@@ -13,10 +13,17 @@
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,'Noto Sans KR',sans-serif}
-    header.app{background:var(--navy);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px}
+
+
+    /* 헤더/링크 레이아웃 안정화 */
+    header.app{background:var(--navy);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
     .brand{display:flex;align-items:center;gap:12px}
     .logo{width:28px;height:28px;border-radius:8px;background:var(--navy);
       display:inline-grid;place-items:center;border:2px solid var(--gold)}
+    .topnav{display:flex;gap:8px;margin-left:auto}
+    .link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:6px 10px;border-radius:8px}
+
+
     .container{padding:16px 16px 96px}
     .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;
       box-shadow:0 1px 0 rgba(0,0,0,.04)}
@@ -44,14 +51,12 @@
     .stamp.special{border-color:var(--gold);color:var(--navy);box-shadow:0 0 0 2px rgba(229,194,85,.25) inset}
 
 
-    /* Views */
     [data-view]{display:none}
     [data-view].show{display:block}
     .topbar{display:flex;align-items:center;gap:10px;margin:0 0 12px}
-    .link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:6px 10px;border-radius:8px}
 
 
-    /* Modal for monthly detail */
+    /* Modal */
     .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.4);padding:18px}
     .modal.show{display:grid}
     .panel{width:min(720px,100%);background:#fff;border-radius:16px;border:1px solid var(--line);overflow:hidden}
@@ -75,18 +80,20 @@
 <body>
 
 
-  <!-- ===== Header ===== -->
   <header class="app">
     <div class="brand">
       <div class="logo" aria-hidden="true"></div>
       <h1 style="margin:0;font-size:18px;">조립1부 문화여권</h1>
     </div>
-    #/홈</a>
-    #/passport여권 보기</a>
+
+
+    <nav class="topnav">
+      #/홈</a>
+      #/passport여권 보기</a>
+    </nav>
   </header>
 
 
-  <!-- ===== Views ===== -->
   <main class="container">
     <!-- Home -->
     <section id="view-home" data-view class="show">
@@ -112,7 +119,7 @@
     </section>
 
 
-    <!-- Passport (2~12월) -->
+    <!-- Passport -->
     <section id="view-passport" data-view>
       <div class="topbar">
         #/&larr; 홈</a>
@@ -126,7 +133,7 @@
   <footer class="footer">© 2026 조립1부</footer>
 
 
-  <!-- ===== Monthly Detail Modal ===== -->
+  <!-- Detail Modal -->
   <div id="detail-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
     <div class="panel">
       <header>
@@ -135,13 +142,7 @@
       </header>
       <main>
         <div class="chips" id="detail-chips"></div>
-
-
-        <section class="gallery" id="detail-gallery">
-          <!-- 썸네일 샘플 -->
-        </section>
-
-
+        <section class="gallery" id="detail-gallery"></section>
         <section>
           <div id="detail-memo" class="memo">팀 스토리/에피소드가 들어갑니다. 기본 2줄만 노출되고, ‘더보기’를 누르면 전체가 펼쳐집니다.</div>
           <div class="hstack" style="margin-top:6px;">
@@ -155,20 +156,16 @@
 
 
   <script>
-    // ===== Mini Router (hash-based) =====
+    // Router
     const views = {
       home: document.getElementById('view-home'),
       passport: document.getElementById('view-passport')
     };
-
-
     function show(view){
       Object.values(views).forEach(v=>v.classList.remove('show'));
       (views[view]||views.home).classList.add('show');
       if(view==='passport') renderPassport();
     }
-
-
     function onRoute(){
       const hash = location.hash.replace('#','');
       if(hash.startsWith('/passport')) show('passport'); else show('home');
@@ -177,19 +174,14 @@
     window.addEventListener('load', onRoute);
 
 
-    // ===== Demo Data (썸네일/캡션/스탬프) =====
-    // 대표 썸네일은 "최신 업로드" 기준 → 여기선 가장 마지막 항목을 대표로 사용
+    // Demo data
     const demoMedia = {
       2: [{cap:'첫 활동 테스트 캡션'}],
       10:[{cap:'특별 미션 성공!'}]
     };
-    const demoStamp = {
-      2: 'basic',  // Pass
-      10:'special'  // 특별
-    };
+    const demoStamp = { 2:'basic', 10:'special' };
 
 
-    // ===== Passport Grid (2~12월) =====
     function renderPassport(){
       const grid = document.getElementById('months-grid');
       grid.innerHTML = '';
@@ -214,7 +206,7 @@
     }
 
 
-    // ===== Monthly Detail (사진 + 설명 2줄 + 펼침) =====
+    // Detail Modal
     const modal = document.getElementById('detail-modal');
     const chips = document.getElementById('detail-chips');
     const gallery = document.getElementById('detail-gallery');
@@ -225,7 +217,6 @@
 
     function openDetail(month){
       title.textContent = month+'월 상세';
-      // 상태 칩: 참여/승인/스탬프
       chips.innerHTML = '';
       const stamp = demoStamp[month];
       const items = ['참여 완료'];
@@ -236,7 +227,6 @@
       });
 
 
-      // 갤러리 (샘플 2~4칸)
       gallery.innerHTML='';
       const medias = demoMedia[month]||[];
       const count = Math.max(2, Math.min(4, (medias.length||2)));
@@ -246,7 +236,6 @@
       }
 
 
-      // 메모(2줄 + 펼침)
       memo.classList.remove('expanded');
       memo.textContent = (medias[0]?.cap || '팀 스토리/에피소드가 들어갑니다. 기본 2줄 노출, 더보기로 전체 펼침.');
       meta.textContent = '참여 5점 · 팀장 +2점 · 자발적 +3점 · 5장 이상 +1점';
@@ -258,11 +247,7 @@
     function toggleMemo(){ memo.classList.toggle('expanded'); }
 
 
-    // 초기 렌더
     if(location.hash.replace('#','').startsWith('/passport')) renderPassport();
-
-
-    // (참고) PWA 기능은 이 단일 파일 데모에선 제외 — 이후 manifest & service worker 추가 시 즉시 활성화
   </script>
 </body>
  
