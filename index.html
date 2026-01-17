@@ -2,93 +2,112 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>조립1부 문화여권 – 2차 데모(SPA)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>조립1부 문화여권 – Safe v2.1</title>
   <meta name="theme-color" content="#081C46"/>
   <style>
     :root{--navy:#081C46;--gold:#E5C255;--ink:#0d1a3a;--bg:#fbf9f4;--line:#d7d2c8;--text:#0e1320;--muted:#7b7f8a}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,'Noto Sans KR',sans-serif}
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,'Noto Sans KR',sans-serif;
+    }
 
 
-    /* 헤더/링크 */
-    header.app{background:var(--navy);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:28px;height:28px;border-radius:8px;background:var(--navy);display:inline-grid;place-items:center;border:2px solid var(--gold)}
-    .topnav{display:flex;gap:8px;margin-left:auto}
-    .link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:6px 10px;border-radius:8px}
+    /* 헤더 */
+    header.app{
+      background:var(--navy); color:#fff; padding:16px 20px;
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    }
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{width:28px; height:28px; border-radius:8px; border:2px solid var(--gold)}
+    .topnav{display:flex; gap:8px; margin-left:auto}
+    .link{
+      color:#fff; text-decoration:none;
+      border:1px solid rgba(255,255,255,.35); padding:6px 10px; border-radius:8px;
+      background:transparent;
+    }
 
 
-    /* 공통 */
+    /* 공통 레이아웃 */
     .container{padding:16px 16px 96px}
-    .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 1px 0 rgba(0,0,0,.04)}
-    .points{font-size:28px;font-weight:700;color:var(--navy)}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
-    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-    a.btn,button.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
-      padding:14px 12px;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--text);text-decoration:none}
-    .btn.primary{background:var(--gold);border-color:#c7a64a;font-weight:700}
-    .footer{position:sticky;bottom:0;padding:10px 16px;background:linear-gradient(180deg,rgba(251,249,244,0),rgba(251,249,244,1));color:var(--muted);font-size:12px}
+    .card{
+      background:#fff; border:1px solid var(--line); border-radius:14px;
+      padding:16px; margin:12px 0; box-shadow:0 1px 0 rgba(0,0,0,.04);
+    }
+    .points{font-size:28px; font-weight:700; color:var(--navy)}
+    .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0}
+    .grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
 
 
-    /* 여권 그리드 */
-    .month{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:12px;min-height:150px;
-      display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:box-shadow .15s ease}
+    button.btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:6px;
+      padding:14px 12px; background:#fff; border:1px solid var(--line); border-radius:12px; color:var(--text);
+    }
+    .btn.primary{background:var(--gold); border-color:#c7a64a; font-weight:700}
+    .footer{
+      position:sticky; bottom:0; padding:10px 16px;
+      background:linear-gradient(180deg,rgba(251,249,244,0),rgba(251,249,244,1));
+      color:var(--muted); font-size:12px;
+    }
+
+
+    /* 여권(그리드) */
+    .month{
+      background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:12px; min-height:150px;
+      display:flex; flex-direction:column; gap:8px; cursor:pointer; transition:box-shadow .15s ease;
+    }
     .month:hover{box-shadow:0 4px 18px rgba(0,0,0,.06)}
-    .month h3{margin:0;font-size:14px;color:var(--ink)}
-    .thumb{width:100%;aspect-ratio:4/3;border:1px dashed #cfc9bb;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#9b9182;font-size:12px}
-    .caption{font-size:12px;color:#3b3f52;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .stamp{width:44px;height:44px;border-radius:50%;border:2px solid var(--navy);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:800;font-style:italic;align-self:flex-end}
-    .stamp.special{border-color:var(--gold);color:var(--navy);box-shadow:0 0 0 2px rgba(229,194,85,.25) inset}
+    .month h3{margin:0; font-size:14px; color:var(--ink)}
+    .thumb{
+      width:100%; aspect-ratio:4/3; border:1px dashed #cfc9bb; border-radius:10px;
+      display:flex; align-items:center; justify-content:center; color:#9b9182; font-size:12px;
+    }
+    .caption{font-size:12px; color:#3b3f52; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .stamp{
+      width:44px; height:44px; border-radius:50%; border:2px solid var(--navy);
+      display:flex; align-items:center; justify-content:center; color:var(--gold);
+      font-weight:800; font-style:italic; align-self:flex-end;
+    }
+    .stamp.special{
+      border-color:var(--gold); color:var(--navy); box-shadow:0 0 0 2px rgba(229,194,85,.25) inset;
+    }
 
 
     /* 뷰 전환 */
-    [data-view]{display:none} [data-view].show{display:block}
-    .topbar{display:flex;align-items:center;gap:10px;margin:0 0 12px}
-    .subtle{color:#6a6f7d;font-size:13px}
+    [data-view]{display:none}
+    [data-view].show{display:block}
+    .topbar{display:flex; align-items:center; gap:10px; margin:0 0 12px}
 
 
-    /* 업로드/랭킹/관리자 간이 UI */
-    .field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
-    select,input[type="text"],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:14px;outline:none}
-    input[type="file"]{border:none}
-    .list{display:flex;flex-direction:column;gap:10px}
-    .row{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
-    .muted{color:#8a8f9c;font-size:12px}
-    .hstack{display:flex;align-items:center;gap:8px}
+    /* 간이 UI */
+    .field{display:flex; flex-direction:column; gap:6px; margin:10px 0}
+    select, input[type="text"]{
+      width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; font-size:14px; outline:none;
+    }
+    .list{display:flex; flex-direction:column; gap:10px}
+    .row{background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px}
+    .muted{color:#8a8f9c; font-size:12px}
+    .hstack{display:flex; align-items:center; gap:8px}
     .right{margin-left:auto}
-    .ghost{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer}
-
-
-    /* 모달 */
-    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.4);padding:18px}
-    .modal.show{display:grid}
-    .panel{width:min(720px,100%);background:#fff;border-radius:16px;border:1px solid var(--line);overflow:hidden}
-    .panel header{padding:14px 16px;background:#f4f2ec;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-    .panel main{padding:16px}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:#fff}
-    .gallery{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
-    .ph{aspect-ratio:4/3;background:#faf7ef;border:1px dashed #cfc9bb;border-radius:10px;display:grid;place-items:center;color:#9b9182;font-size:12px}
-    .memo{font-size:14px;line-height:1.45;color:#2a2f43;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .memo.expanded{-webkit-line-clamp:unset}
-    @media (min-width:900px){.container{max-width:980px;margin:0 auto}}
+    .ghost{background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 10px; cursor:pointer}
   </style>
 </head>
 <body>
 
 
-  <!-- 헤더 -->
+  <!-- 헤더(버튼 라우팅) -->
   <header class="app">
     <div class="brand">
       <div class="logo" aria-hidden="true"></div>
       <h1 style="margin:0;font-size:18px;">조립1부 문화여권</h1>
     </div>
     <nav class="topnav">
-      <a class="link" href="#t여권 보기</a>
-      #/upload사진 업로드</a>
-      #/ranking랭킹</a>
-      #/admin관리자 승인</a>
+      <button class="link" >홈</button>
+      <button class="link" >여권 보기</button>
+      <button class="link" >사진 업로드</button>
+      <button class="link" >랭킹</button>
+      <button class="link" >관리자 승인</button>
     </nav>
   </header>
 
@@ -104,10 +123,10 @@
 
 
       <nav class="grid-2">
-        #/passport여권 보기</a>
-        #/upload사진 업로드</a>
-        #/ranking랭킹</a>
-        #/admin관리자 승인</a>
+        <button class="btn primary" >여권 보기</button>
+        <button class="btn" >사진 업로드</button>
+        <button class="btn" >랭킹</button>
+        <button class="btn" >관리자 승인</button>
       </nav>
 
 
@@ -121,21 +140,19 @@
     <!-- PASSPORT -->
     <section id="view-passport" data-view>
       <div class="topbar">
-        #/&larr; 홈</a>
+        <button class="link" >&larr; 홈</button>
         <h2 style="margin:0;">여권</h2>
       </div>
       <div class="grid-3" id="months-grid"></div>
     </section>
 
 
-    <!-- UPLOAD -->
+    <!-- UPLOAD(의사) -->
     <section id="view-upload" data-view>
       <div class="topbar">
-        #/&larr; 홈</a>
+        <button class="link" >&larr; 홈</button>
         <h2 style="margin:0;">사진 업로드(데모)</h2>
       </div>
-
-
       <div class="card">
         <div class="field">
           <label>월 선택</label>
@@ -147,15 +164,16 @@
           </select>
         </div>
         <div class="field">
-          <label>사진 선택(여러 장 가능 · 데모)</label>
-          <input type="file" id="up-file" accept="image/*" multiple />
-        </div>
-        <div class="field">
           <label>캡션(1줄)</label>
           <input type="text" id="up-caption" placeholder="설명을 입력하세요 (최대 60자)"/>
         </div>
-
-
+        <div class="field">
+          <label>사진 개수(데모)</label>
+          <select id="up-count">
+            <option value="1">1장</option><option value="2">2장</option><option value="3">3장</option>
+            <option value="4">4장</option><option value="5">5장 이상</option>
+          </select>
+        </div>
         <div class="field">
           <label>추가 옵션(포인트 계산용 · 데모)</label>
           <div class="hstack">
@@ -163,218 +181,151 @@
             <label><input type="checkbox" id="opt-voluntary"/> 자발적(+3)</label>
           </div>
         </div>
-
-
         <button class="btn primary" >제출(데모)</button>
-        <p class="subtle">※ 지금은 기기 로컬 저장소(localStorage)만 사용합니다. 3차에서 Google Drive/DB 연동.</p>
+        <p class="muted">※ 지금은 기기 로컬 저장소만 사용합니다. 3차에서 Google Drive/DB 연동.</p>
       </div>
     </section>
 
 
-    <!-- RANKING -->
+    <!-- RANKING(의사) -->
     <section id="view-ranking" data-view>
       <div class="topbar">
-        #/&larr; 홈</a>
+        <button class="link" >&larr; 홈</button>
         <h2 style="margin:0;">랭킹</h2>
       </div>
       <div class="list" id="rank-list"></div>
-      <p class="subtle">※ 현재는 기기 로컬 기준(의사 동작). 조직 전체 랭킹은 3차에서 DB 집계로 대체.</p>
+      <p class="muted">※ 현재는 단말 기준(의사 동작). 조직 전체 랭킹은 3차에서 DB 집계로 대체.</p>
     </section>
 
 
-    <!-- ADMIN -->
+    <!-- ADMIN(의사 승인) -->
     <section id="view-admin" data-view>
       <div class="topbar">
-        #/&larr; 홈</a>
+        <button class="link" >&larr; 홈</button>
         <h2 style="margin:0;">관리자 승인(데모)</h2>
       </div>
       <div class="list" id="admin-queue"></div>
-      <p class="subtle">※ 승인 시 해당 월에 “특별 스탬프”가 부여됩니다(의사 동작).</p>
+      <p class="muted">승인 시 해당 월에 “특별 스탬프”가 부여됩니다(의사 동작).</p>
     </section>
   </main>
 
 
-  <footer class="footer">© 2026 조립1부</footer>
-
-
-  <!-- DETAIL MODAL -->
-  <div id="detail-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
-    <div class="panel">
-      <header>
-        <strong id="detail-title">2월 상세</strong>
-        <button class="ghost" >닫기</button>
-      </header>
-      <main>
-        <div class="chips" id="detail-chips"></div>
-        <section class="gallery" id="detail-gallery"></section>
-        <section>
-          <div id="detail-memo" class="memo">팀 스토리/에피소드가 들어갑니다. 기본 2줄만 노출되고, ‘더보기’를 누르면 전체가 펼쳐집니다.</div>
-          <div class="hstack" style="margin-top:6px;">
-            <button class="ghost" >더보기</button>
-            <span class="muted right" id="detail-meta">참여 5점 · 팀장 +2점 · 자발적 +3점 · 5장 이상 +1점</span>
-          </div>
-        </section>
-      </main>
-    </div>
-  </div>
+  <footer class="footer">© 2026 조립1부 · Safe v2.1</footer>
 
 
   <script>
-    /* ========= 라우터 ========= */
+    /* ===== 라우팅(버튼 기반) ===== */
     const views = {
-      home:    document.getElementById('view-home'),
+      home: document.getElementById('view-home'),
       passport: document.getElementById('view-passport'),
-      upload:  document.getElementById('view-upload'),
-      ranking:  document.getElementById('view-ranking'),
-      admin:    document.getElementById('view-admin')
+      upload: document.getElementById('view-upload'),
+      ranking: document.getElementById('view-ranking'),
+      admin: document.getElementById('view-admin')
     };
-    function show(view){
+    function go(view){
       Object.values(views).forEach(v=>v.classList.remove('show'));
       (views[view]||views.home).classList.add('show');
       if(view==='passport') renderPassport();
       if(view==='ranking') renderRanking();
       if(view==='admin')  renderAdmin();
       if(view==='home')    renderMyPoints();
-    }
-    function onRoute(){
-      const hash = location.hash.replace('#','');
-      if(hash.startsWith('/passport')) show('passport');
-      else if(hash.startsWith('/upload')) show('upload');
-      else if(hash.startsWith('/ranking')) show('ranking');
-      else if(hash.startsWith('/admin')) show('admin');
-      else show('home');
-    }
-    window.addEventListener('hashchange', onRoute);
-    window.addEventListener('load', onRoute);
-
-
-    /* ========= 로컬 스토어 ========= */
-    const LS_KEY_MEDIA  = 'pass_media';    // { month: [{cap, ts, count}] }
-    const LS_KEY_QUEUE  = 'pass_queue';    // [{id, month, caption, leader, voluntary, files}] 대기열
-    const LS_KEY_POINTS = 'pass_points';    // { total, breakdownByMonth: {m:{participation,leader,voluntary,media5}} }
-
-
-    function getLS(key, fallback){
-      try{ return JSON.parse(localStorage.getItem(key)) ?? fallback; }catch(_){ return fallback; }
-    }
-    function setLS(key, val){
-      localStorage.setItem(key, JSON.stringify(val));
+      window.scrollTo({top:0,behavior:'instant'});
     }
 
 
-    /* ========= 데모 초기 데이터 ========= */
-    const demoMedia = {
-      2:[{cap:'첫 활동 테스트 캡션', ts: Date.now()-86400000, count:2}],
-      10:[{cap:'특별 미션 성공!',  ts: Date.now()-3600000,  count:5}],
-    };
-    // 승인 결과 반영되는 스탬프(기본은 참여 시 Pass, 승인은 special)
-    const stampByMonth = getLS('pass_stamp', {2:'basic', 10:'special'});
+    /* ===== 로컬 스토리지 도우미 ===== */
+    const LS_MEDIA='pass_media', LS_QUEUE='pass_queue', LS_POINTS='pass_points', LS_STAMP='pass_stamp';
+    const demoMedia={2:[{cap:'첫 활동 테스트 캡션',ts:Date.now()-86400000,count:2}],10:[{cap:'특별 미션 성공!',ts:Date.now()-3600000,count:5}]};
+    const stampByMonth = get(LS_STAMP,{2:'basic',10:'special'});
 
 
-    /* ========= 여권 렌더 ========= */
-    function mergeMedia(){
-      const local = getLS(LS_KEY_MEDIA, {});
-      const merged = {};
-      for(const m of [2,3,4,5,6,7,8,9,10,11,12]){
-        merged[m] = [...(demoMedia[m]||[]), ...(local[m]||[])];
-      }
-      return merged;
+    function get(k,fb){ try{ return JSON.parse(localStorage.getItem(k)) ?? fb }catch(_){ return fb } }
+    function set(k,v){ localStorage.setItem(k, JSON.stringify(v)) }
+
+
+    function mergedMedia(){
+      const local=get(LS_MEDIA,{});
+      const out={}; for(const m of [2,3,4,5,6,7,8,9,10,11,12]) out[m]=[...(demoMedia[m]||[]), ...(local[m]||[])];
+      return out;
     }
-    function latestOf(arr){ return arr && arr.length ? arr.sort((a,b)=>a.ts-b.ts)[arr.length-1] : null; }
+    const last = arr => arr && arr.length ? arr.sort((a,b)=>a.ts-b.ts)[arr.length-1] : null;
 
 
+    /* ===== 여권 렌더 ===== */
     function renderPassport(){
-      const grid = document.getElementById('months-grid'); grid.innerHTML='';
-      const merged = mergeMedia();
+      const grid=document.getElementById('months-grid'); grid.innerHTML='';
+      const mmd=mergedMedia();
       for(const m of [2,3,4,5,6,7,8,9,10,11,12]){
-        const latest = latestOf(merged[m]);
-        const stamp  = stampByMonth[m];
-        const card = document.createElement('div');
-        card.className='month';
-        card.innerHTML = `
+        const l=last(mmd[m]); const st=stampByMonth[m];
+        const card=document.createElement('div'); card.className='month';
+        card.innerHTML=`
           <h3>${m}월</h3>
-          <div class="thumb">${latest ? '대표 썸네일' : '+ 사진 추가'}</div>
-          <div class="caption">${latest ? latest.cap : '설명 없음'}</div>
-          ${stamp ? `<div class="stamp ${stamp==='special'?'special':''}">${stamp==='special'?'★':'Pass'}</div>` : ''}
+          <div class="thumb">${l ? '대표 썸네일' : '+ 사진 추가'}</div>
+          <div class="caption">${l ? l.cap : '설명 없음'}</div>
+          ${st ? `<div class="stamp ${st==='special'?'special':''}">${st==='special'?'★':'Pass'}</div>` : ''}
         `;
-        card.=>openDetail(m, merged[m]);
+        card.=>openDetail(m, mmd[m]);
         grid.appendChild(card);
       }
     }
 
 
-    /* ========= 업로드(의사) ========= */
+    /* ===== 업로드(의사) ===== */
     function demoUpload(){
-      const month = Number(document.getElementById('up-month').value);
-      const caption = (document.getElementById('up-caption').value||'설명 없음').slice(0,60);
-      const files = document.getElementById('up-file').files;
-      const leader = document.getElementById('opt-leader').checked;
-      const voluntary = document.getElementById('opt-voluntary').checked;
+      const month=Number(document.getElementById('up-month').value);
+      const caption=(document.getElementById('up-caption').value||'설명 없음').slice(0,60);
+      const count=Number(document.getElementById('up-count').value);
+      const leader=document.getElementById('opt-leader').checked;
+      const voluntary=document.getElementById('opt-voluntary').checked;
 
 
-      // media 저장
-      const media = getLS(LS_KEY_MEDIA, {});
-      media[month] = media[month]||[];
-      media[month].push({cap:caption, ts:Date.now(), count: Math.max(1, files?.length || 1)});
-      setLS(LS_KEY_MEDIA, media);
+      const media=get(LS_MEDIA,{}); media[month]=media[month]||[];
+      media[month].push({cap:caption,ts:Date.now(),count}); set(LS_MEDIA,media);
 
 
-      // 관리자 승인 대기열
-      const q = getLS(LS_KEY_QUEUE, []);
-      q.push({id:Date.now(), month, caption, leader, voluntary, filesCount: files?.length||1, status:'pending'});
-      setLS(LS_KEY_QUEUE, q);
+      const q=get(LS_QUEUE,[]); q.push({id:Date.now(),month,caption,leader,voluntary,count,status:'pending'}); set(LS_QUEUE,q);
 
 
-      // 포인트 – 참여(+5) 즉시 반영 (승인은 관리자 화면에서 추가 반영 없음. 스탬프만 부여)
-      addPointsFor(month, {participation:5, leader: leader?2:0, voluntary: voluntary?3:0, mediaCount: files?.length||1});
-
-
-      alert('제출 완료! 관리자 승인으로 이동합니다(데모).');
-      location.hash = '#/admin';
-      renderAdmin();
+      addPointsFor(month,{participation:5,leader:leader?2:0,voluntary:voluntary?3:0,addCount:count});
+      alert('제출 완료! 관리자 승인으로 이동합니다(데모).'); go('admin');
     }
 
 
-    /* ========= 포인트 계산 ========= */
-    function addPointsFor(month, opts){
-      const pts = getLS(LS_KEY_POINTS, {total:0, breakdownByMonth:{}});
-      const b = pts.breakdownByMonth[month] || {participation:0, leader:0, voluntary:0, media5:0};
-      b.participation += (opts.participation||0);
-      b.leader        += (opts.leader||0);
-      b.voluntary    += (opts.voluntary||0);
-      // 해당 월 누적 사진 수가 5장 이상이면 +1 (월당 1회만 가점)
-      const merged = mergeMedia()[month]||[];
-      const totalPhotosThisMonth = merged.reduce((s,x)=> s + (x.count||1), 0);
-      if(totalPhotosThisMonth>=5 && b.media5===0){ b.media5 = 1; }
+    /* ===== 포인트 계산(의사) ===== */
+    function addPointsFor(month,opts){
+      const pts=get(LS_POINTS,{total:0,byMonth:{}});
+      const b=pts.byMonth[month]||{participation:0,leader:0,voluntary:0,media5:0};
+      b.participation+=(opts.participation||0);
+      b.leader+=(opts.leader||0);
+      b.voluntary+=(opts.voluntary||0);
 
 
-      pts.breakdownByMonth[month] = b;
-      // 총합 재계산
-      pts.total = Object.values(pts.breakdownByMonth)
-                .reduce((sum,v)=> sum + v.participation + v.leader + v.voluntary + v.media5, 0);
-      setLS(LS_KEY_POINTS, pts);
-      renderMyPoints();
+      const all=(mergedMedia()[month]||[]);
+      const totalPhotos=all.reduce((s,x)=>s+(x.count||1),0);
+      if(totalPhotos>=5 && b.media5===0) b.media5=1;
+
+
+      pts.byMonth[month]=b;
+      pts.total=Object.values(pts.byMonth).reduce((sum,v)=>sum+v.participation+v.leader+v.voluntary+v.media5,0);
+      set(LS_POINTS,pts); renderMyPoints();
     }
-
-
     function renderMyPoints(){
-      const pts = getLS(LS_KEY_POINTS, {total:0});
-      const el = document.getElementById('my-points');
-      if(el) el.textContent = String(pts.total||0);
+      const el=document.getElementById('my-points'); if(!el) return;
+      const pts=get(LS_POINTS,{total:0}); el.textContent=String(pts.total||0);
     }
 
 
-    /* ========= 관리자 승인(의사) ========= */
+    /* ===== 관리자 승인(의사) ===== */
     function renderAdmin(){
-      const wrap = document.getElementById('admin-queue'); wrap.innerHTML='';
-      const q = getLS(LS_KEY_QUEUE, []);
+      const wrap=document.getElementById('admin-queue'); wrap.innerHTML='';
+      const q=get(LS_QUEUE,[]);
       if(!q.length){ wrap.innerHTML='<div class="row muted">승인 대기 항목이 없습니다.</div>'; return; }
       [...q].reverse().forEach(item=>{
-        const row = document.createElement('div'); row.className='row';
-        row.innerHTML = `
+        const row=document.createElement('div'); row.className='row';
+        row.innerHTML=`
           <div class="hstack"><strong>${item.month}월</strong>
             <span class="muted">/ ${new Date(item.id).toLocaleString()}</span>
-            <span class="right muted">${item.leader?'팀장참여':''} ${item.voluntary?'자발적':''}</span>
+            <span class="right muted">${item.leader?'팀장참여':''} ${item.voluntary?'자발적':''} · 사진 ${item.count}장</span>
           </div>
           <div class="muted" style="margin-top:6px;">${item.caption}</div>
           <div class="hstack" style="margin-top:10px;">
@@ -384,85 +335,29 @@
         wrap.appendChild(row);
       });
     }
-
-
     function approve(id){
-      const q = getLS(LS_KEY_QUEUE, []);
-      const idx = q.findIndex(v=>v.id===id);
-      if(idx<0) return;
-      const item = q[idx];
-      q.splice(idx,1); setLS(LS_KEY_QUEUE, q);
-      // 특별 스탬프 부여
-      stampByMonth[item.month] = 'special'; localStorage.setItem('pass_stamp', JSON.stringify(stampByMonth));
-      alert(`${item.month}월 승인 완료 → 특별 스탬프 부여`);
-      renderAdmin(); renderPassport();
+      const q=get(LS_QUEUE,[]); const i=q.findIndex(v=>v.id===id); if(i<0) return;
+      const it=q[i]; q.splice(i,1); set(LS_QUEUE,q);
+      const stamps=get(LS_STAMP,{});
+      stamps[it.month]='special'; set(LS_STAMP,stamps);
+      alert(`${it.month}월 승인 완료 → 특별 스탬프 부여`); go('passport');
     }
     function reject(id){
-      const q = getLS(LS_KEY_QUEUE, []);
-      const idx = q.findIndex(v=>v.id===id);
-      if(idx<0) return;
-      q.splice(idx,1); setLS(LS_KEY_QUEUE, q);
-      alert('반려 처리했습니다.');
-      renderAdmin();
+      const q=get(LS_QUEUE,[]); const i=q.findIndex(v=>v.id===id); if(i<0) return;
+      q.splice(i,1); set(LS_QUEUE,q);
+      alert('반려 처리했습니다.'); renderAdmin();
     }
 
 
-    /* ========= 랭킹(의사) ========= */
-    function renderRanking(){
-      const wrap = document.getElementById('rank-list'); wrap.innerHTML='';
-      // 데모: 단말 1명 기준 + 샘플 2명
-      const me = getLS(LS_KEY_POINTS, {total:0});
-      const rows = [
-        {name:'나(이 기기)', score: me.total||0},
-        {name:'닉네임2', score: 27},
-        {name:'닉네임3', score: 21},
-      ].sort((a,b)=>b.score-a.score);
-
-
-      rows.forEach((u,i)=>{
-        const row=document.createElement('div'); row.className='row';
-        row.innerHTML = `<strong>${i+1}위</strong> – ${u.name} <span class="muted">/ ${u.score}점</span>`;
-        wrap.appendChild(row);
-      });
-    }
-
-
-    /* ========= 상세 모달 ========= */
-    const modal = document.getElementById('detail-modal');
-    const chips = document.getElementById('detail-chips');
-    const gallery = document.getElementById('detail-gallery');
-    const memo = document.getElementById('detail-memo');
-    const title = document.getElementById('detail-title');
-    const meta  = document.getElementById('detail-meta');
-
-
+    /* ===== 상세 모달(필요 시 추가 가능) ===== */
     function openDetail(month, medias){
-      title.textContent = month+'월 상세';
-      chips.innerHTML='';
-      const stamp = stampByMonth[month];
-      const items = ['참여 완료']; if(stamp==='basic') items.push('기본 스탬프 Pass'); if(stamp==='special') items.push('특별 스탬프');
-      items.forEach(t=>{ const c=document.createElement('span'); c.className='chip'; c.textContent=t; chips.appendChild(c); });
-
-
-      gallery.innerHTML='';
-      const list = medias||[]; const count = Math.max(2, Math.min(4, (list.length||2)));
-      for(let i=0;i<count;i++){ const ph=document.createElement('div'); ph.className='ph'; ph.textContent = list[i]?.cap || '샘플 썸네일'; gallery.appendChild(ph); }
-
-
-      memo.classList.remove('expanded');
-      memo.textContent = (list[0]?.cap || '팀 스토리/에피소드가 들어갑니다. 기본 2줄 노출, 더보기로 전체 펼침.');
-      meta.textContent = '참여 5점 · 팀장 +2점 · 자발적 +3점 · 5장 이상 +1점';
-
-
-      modal.classList.add('show');
+      // 간단 버전: 알림으로 대체 (원하면 이전 모달 UI 다시 붙여드립니다)
+      alert(`${month}월 상세보기 (데모)\n사진/설명/포인트는 3차에서 모달로 표시 가능`);
     }
-    function closeDetail(){ modal.classList.remove('show'); }
-    function toggleMemo(){ memo.classList.toggle('expanded'); }
 
 
-    /* ========= 초기 진입 처리 ========= */
-    if(location.hash.replace('#','').startsWith('/passport')) renderPassport();
-    renderMyPoints();
+    /* ===== 초기 표시 ===== */
+    go('home');
   </script>
 </body>
  
