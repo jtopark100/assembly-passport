@@ -1,340 +1,330 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>조립1부 문화여권 – Safe v2.2</title>
-  <meta name="theme-color" content="#081C46"/>
-  <style>
-    :root{--navy:#081C46;--gold:#E5C255;--ink:#0d1a3a;--bg:#fbf9f4;--line:#d7d2c8;--text:#0e1320;--muted:#7b7f8a}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,'Noto Sans KR',sans-serif}
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>조립1부 문화여권 – Safe v2.3</title>
+<meta name="theme-color" content="#081C46"/>
+<style,249,244,1));color:var(--muted);font-size:12px}<style>
 
 
-    header.app{background:var(--navy);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--gold)}
-    .topnav{display:flex;gap:8px;margin-left:auto}
-    .link{color:#fff;border:1px solid rgba(255,255,255,.35);padding:6px 10px;border-radius:8px;background:transparent}
+  /* 여권 */
+  .month{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:12px;min-height:150px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:box-shadow .15s ease}
+  .month:hover{box-shadow:0 4px 18px rgba(0,0,0,.06)}
+  .month h3{margin:0;font-size:14px;color:var(--ink)}
+  .thumb{width:100%;aspect-ratio:4/3;border:1px dashed #cfc9bb;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#9b9182;font-size:12px}
+  .caption{font-size:12px;color:#3b3f52;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stamp{width:44px;height:44px;border-radius:50%;border:2px solid var(--navy);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:800;font-style:italic;align-self:flex-end}
+  .stamp.special{border-color:var(--gold);color:var(--navy);box-shadow:0 0 0 2px rgba(229,194,85,.25) inset}
 
 
-    .container{padding:16px 16px 96px}
-    .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 1px 0 rgba(0,0,0,.04)}
-    .points{font-size:28px;font-weight:700;color:var(--navy)}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
-    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  /* 뷰 전환 */
+  [data-view]{display:none}
+  [data-view].show{display:block}
+  .topbar{display:flex;align-items:center;gap:10px;margin:0 0 12px}
 
 
-    button.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:14px 12px;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--text)}
-    .btn.primary{background:var(--gold);border-color:#c7a64a;font-weight:700}
-
-
-    .footer{position:sticky;bottom:0;padding:10px 16px;background:linear-gradient(180deg,rgba(251,249,244,0),rgba(251,249,244,1));color:var(--muted);font-size:12px}
-
-
-    .month{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:12px;min-height:150px;
-      display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:box-shadow .15s ease}
-    .month:hover{box-shadow:0 4px 18px rgba(0,0,0,.06)}
-    .month h3{margin:0;font-size:14px;color:var(--ink)}
-    .thumb{width:100%;aspect-ratio:4/3;border:1px dashed #cfc9bb;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#9b9182;font-size:12px}
-    .caption{font-size:12px;color:#3b3f52;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .stamp{width:44px;height:44px;border-radius:50%;border:2px solid var(--navy);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:800;font-style:italic;align-self:flex-end}
-    .stamp.special{border-color:var(--gold);color:var(--navy);box-shadow:0 0 0 2px rgba(229,194,85,.25) inset}
-
-
-    [data-view]{display:none}
-    [data-view].show{display:block}
-    .topbar{display:flex;align-items:center;gap:10px;margin:0 0 12px}
-
-
-    .field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
-    select,input[type="text"]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:14px;outline:none}
-    .list{display:flex;flex-direction:column;gap:10px}
-    .row{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
-    .muted{color:#8a8f9c;font-size:12px}
-    .hstack{display:flex;align-items:center;gap:8px}
-    .right{margin-left:auto}
-    .ghost{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer}
-  </style>
+  /* 간이 UI */
+  .field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+  select,input[type="text"]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:14px;outline:none}
+  .list{display:flex;flex-direction:column;gap:10px}
+  .row{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+  .muted{color:#8a8f9c;font-size:12px}
+  .hstack{display:flex;align-items:center;gap:8px}
+  .right{margin-left:auto}
+  .ghost{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer}
+</style>
 </head>
 <body>
 
 
-  <header class="app">
-    <div class="brand">
-      <div class="logo" aria-hidden="true"></div>
-      <h1 style="margin:0;font-size:18px;">조립1부 문화여권</h1>
-    </div>
-    <nav class="topnav">
-      <button class="link" data-route="home">홈</button>
-      <button class="link" data-route="passport">여권 보기</button>
-      <button class="link" data-route="upload">사진 업로드</button>
-      <button class="link" data-route="ranking">랭킹</button>
-      <button class="link" data-route="admin">관리자 승인</button>
+<header class="app">
+  <div class="brand">
+    <div class="logo" aria-hidden="true"></div>
+    <h1 style="margin:0;font-size:18px;">조립1부 문화여권</h1>
+  </div>
+  <nav class="topnav">
+    <!-- 이중 라우팅: href 해시 + onclick nav() -->
+    #/home홈</a>
+    #/passport여권 보기</a>
+    #/upload사진 업로드</a>
+    #/ranking랭킹</a>
+    #/admin관리자 승인</a>
+  </nav>
+</header>
+
+
+<main class="container">
+  <!-- HOME -->
+  <section id="view-home" data-view class="show">
+    <section class="card">
+      <h2>이번 달 미션</h2>
+      <p id="mission-title">대표 썸네일 업로드 테스트</p>
+      <div class="points"><span id="my-points">0</span>점</div>
+    </section>
+
+
+    <nav class="grid-2">
+      #/passport여권 보기</a>
+      #/upload사진 업로드</a>
+      #/ranking랭킹</a>
+      #/admin관리자 승인</a>
     </nav>
-  </header>
 
 
-  <main class="container">
-    <!-- HOME -->
-    <section id="view-home" data-view class="show">
-      <section class="card">
-        <h2>이번 달 미션</h2>
-        <p id="mission-title">대표 썸네일 업로드 테스트</p>
-        <div class="points"><span id="my-points">0</span>점</div>
-      </section>
-      <nav class="grid-2">
-        <button class="btn primary" data-route="passport">여권 보기</button>
-        <button class="btn" data-route="upload">사진 업로드</button>
-        <button class="btn" data-route="ranking">랭킹</button>
-        <button class="btn" data-route="admin">관리자 승인</button>
-      </nav>
-      <section class="card">
-        <h2>내 포인트</h2>
-        <div class="points"><span id="my-points-dup">0</span>점</div>
-      </section>
+    <section class="card">
+      <h2>내 포인트</h2>
+      <div class="points"><span id="my-points-dup">0</span>점</div>
     </section>
+  </section>
 
 
-    <!-- PASSPORT -->
-    <section id="view-passport" data-view>
-      <div class="topbar">
-        <button class="link" data-route="home">&larr; 홈</button>
-        <h2 style="margin:0;">여권</h2>
+  <!-- PASSPORT -->
+  <section id="view-passport" data-view>
+    <div class="topbar">
+      #/home&larr; 홈</a>
+      <h2 style="margin:0;">여권</h2>
+    </div>
+    <div class="grid-3" id="months-grid"></div>
+  </section>
+
+
+  <!-- UPLOAD (데모) -->
+  <section id="view-upload" data-view>
+    <div class="topbar">
+      #/home&larr; 홈</a>
+      <h2 style="margin:0;">사진 업로드(데모)</h2>
+    </div>
+    <div class="card">
+      <div class="field"><label>월 선택</label>
+        <select id="up-month"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
       </div>
-      <div class="grid-3" id="months-grid"></div>
-    </section>
-
-
-    <!-- UPLOAD (demo) -->
-    <section id="view-upload" data-view>
-      <div class="topbar">
-        <button class="link" data-route="home">&larr; 홈</button>
-        <h2 style="margin:0;">사진 업로드(데모)</h2>
+      <div class="field"><label>캡션(1줄)</label><input type="text" id="up-caption" placeholder="설명을 입력하세요 (최대 60자)"/></div>
+      <div class="field"><label>사진 개수(데모)</label>
+        <select id="up-count"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
       </div>
-      <div class="card">
-        <div class="field">
-          <label>월 선택</label>
-          <select id="up-month"><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
+      <div class="field"><label>추가 옵션(포인트 계산)</label>
+        <div class="hstack">
+          <label><input type="checkbox" id="opt-leader"/> 팀장 참여(+2)</label>
+          <label><input type="checkbox" id="opt-voluntary"/> 자발적(+3)</label>
         </div>
-        <div class="field"><label>캡션(1줄)</label><input type="text" id="up-caption" placeholder="설명을 입력하세요 (최대 60자)"/></div>
-        <div class="field"><label>사진 개수(데모)</label><select id="up-count"><option value="1">1장</option><option value="2">2장</option><option value="3">3장</option><option value="4">4장</option><option value="5">5장 이상</option></select></div>
-        <div class="field"><label>추가 옵션(포인트 계산용 · 데모)</label>
-          <div class="hstack">
-            <label><input type="checkbox" id="opt-leader"/> 팀장 참여(+2)</label>
-            <label><input type="checkbox" id="opt-voluntary"/> 자발적(+3)</label>
-          </div>
-        </div>
-        <button class="btn primary" id="btn-upload">제출(데모)</button>
-        <p class="muted">※ 현재는 기기 로컬 저장소만 사용. 3차에서 Google Drive/DB 연동.</p>
       </div>
-    </section>
+      <button class="btn primary" id="btn-upload">제출(데모)</button>
+      <p class="muted">※ 현재는 기기 로컬 저장소만 사용. 3차에서 Google Drive/DB 연동.</p>
+    </div>
+  </section>
 
 
-    <!-- RANKING -->
-    <section id="view-ranking" data-view>
-      <div class="topbar">
-        <button class="link" data-route="home">&larr; 홈</button>
-        <h2 style="margin:0;">랭킹</h2>
-      </div>
-      <div class="list" id="rank-list"></div>
-      <p class="muted">※ 단말 기준 의사 동작. 조직 전체 랭킹은 3차에서 DB 집계로 대체.</p>
-    </section>
+  <!-- RANKING -->
+  <section id="view-ranking" data-view>
+    <div class="topbar">
+      #/home&larr; 홈</a>
+      <h2 style="margin:0;">랭킹</h2>
+    </div>
+    <div class="list" id="rank-list"></div>
+  </section>
 
 
-    <!-- ADMIN -->
-    <section id="view-admin" data-view>
-      <div class="topbar">
-        <button class="link" data-route="home">&larr; 홈</button>
-        <h2 style="margin:0;">관리자 승인(데모)</h2>
-      </div>
-      <div class="list" id="admin-queue"></div>
-      <p class="muted">승인 시 해당 월에 “특별 스탬프”가 부여됩니다(의사 동작).</p>
-    </section>
-  </main>
+  <!-- ADMIN -->
+  <section id="view-admin" data-view>
+    <div class="topbar">
+      #/home&larr; 홈</a>
+      <h2 style="margin:0;">관리자 승인(데모)</h2>
+    </div>
+    <div class="list" id="admin-queue"></div>
+    <p class="muted">승인 시 해당 월에 “특별 스탬프”가 부여됩니다(의사 동작).</p>
+  </section>
+</main>
 
 
-  <footer class="footer">© 2026 조립1부 · Safe v2.2</footer>
+<footer class="footer">© 2026 조립1부 · Safe v2.3</footer>
 
 
-  <script>
-    /* ===== 0) 이전 Service Worker 강제 해제(캐시 무력화) ===== */
-    (function resetSW(){
-      try{
-        const KEY='sw_cleaned_v22';
-        if('serviceWorker' in navigator && !localStorage.getItem(KEY)){
-          navigator.serviceWorker.getRegistrations().then(regs=>{
-            regs.forEach(r=>{
-              // 이 리포 범위의 SW만 해제
-              if(r.scope.includes('/assembly-passport/')) r.unregister();
-            });
-          }).finally(()=>{
-            localStorage.setItem(KEY,'1');
-            // 캐시 무력화: 쿼리 파라미터로 강제 새로고침
-            if(!location.search.includes('v=')){
-              location.replace(location.pathname+'?v='+Date.now()+location.hash);
-            }
-          });
-        }
-      }catch(e){}
-    })();
-
-
-    /* ===== 1) 라우터 (hash + data-route 둘 다 지원) ===== */
-    const VIEWS={
-      home:document.getElementById('view-home'),
-      passport:document.getElementById('view-passport'),
-      upload:document.getElementById('view-upload'),
-      ranking:document.getElementById('view-ranking'),
-      admin:document.getElementById('view-admin')
-    };
-
-
-    function show(v){
-      Object.values(VIEWS).forEach(s=>s.classList.remove('show'));
-      (VIEWS[v]||VIEWS.home).classList.add('show');
-      if(v==='passport') renderPassport();
-      if(v==='ranking') renderRanking();
-      if(v==='admin')  renderAdmin();
-      if(v==='home')    renderMyPoints();
-      window.scrollTo({top:0,behavior:'instant'});
-    }
-    function onHash(){
-      const v = location.hash.replace(/^#\/?/,'') || 'home';
-      show(v);
-    }
-    window.addEventListener('hashchange', onHash);
-    window.addEventListener('load', onHash);
-
-
-    // data-route 클릭 → 해시 변경
-    document.addEventListener('click', (e)=>{
-      const t = e.target.closest('[data-route]');
-      if(!t) return;
-      e.preventDefault();
-      const v = t.getAttribute('data-route');
-      if(v) location.hash = '#/'+v;
-    });
-
-
-    /* ===== 2) 로컬 스토리지 헬퍼 ===== */
-    const LS_MEDIA='pass_media', LS_QUEUE='pass_queue', LS_POINTS='pass_points', LS_STAMP='pass_stamp';
-    function getLS(k,fb){ try{return JSON.parse(localStorage.getItem(k)) ?? fb}catch(_){return fb} }
-    function setLS(k,v){ localStorage.setItem(k, JSON.stringify(v)) }
-
-
-    /* ===== 3) 데모 데이터/상태 ===== */
-    const demoMedia={2:[{cap:'첫 활동 테스트 캡션',ts:Date.now()-86400000,count:2}],10:[{cap:'특별 미션 성공!',ts:Date.now()-3600000,count:5}]};
-    const stampByMonth=getLS(LS_STAMP,{2:'basic',10:'special'});
-
-
-    function mergedMedia(){
-      const local=getLS(LS_MEDIA,{});
-      const out={}; for(const m of [2,3,4,5,6,7,8,9,10,11,12]) out[m]=[...(demoMedia[m]||[]), ...(local[m]||[])];
-      return out;
-    }
-    const last = arr => arr && arr.length ? arr.sort((a,b)=>a.ts-b.ts)[arr.length-1] : null;
-
-
-    /* ===== 4) 여권 렌더 ===== */
-    function renderPassport(){
-      const grid=document.getElementById('months-grid'); grid.innerHTML='';
-      const mmd=mergedMedia();
-      for(const m of [2,3,4,5,6,7,8,9,10,11,12]){
-        const l=last(mmd[m]); const st=stampByMonth[m];
-        const card=document.createElement('div'); card.className='month';
-        card.innerHTML=`
-          <h3>${m}월</h3>
-          <div class="thumb">${l ? '대표 썸네일' : '+ 사진 추가'}</div>
-          <div class="caption">${l ? l.cap : '설명 없음'}</div>
-          ${st ? `<div class="stamp ${st==='special'?'special':''}">${st==='special'?'★':'Pass'}</div>` : ''}
-        `;
-        card.=>alert(m+'월 상세(데모)'); // 3차에 상세 모달 재연결
-        grid.appendChild(card);
+<script>
+  /* 0) 이전 Service Worker 강제 해제(캐시 무력화) */
+  (function resetSW(){
+    try{
+      const KEY='sw_cleaned_v23';
+      if('serviceWorker' in navigator && !localStorage.getItem(KEY)){
+        navigator.serviceWorker.getRegistrations().then(regs=>{
+          regs.forEach(r=>{ if(r.scope.includes('/assembly-passport/')) r.unregister(); });
+        }).finally(()=>{
+          localStorage.setItem(KEY,'1');
+          if(!location.search.includes('v=')){
+            location.replace(location.pathname+'?v='+Date.now()+location.hash);
+          }
+        });
       }
+    }catch(e){}
+  })();
+
+
+  /* 1) 해시 라우터 + 이중 내비게이션(nav 함수) */
+  const VIEWS={
+    home:document.getElementById('view-home'),
+    passport:document.getElementById('view-passport'),
+    upload:document.getElementById('view-upload'),
+    ranking:document.getElementById('view-ranking'),
+    admin:document.getElementById('view-admin')
+  };
+  function show(v){
+    Object.values(VIEWS).forEach(s=>s.classList.remove('show'));
+    (VIEWS[v]||VIEWS.home).classList.add('show');
+    if(v==='passport') renderPassport();
+    if(v==='ranking') renderRanking();
+    if(v==='admin')  renderAdmin();
+    if(v==='home')    renderMyPoints();
+    window.scrollTo({top:0,behavior:'instant'});
+  }
+  function onHash(){ const x=(location.hash.replace(/^#\/?/,'')||'home'); show(x); }
+  window.addEventListener('hashchange', onHash);
+  window.addEventListener('load', onHash);
+  function nav(v){ try{ location.hash='#/'+v; }catch(e){ show(v); } return false; }
+
+
+  // 터치 환경에서도 앵커가 확실히 작동하도록 보조 핸들러
+  document.addEventListener('touchend', function(e){
+    const a = e.target.closest('a[href^="#/"]');
+    if(a){ e.preventDefault(); const v=a.getAttribute('href').replace(/^#\//,''); nav(v); }
+  }, {passive:false});
+
+
+  /* 2) 로컬 스토리지 헬퍼 */
+  const LS_MEDIA='pass_media', LS_QUEUE='pass_queue', LS_POINTS='pass_points', LS_STAMP='pass_stamp';
+  function getLS(k,fb){ try{return JSON.parse(localStorage.getItem(k)) ?? fb}catch(_){return fb} }
+  function setLS(k,v){ localStorage.setItem(k, JSON.stringify(v)) }
+
+
+  /* 3) 데모 데이터/상태 */
+  const demoMedia={2:[{cap:'첫 활동 테스트 캡션',ts:Date.now()-86400000,count:2}],10:[{cap:'특별 미션 성공!',ts:Date.now()-3600000,count:5}]};
+  const stampByMonth=getLS(LS_STAMP,{2:'basic',10:'special'});
+
+
+  function mergedMedia(){
+    const local=getLS(LS_MEDIA,{});
+    const out={}; for(const m of [2,3,4,5,6,7,8,9,10,11,12]) out[m]=[...(demoMedia[m]||[]), ...(local[m]||[])];
+    return out;
+  }
+  const last = arr => arr && arr.length ? arr.sort((a,b)=>a.ts-b.ts)[arr.length-1] : null;
+
+
+  /* 4) 여권 렌더 */
+  function renderPassport(){
+    const grid=document.getElementById('months-grid'); if(!grid) return; grid.innerHTML='';
+    const mmd=mergedMedia();
+    for(const m of [2,3,4,5,6,7,8,9,10,11,12]){
+      const l=last(mmd[m]); const st=stampByMonth[m];
+      const card=document.createElement('div'); card.className='month';
+      card.innerHTML=`
+        <h3>${m}월</h3>
+        <div class="thumb">${l ? '대표 썸네일' : '+ 사진 추가'}</div>
+        <div class="caption">${l ? l.cap : '설명 없음'}</div>
+        ${st ? `<div class="stamp ${st==='special'?'special':''}">${st==='special'?'★':'Pass'}</div>` : ''}
+      `;
+      card.=>alert(m+'월 상세(데모)'); // 3차에 상세 모달 연결
+      grid.appendChild(card);
     }
+  }
 
 
-    /* ===== 5) 업로드(의사 동작) ===== */
-    function addPointsFor(month,{participation=0,leader=0,voluntary=0}={}){
-      const pts=getLS(LS_POINTS,{total:0,byMonth:{}});
-      const b=pts.byMonth[month]||{participation:0,leader:0,voluntary:0,media5:0};
-      b.participation+=participation; b.leader+=leader; b.voluntary+=voluntary;
+  /* 5) 업로드(데모) + 포인트 */
+  function addPointsFor(month,{participation=0,leader=0,voluntary=0}={}){
+    const pts=getLS(LS_POINTS,{total:0,byMonth:{}});
+    const b=pts.byMonth[month]||{participation:0,leader:0,voluntary:0,media5:0};
+    b.participation+=participation; b.leader+=leader; b.voluntary+=voluntary;
 
 
-      const all=(mergedMedia()[month]||[]);
-      const totalPhotos=all.reduce((s,x)=>s+(x.count||1),0);
-      if(totalPhotos>=5 && b.media5===0) b.media5=1;
+    const all=(mergedMedia()[month]||[]);
+    const totalPhotos=all.reduce((s,x)=>s+(x.count||1),0);
+    if(totalPhotos>=5 && b.media5===0) b.media5=1;
 
 
-      pts.byMonth[month]=b;
-      pts.total=Object.values(pts.byMonth).reduce((sum,v)=>sum+v.participation+v.leader+v.voluntary+v.media5,0);
-      setLS(LS_POINTS,pts); renderMyPoints();
-    }
-    function renderMyPoints(){
-      const pts=getLS(LS_POINTS,{total:0});
-      const a=document.getElementById('my-points'), b=document.getElementById('my-points-dup');
-      if(a) a.textContent=String(pts.total||0);
-      if(b) b.textContent=String(pts.total||0);
-    }
+    pts.byMonth[month]=b;
+    pts.total=Object.values(pts.byMonth).reduce((sum,v)=>sum+v.participation+v.leader+v.voluntary+v.media5,0);
+    setLS(LS_POINTS,pts); renderMyPoints();
+  }
+  function renderMyPoints(){
+    const pts=getLS(LS_POINTS,{total:0});
+    const a=document.getElementById('my-points'), b=document.getElementById('my-points-dup');
+    if(a) a.textContent=String(pts.total||0);
+    if(b) b.textContent=String(pts.total||0);
+  }
+  window.addEventListener('load', ()=>{
+    const up=document.getElementById('btn-upload');
+    if(up) up.addEventListener('click', ()=>{
+      const month=Number(document.getElementById('up-month').value);
+      const caption=(document.getElementById('up-caption').value||'설명 없음').slice(0,60);
+      const count =Number(document.getElementById('up-count').value);
+      const leader=document.getElementById('opt-leader').checked;
+      const voluntary=document.getElementById('opt-voluntary').checked;
 
 
-    // 업로드 버튼 핸들러 등록
-    window.addEventListener('load', ()=>{
-      const up=document.getElementById('btn-upload');
-      if(up) up.addEventListener('click', ()=>{
-        const month = Number(document.getElementById('up-month').value);
-        const caption=(document.getElementById('up-caption').value||'설명 없음').slice(0,60);
-        const count  = Number(document.getElementById('up-count').value);
-        const leader = document.getElementById('opt-leader').checked;
-        const voluntary=document.getElementById('opt-voluntary').checked;
+      const media=getLS(LS_MEDIA,{}); media[month]=media[month]||[];
+      media[month].push({cap:caption,ts:Date.now(),count}); setLS(LS_MEDIA,media);
 
 
-        const media=getLS(LS_MEDIA,{}); media[month]=media[month]||[];
-        media[month].push({cap:caption,ts:Date.now(),count}); setLS(LS_MEDIA,media);
+      const q=getLS(LS_QUEUE,[]); q.push({id:Date.now(),month,caption,leader,voluntary,count,status:'pending'}); setLS(LS_QUEUE,q);
 
 
-        const q=getLS(LS_QUEUE,[]); q.push({id:Date.now(),month,caption,leader,voluntary,count,status:'pending'}); setLS(LS_QUEUE,q);
+      addPointsFor(month,{participation:5,leader:leader?2:0,voluntary:voluntary?3:0});
+      alert('제출 완료! 관리자 승인에서 확인(데모)'); location.hash='#/admin';
+    }, {passive:true});
+  });
 
 
-        addPointsFor(month,{participation:5,leader:leader?2:0,voluntary:voluntary?3:0});
-        alert('제출 완료! 관리자 승인에서 확인(데모)'); location.hash='#/admin';
-      }, {passive:true});
+  /* 6) 관리자 승인(의사) */
+  function renderAdmin(){
+    const wrap=document.getElementById('admin-queue'); if(!wrap) return; wrap.innerHTML='';
+    const q=getLS(LS_QUEUE,[]); if(!q.length){ wrap.innerHTML='<div class="row muted">승인 대기 항목이 없습니다.</div>'; return; }
+    [...q].reverse().forEach(item=>{
+      const row=document.createElement('div'); row.className='row';
+      row.innerHTML=`
+        <div class="hstack"><strong>${item.month}월</strong>
+          <span class="muted">/ ${new Date(item.id).toLocaleString()}</span>
+          <span class="right muted">${item.leader?'팀장참여':''} ${item.voluntary?'자발적':''} · 사진 ${item.count}장</span>
+        </div>
+        <div class="muted" style="margin-top:6px;">${item.caption}</div>
+        <div class="hstack" style="margin-top:10px;">
+          <button class="ghost" >승인(특별 스탬프)</button>
+          <button class="ghost" >반려</button>
+        </div>`;
+      wrap.appendChild(row);
     });
-
-
-    /* ===== 6) 관리자(의사 승인) ===== */
-    function renderAdmin(){
-      const wrap=document.getElementById('admin-queue'); wrap.innerHTML='';
-      const q=getLS(LS_QUEUE,[]); if(!q.length){ wrap.innerHTML='<div class="row muted">승인 대기 항목이 없습니다.</div>'; return; }
-      [...q].reverse().forEach(item=>{
-        const row=document.createElement('div'); row.className='row';
-        row.innerHTML=`
-          <div class="hstack"><strong>${item.month}월</strong>
-            <span class="muted">/ ${new Date(item.id).toLocaleString()}</span>
-            <span class="right muted">${item.leader?'팀장참여':''} ${item.voluntary?'자발적':''} · 사진 ${item.count}장</span>
-          </div>
-          <div class="muted" style="margin-top:6px;">${item.caption}</div>
-          <div class="hstack" style="margin-top:10px;">
-            <button class="ghost" >승인(특별 스탬프)</button>
-            <button class="ghost" >반려</button>
-          </div>`;
-        wrap.appendChild(row);
-      });
-    }
-    function approve(id){
-      const q=getLS(LS_QUEUE,[]); const i=q.findIndex(v=>v.id===id); if(i<0) return;
-      const it=q[i]; q.splice(i,1); setLS(LS_QUEUE,q);
-      const stamps=getLS(LS_STAMP,{}); stamps[it.month]='special'; setLS(LS_STAMP,stamps);
-      alert(it.month+'월 승인 완료 → 특별 스탬프'); location.hash='#/passport';
-    }
-    function reject(id){
-      const q=getLS(LS_QUEUE,[]); const i=q.findIndex(v=>v.id===id); if(i<0) return;
-      q.splice(i,1); setLS(LS_QUEUE,q); alert('반려 처리했습니다.'); renderAdmin();
-    }
-  </script>
+  }
+  function approve(id){
+    const q=getLS(LS_QUEUE,[]); const i=q.findIndex(v=>v.id===id); if(i<0) return;
+    const it=q[i]; q.splice(i,1); setLS(LS_QUEUE,q);
+    const stamps=getLS(LS_STAMP,{}); stamps[it.month]='special'; setLS(LS_STAMP,stamps);
+    alert(it.month+'월 승인 완료 → 특별 스탬프'); location.hash='#/passport';
+  }
+  function reject(id){
+    const q=getLS(LS_QUEUE,[]); const i=q.findIndex(v=>v.id===id); if(i<0) return;
+    q.splice(i,1); setLS(LS_QUEUE,q); alert('반려 처리했습니다.'); renderAdmin();
+  }
+</script>
 </body>
+</html>
+  :root{--navy:#081C46;--gold:#E5C255;--ink:#0d1a3a;--bg:#fbf9f4;--line:#d7d2c8;--text:#0e1320;--muted:#7b7f8a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,'Noto Sans KR',sans-serif}
+
+
+  /* 헤더 */
+  header.app{background:var(--navy);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--gold)}
+  .topnav{display:flex;gap:8px;margin-left:auto}
+  .link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:6px 10px;border-radius:8px;background:transparent}
+
+
+  /* 공통 */
+  .container{padding:16px 16px 96px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+  .points{font-size:28px;font-weight:700;color:var(--navy)}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  a.btn,button.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:14px 12px;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--text);text-decoration:none}
  
 
-</html>
+  .btn.primary{background:var(--gold);border-color:#c7a64a;font-weight:700}
