@@ -2,76 +2,79 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <title>Router Test v0</title>
+  <title>Router Test v1 (Button only)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans KR',sans-serif;padding:16px;line-height:1.5}
+    .bar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+    button{padding:8px 12px;border:1px solid #ddd;border-radius:10px;background:#fff}
+    .view{display:none}
+    .view.show{display:block}
+    .mark{margin-top:24px;color:#666;font-size:12px}
+  </style>
 </head>
-<body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans KR',sans-serif;padding:16px">
-  <h3>Router Test v0</h3>
-  <p>
-    #/home홈</a> |
-    #/passport여권 보기</a> |
-    #/upload사진 업로드</a> |
-    #/ranking랭킹</a> |
-    #/admin관리자 승인</a>
-  </p>
+<body>
+  <h3>Router Test v1 (Button only)</h3>
 
 
-  <div id="view-home">HOME 뷰</div>
-  <div id="view-passport" hidden>PASSPORT 뷰</div>
-  <div id="view-upload" hidden>UPLOAD 뷰</div>
-  <div id="view-ranking" hidden>RANKING 뷰</div>
-  <div id="view-admin" hidden>ADMIN 뷰</div>
+  <div class="bar">
+    <button >홈</button>
+    <button >여권 보기</button>
+    <button >사진 업로드</button>
+    <button >랭킹</button>
+    <button >관리자 승인</button>
+  </div>
+
+
+  <div id="view-home"    class="view show">HOME 뷰</div>
+  <div id="view-passport" class="view">PASSPORT 뷰</div>
+  <div id="view-upload"  class="view">UPLOAD 뷰</div>
+  <div id="view-ranking"  class="view">RANKING 뷰</div>
+  <div id="view-admin"    class="view">ADMIN 뷰</div>
+
+
+  <div class="mark">MARK R1b</div>
 
 
   <script>
-    // 캐시/서비스워커 영향 제거(최초 1회)
+    // 이전 SW/캐시 영향 제거(최초 1회)
     (function(){
-      if('serviceWorker' in navigator){
-        navigator.serviceWorker.getRegistrations && navigator.serviceWorker.getRegistrations().then(rs=>{
-          rs.forEach(r=>{ if(r.scope.includes('/assembly-passport/')) r.unregister(); });
-        });
-      }
+      try{
+        const KEY='sw_cleaned_R1b';
+        if('serviceWorker' in navigator && !localStorage.getItem(KEY)){
+          navigator.serviceWorker.getRegistrations?.().then(rs=>{
+            rs.forEach(r=>{ if(r.scope.includes('/assembly-passport/')) r.unregister(); });
+          }).finally(()=>{
+            localStorage.setItem(KEY,'1');
+            if(!location.search.includes('v=')){
+              location.replace(location.pathname+'?v='+Date.now()+location.hash);
+            }
+          });
+        }
+      }catch(e){}
     })();
 
 
-    const views = ['home','passport','upload','ranking','admin'];
+    const views=['home','passport','upload','ranking','admin'];
     function show(v){
       views.forEach(id=>{
-        const el = document.getElementById('view-'+id);
+        const el=document.getElementById('view-'+id);
         if(!el) return;
-        el.hidden = (id!==v);
+        el.classList.toggle('show', id===v);
       });
-      // 스크롤 올리기
-      window.scrollTo({top:0, behavior:'instant'});
+      window.scrollTo({top:0,behavior:'instant'});
     }
-
-
     function onHash(){
-      const v = (location.hash.replace(/^#\/?/,'')||'home');
+      const v=(location.hash.replace(/^#\/?/,'')||'home');
       show(views.includes(v)? v : 'home');
     }
-
-
-    // 앵커+JS 이중 루트
     function nav(v){
-      try { location.hash = '#/'+v; } catch(e) { show(v); }
+      try{ location.hash='#/'+v; }catch(e){ show(v); }
       return false;
     }
-
-
-    // 터치 보조(모바일)
-    document.addEventListener('touchend', e=>{
-      const a = e.target.closest('a[href^="#/"]');
-      if(!a) return;
-      e.preventDefault();
-      nav(a.getAttribute('href').replace(/^#\//,''));
-    }, {passive:false});
-
-
     window.addEventListener('hashchange', onHash);
     window.addEventListener('load', onHash);
   </script>
-  <!-- MARK R0 -->
 </body>
  
 
