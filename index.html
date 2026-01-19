@@ -1,28 +1,31 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <title>Router Test v1 (Button only)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Router Test v2 (external JS)</title>
+  <meta name="theme-color" content="#081C46"/>
   <style>
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans KR',sans-serif;padding:16px;line-height:1.5}
     .bar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
     button{padding:8px 12px;border:1px solid #ddd;border-radius:10px;background:#fff}
-    .view{display:none}
-    .view.show{display:block}
+    .view{display:none} .view.show{display:block}
     .mark{margin-top:24px;color:#666;font-size:12px}
   </style>
+  <!-- ✅ 인라인 스크립트 제거, 외부 파일만 로드 -->
+  app.js</script>
 </head>
 <body>
-  <h3>Router Test v1 (Button only)</h3>
+  <h3>Router Test v2 (external JS)</h3>
 
 
   <div class="bar">
-    <button >홈</button>
-    <button >여권 보기</button>
-    <button >사진 업로드</button>
-    <button >랭킹</button>
-    <button >관리자 승인</button>
+    <!-- onclick 제거하고 data-route 속성만 둡니다 -->
+    <button data-route="home">홈</button>
+    <button data-route="passport">여권 보기</button>
+    <button data-route="upload">사진 업로드</button>
+    <button data-route="ranking">랭킹</button>
+    <button data-route="admin">관리자 승인</button>
   </div>
 
 
@@ -33,48 +36,7 @@
   <div id="view-admin"    class="view">ADMIN 뷰</div>
 
 
-  <div class="mark">MARK R1b</div>
-
-
-  <script>
-    // 이전 SW/캐시 영향 제거(최초 1회)
-    (function(){
-      try{
-        const KEY='sw_cleaned_R1b';
-        if('serviceWorker' in navigator && !localStorage.getItem(KEY)){
-          navigator.serviceWorker.getRegistrations?.().then(rs=>{
-            rs.forEach(r=>{ if(r.scope.includes('/assembly-passport/')) r.unregister(); });
-          }).finally(()=>{
-            localStorage.setItem(KEY,'1');
-            if(!location.search.includes('v=')){
-              location.replace(location.pathname+'?v='+Date.now()+location.hash);
-            }
-          });
-        }
-      }catch(e){}
-    })();
-
-
-    const views=['home','passport','upload','ranking','admin'];
-    function show(v){
-      views.forEach(id=>{
-        const el=document.getElementById('view-'+id);
-        if(!el) return;
-        el.classList.toggle('show', id===v);
-      });
-      window.scrollTo({top:0,behavior:'instant'});
-    }
-    function onHash(){
-      const v=(location.hash.replace(/^#\/?/,'')||'home');
-      show(views.includes(v)? v : 'home');
-    }
-    function nav(v){
-      try{ location.hash='#/'+v; }catch(e){ show(v); }
-      return false;
-    }
-    window.addEventListener('hashchange', onHash);
-    window.addEventListener('load', onHash);
-  </script>
+  <div class="mark">MARK R2</div>
 </body>
  
 
