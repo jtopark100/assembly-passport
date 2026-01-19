@@ -2,41 +2,114 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Router Test v2 (external JS)</title>
-  <meta name="theme-color" content="#081C46"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>조립1부 문화여권 – CSS Router (No JS)</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans KR',sans-serif;padding:16px;line-height:1.5}
-    .bar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
-    button{padding:8px 12px;border:1px solid #ddd;border-radius:10px;background:#fff}
-    .view{display:none} .view.show{display:block}
-    .mark{margin-top:24px;color:#666;font-size:12px}
+    :root{--navy:#081C46;--gold:#E5C255;--bg:#fbf9f4;--text:#0e1320;--line:#d7d2c8}
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans KR',sans-serif;
+    }
+    /* 헤더 */
+    header{background:var(--navy); color:#fff; padding:16px 20px;
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+    .brand{font-weight:800; letter-spacing:.3px}
+    .tabs{display:flex; gap:8px; margin-left:auto; flex-wrap:wrap}
+    .tab{
+      color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.35);
+      padding:6px 10px; border-radius:8px; background:transparent
+    }
+    /* 본문 */
+    main{padding:16px 16px 80px}
+    .card{
+      background:#fff; border:1px solid var(--line); border-radius:14px;
+      padding:16px; margin:12px 0; box-shadow:0 1px 0 rgba(0,0,0,.04)
+    }
+    .grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+    .month{
+      background:#fff; border:1.5px solid var(--line); border-radius:16px;
+      padding:12px; min-height:140px
+    }
+    /* CSS Router 핵심 */
+    .view{display:none}
+    /* 기본은 홈(#home)을 보이게 */
+    #home{display:block}
+    /* 특정 섹션이 :target 되면 그 섹션만 보임 */
+    .view:target{display:block}
+    /* 어떤 섹션이 타깃이면 홈은 숨김 (홈을 마지막에 두는 이유) */
+    .view:target ~ #home{display:none}
+    /* 푸터 */
+    footer{padding:12px 16px; color:#7b7f8a; font-size:12px}
   </style>
-  <!-- ✅ 인라인 스크립트 제거, 외부 파일만 로드 -->
-  app.js</script>
 </head>
 <body>
-  <h3>Router Test v2 (external JS)</h3>
+  <header>
+    <div class="brand">조립1부 문화여권</div>
+    <nav class="tabs">
+      #home홈</a>
+      #passport여권 보기</a>
+      #upload사진 업로드</a>
+      #ranking랭킹</a>
+      #admin관리자 승인</a>
+    </nav>
+  </header>
 
 
-  <div class="bar">
-    <!-- onclick 제거하고 data-route 속성만 둡니다 -->
-    <button data-route="home">홈</button>
-    <button data-route="passport">여권 보기</button>
-    <button data-route="upload">사진 업로드</button>
-    <button data-route="ranking">랭킹</button>
-    <button data-route="admin">관리자 승인</button>
-  </div>
+  <main>
+    <!-- 여권 -->
+    <section id="passport" class="view">
+      <h2>여권</h2>
+      <div class="grid-3">
+        <div class="month"><strong>2월</strong><div style="margin-top:8px;color:#888">+ 사진 추가</div></div>
+        <div class="month"><strong>3월</strong><div style="margin-top:8px;color:#888">+ 사진 추가</div></div>
+        <div class="month"><strong>4월</strong><div style="margin-top:8px;color:#888">+ 사진 추가</div></div>
+        <div class="month"><strong>5월</strong><div style="margin-top:8px;color:#888">+ 사진 추가</div></div>
+        <div class="month"><strong>6월</strong><div style="margin-top:8px;color:#888">+ 사진 추가</div></div>
+        <div class="month"><strong>7월</strong><div style="margin-top:8px;color:#888">+ 사진 추가</div></div>
+        <div class="month"><strong>8월</strong><div style="margin-top:8px;color:#888">+ 사진 추가</div></div>
+        <div class="month"><strong>9월</strong><div style="margin-top:8px,color:#888">+ 사진 추가</div></div>
+        <div class="month"><strong>10월</strong><div style="margin-top:8px;color:#888">대표 썸네일</div></div>
+        <div class="month"><strong>11월</strong><div style="margin-top:8px;color:#888">+ 사진 추가</div></div>
+        <div class="month"><strong>12월</strong><div style="margin-top:8px;color:#888">+ 사진 추가</div></div>
+      </div>
+    </section>
 
 
-  <div id="view-home"    class="view show">HOME 뷰</div>
-  <div id="view-passport" class="view">PASSPORT 뷰</div>
-  <div id="view-upload"  class="view">UPLOAD 뷰</div>
-  <div id="view-ranking"  class="view">RANKING 뷰</div>
-  <div id="view-admin"    class="view">ADMIN 뷰</div>
+    <!-- 업로드 -->
+    <section id="upload" class="view">
+      <h2>사진 업로드(데모)</h2>
+      <div class="card">여기는 이후 3차에 실제 업로드 폼 연결 예정입니다.</div>
+    </section>
 
 
-  <div class="mark">MARK R2</div>
+    <!-- 랭킹 -->
+    <section id="ranking" class="view">
+      <h2>랭킹</h2>
+      <div class="card">나: 0점 · 닉네임2: 27점 · 닉네임3: 21점 (데모)</div>
+    </section>
+
+
+    <!-- 관리자 -->
+    <section id="admin" class="view">
+      <h2>관리자 승인(데모)</h2>
+      <div class="card">승인 대기 없음 (데모)</div>
+    </section>
+
+
+    <!-- 홈(마지막에 배치해야 위 CSS 규칙이 제대로 동작합니다) -->
+    <section id="home" class="view">
+      <div class="card">
+        <h2>이번 달 미션</h2>
+        <p>대표 썸네일 업로드 테스트</p>
+        <strong style="font-size:28px;color:#081C46">0점</strong>
+      </div>
+      <div class="card">상단 탭을 눌러 전환이 되는지 먼저 확인해 주세요.</div>
+    </section>
+  </main>
+
+
+  <footer>© 2026 조립1부 · CSS Router C0</footer>
 </body>
  
 
