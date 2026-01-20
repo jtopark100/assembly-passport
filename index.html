@@ -8,47 +8,49 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&family=Dancing+Script:wght@700&display=swap');
-        :root { --passport-navy: #1a2e5a; --passport-gold: #d4af37; --passport-inner: #fdfaf2; --kia-red: #bb0a30; }
+        :root { --passport-navy: #1a2e5a; --passport-gold: #d4af37; --passport-inner: #fdfaf2; --kia-red: #bb0a30; --success-blue: #0047ab; }
         
-        /* 모바일 최적화 기본 설정 */
         body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--passport-inner); color: #1c1c1e; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; word-break: keep-all; }
-        header { background: var(--passport-navy); color: var(--passport-gold); padding: calc(15px + env(safe-area-inset-top)) 20px 15px; text-align: center; border-bottom: 2px solid var(--passport-gold); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        header h1 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: 1px; }
-
+        header { background: var(--passport-navy); color: var(--passport-gold); padding: calc(15px + env(safe-area-inset-top)) 20px 15px; text-align: center; border-bottom: 2px solid var(--passport-gold); position: sticky; top: 0; z-index: 1000; }
         .container { padding: 15px; max-width: 500px; margin: 0 auto; }
         .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #eee; position: relative; }
         
-        /* 홈 디자인 */
-        .passport-home { background: var(--passport-navy); min-height: 70vh; margin: 10px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--passport-gold); border: 2px solid var(--passport-gold); padding: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; }
-        .passport-home::after { content: ""; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 15px; pointer-events: none; }
-        
-        /* 승인 대기 UI */
-        .pending-card { border: 2px solid var(--kia-red); background: #fff8f8; }
-        .pending-badge { background: var(--kia-red); color: white; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 800; margin-bottom: 10px; display: inline-block; }
+        /* [고급 스탬프 디자인] */
+        .stamp-base { 
+            position: absolute; top: 15px; right: 15px; font-family: 'Dancing Script', cursive; 
+            font-size: 24px; font-weight: 700; padding: 5px 12px; border-radius: 10px; 
+            transform: rotate(-15deg); z-index: 10; pointer-events: none;
+        }
+        .stamp-pass { color: var(--kia-red); border: 3px double var(--kia-red); background: rgba(255, 255, 255, 0.8); box-shadow: 0 0 10px rgba(187, 10, 48, 0.2); }
+        .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); background: rgba(255, 255, 255, 0.8); box-shadow: 0 0 10px rgba(0, 71, 171, 0.2); }
 
-        /* 공통 버튼/입력 */
-        .btn-main { width: 100%; height: 50px; border-radius: 12px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; margin-top: 15px; font-size: 15px; }
-        .btn-approve { background: var(--kia-red); color: white; border: none; height: 45px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; }
-        
-        /* 하단바 (이모티콘 복구 및 모바일 최적화) */
+        /* [이미지 확대 모달] */
+        #zoom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; }
+        #zoom-modal img { max-width: 95%; max-height: 95%; object-fit: contain; }
+
+        /* [관리자 승인/보류 버튼] */
+        .btn-approve-group { display: flex; gap: 8px; margin-top: 15px; }
+        .btn-green { flex: 2; background: #28a745; color: white; border: none; height: 45px; border-radius: 10px; font-weight: 800; cursor: pointer; }
+        .btn-red { flex: 1; background: #dc3545; color: white; border: none; height: 45px; border-radius: 10px; font-weight: 800; cursor: pointer; }
+
+        /* 하단바 및 기타 UI */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); display: flex; padding-bottom: env(safe-area-inset-bottom); height: 75px; z-index: 1000; border-top: 2px solid var(--passport-gold); }
         .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 600; }
         .bottom-nav a.active-link { color: var(--passport-gold); }
         .nav-icon { font-size: 22px; margin-bottom: 4px; display: block; }
         
-        /* 점수 탭 선택형 UI */
-        .score-tabs { display: flex; gap: 8px; margin-top: 10px; }
-        .score-tab { flex: 1; padding: 12px 0; border-radius: 10px; font-size: 12px; text-align: center; background: #eee; color: #888; font-weight: 700; transition: all 0.2s; }
+        .score-tabs { display: flex; gap: 5px; margin-top: 10px; }
+        .score-tab { flex: 1; padding: 12px 0; border-radius: 10px; font-size: 11px; text-align: center; background: #eee; color: #888; font-weight: 700; }
         .score-tab.active-blue { background: #eef4ff; color: #007aff; box-shadow: inset 0 0 0 2px #007aff; }
         .score-tab.active-orange { background: #fff4ee; color: #ff9500; box-shadow: inset 0 0 0 2px #ff9500; }
         .score-tab.active-green { background: #eefff2; color: #34c759; box-shadow: inset 0 0 0 2px #34c759; }
 
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .month-box { background: white; border-radius: 15px; overflow: hidden; height: 160px; border: 1px solid #e5e5ea; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        
+        .month-box { background: white; border-radius: 15px; overflow: hidden; height: 160px; border: 1px solid #e5e5ea; position: relative; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--passport-inner); z-index: 2000; overflow-y: auto; }
         [data-view] { display: none; } [data-view].active { display: block; }
         input, select, textarea { -webkit-appearance: none; border-radius: 10px; border: 1px solid #ddd; padding: 14px; width: 100%; box-sizing: border-box; font-size: 16px; margin-top: 8px; background: white; font-family: inherit; }
+        .btn-main { width: 100%; height: 50px; border-radius: 12px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; margin-top: 15px; font-size: 15px; }
     </style>
 </head>
 <body>
@@ -56,13 +58,11 @@
 <header id="app-header" style="display:none;"><h1>KIA ASSEMBLY PART 1</h1></header>
 
 <div id="view-home" data-view class="active">
-    <div class="passport-home">
+    <div style="background: var(--passport-navy); min-height: 70vh; margin: 10px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--passport-gold); border: 2px solid var(--passport-gold); padding: 20px; text-align: center;">
         <div style="font-size: 10px; letter-spacing: 4px; margin-bottom: 10px; opacity:0.8;">REPUBLIC OF KOREA</div>
-        <div style="font-size: 32px; font-weight: 800; margin-bottom: 30px; letter-spacing: 2px;">문화여권</div>
-        <div style="font-size: 60px; margin-bottom: 20px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">🇰🇷</div>
-        <div style="font-weight: 800; color: var(--passport-gold); margin-bottom: 25px;">KIA 조립1부</div>
+        <div style="font-size: 32px; font-weight: 800; margin-bottom: 30px;">문화여권</div>
+        <div style="font-size: 60px; margin-bottom: 20px;">🇰🇷</div>
         <div class="card" style="background: rgba(255,255,255,0.05); color: white; border: 1px dashed var(--passport-gold); width: 85%;">
-            <div style="font-size: 10px; opacity: 0.7; margin-bottom: 5px;">THIS MONTH'S MISSION</div>
             <div id="home-mission-text" style="font-size: 18px; font-weight: 800;">불러오는 중...</div>
         </div>
     </div>
@@ -74,21 +74,20 @@
             <h3 style="color:var(--kia-red);">📢 승인 대기 활동 (<span id="pending-count">0</span>)</h3>
             <div id="pending-list"></div>
         </div>
-
         <div id="admin-mission-area" style="display:none; border: 2px solid var(--passport-gold); padding: 15px; border-radius: 15px; margin-bottom: 20px; background:white;">
-            <h4 style="margin:0 0 10px 0; color:var(--passport-navy);">🛠️ 미션 관리 시스템</h4>
-            <input type="text" id="new-mission-text" placeholder="미션 내용 입력">
-            <label style="font-size:12px; display:block; margin-top:8px;"><input type="checkbox" id="mission-hidden-check"> 배정 전까지 숨김 처리</label>
-            <button onclick="addMissionPool()" class="btn-main" style="height:40px;">후보 등록</button>
-            <hr style="margin:15px 0; border:0; border-top:1px solid #eee;">
+            <h4 style="margin:0;">🛠️ 미션 관리</h4>
+            <input type="text" id="new-mission-text" placeholder="미션 내용">
+            <label style="font-size:12px;"><input type="checkbox" id="mission-hidden-check"> 숨은 미션 (성공 시 SUCCESS 스탬프)</label>
+            <button onclick="addMissionPool()" class="btn-main" style="height:40px;">등록</button>
+            <hr>
             <select id="match-month"><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월</option>`)</script></select>
             <select id="match-mission-select" style="margin-top:8px;"></select>
-            <button onclick="setMonthlyMission()" class="btn-main" style="height:40px; background:var(--kia-red); color:white; border:none;">월별 배정 확정</button>
+            <button onclick="setMonthlyMission()" class="btn-main" style="height:40px; background:var(--kia-red); border:none; color:white;">배정 확정</button>
         </div>
         
         <h3>🎯 연간 미션 가이드</h3>
         <div id="mission-pool-list"></div>
-        <h3 style="margin-top:30px;">📅 월별 진행 현황</h3>
+        <h3 style="margin-top:30px;">📅 월별 현황</h3>
         <div id="monthly-history-list"></div>
     </div>
 
@@ -104,16 +103,18 @@
 
     <div id="view-upload" data-view>
         <div class="card">
-            <h3>📸 활동 인증 제출</h3>
+            <h3>📸 인증샷 제출</h3>
             <select id="up-month"><script>const cm=new Date().getMonth()+1;for(let i=1;i<=12;i++)document.write(`<option value="${i}" ${i===cm?'selected':''}>${i}월 활동</option>`)</script></select>
-            <input type="text" id="up-name" placeholder="참여자 성함 (쉼표 구분)" oninput="drawScoreTabs()">
+            <input type="text" id="up-name" placeholder="참여자 (쉼표 구분)" oninput="drawScoreTabs()">
             <div id="score-tabs-container"></div>
-            <textarea id="up-content" placeholder="오늘의 소감을 남겨주세요" rows="3"></textarea>
+            <textarea id="up-content" placeholder="소감" rows="3"></textarea>
             <input type="file" id="up-img" accept="image/*" multiple style="margin-top:15px;">
-            <button onclick="submitUpload()" id="up-btn" class="btn-main">인증 스탬프 요청</button>
+            <button onclick="submitUpload()" id="up-btn" class="btn-main">스탬프 요청</button>
         </div>
     </div>
 </div>
+
+<div id="zoom-modal" onclick="this.style.display='none'"><img id="zoom-img" src=""></div>
 
 <nav class="bottom-nav">
     <a href="#/home" id="link-home"><span class="nav-icon">🏠</span>홈</a>
@@ -125,8 +126,8 @@
 
 <div id="modal" class="modal">
     <div style="background:white; padding:15px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom:1px solid #eee;">
-        <div id="modal-title" style="font-weight:800; color:var(--passport-navy);">상세 내역</div>
-        <div onclick="closeModal()" style="font-size:30px; color:#ccc; cursor:pointer;">&times;</div>
+        <div id="modal-title" style="font-weight:800; color:var(--passport-navy);">피드</div>
+        <div onclick="closeModal()" style="font-size:30px; color:#ccc;">&times;</div>
     </div>
     <div id="modal-body-content"></div>
 </div>
@@ -143,6 +144,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let isAdmin = false;
+    let missionPoolCache = {};
 
     function handleAdminAuth() {
         if(!isAdmin) { if(prompt("관리자 코드")==="assy") { 
@@ -153,40 +155,47 @@
         router();
     }
 
-    // [로직 보존] 승인 관리
+    // [줌인 기능]
+    function zoomImg(src) { 
+        document.getElementById('zoom-img').src = src; 
+        document.getElementById('zoom-modal').style.display = 'flex'; 
+    }
+
+    // [로직 보존] 승인 관리 (녹색/적색 선택 기능)
     function loadApprovalList() {
         db.ref('activities').on('value', snap => {
             const data = snap.val() || {};
-            const pendingList = document.getElementById('pending-list');
-            const pendingCount = document.getElementById('pending-count');
-            pendingList.innerHTML = '';
+            const listArea = document.getElementById('pending-list');
+            listArea.innerHTML = '';
             let count = 0;
             Object.values(data).filter(d => !d.isPassed).forEach(item => {
                 count++;
                 const card = document.createElement('div');
                 card.className = 'card pending-card';
                 card.innerHTML = `
-                    <div class="pending-badge">승인 대기중</div>
-                    <div style="font-weight:800; margin-bottom:8px;">${item.month}월 활동: ${item.names.join(', ')}</div>
-                    <div style="font-size:14px; line-height:1.5; margin-bottom:12px;">${item.content || '(소감 미작성)'}</div>
-                    <div style="display:flex; gap:6px; overflow-x:auto; margin-bottom:15px; padding-bottom:5px;">
-                        ${item.imgs.map(img => `<img src="${img}" style="height:70px; border-radius:8px; border:1px solid #eee;">`).join('')}
+                    <div class="pending-badge">WAITING</div>
+                    <div style="font-weight:800;">${item.month}월: ${item.names.join(', ')}</div>
+                    <div style="font-size:13px; color:#666; margin:8px 0;">${item.content || '(소감 미작성)'}</div>
+                    <div style="display:flex; gap:5px; overflow-x:auto;">
+                        ${item.imgs.map(img => `<img src="${img}" style="height:70px; border-radius:8px;" onclick="zoomImg('${img}')">`).join('')}
                     </div>
-                    <button onclick="approveAct('${item.id}')" class="btn-approve" style="width:100%;">활동 최종 승인</button>
+                    <div class="btn-approve-group">
+                        <button onclick="approveAct('${item.id}', true)" class="btn-green">✅ 승인</button>
+                        <button onclick="approveAct('${item.id}', false)" class="btn-red">❌ 보류</button>
+                    </div>
                 `;
-                pendingList.appendChild(card);
+                listArea.appendChild(card);
             });
-            pendingCount.innerText = count;
+            document.getElementById('pending-count').innerText = count;
         });
     }
 
-    function approveAct(id) {
-        if(confirm("이 활동을 승인하시겠습니까? 랭킹에 즉시 반영됩니다.")) {
-            db.ref('activities/'+id).update({ isPassed: true }).then(() => alert("승인 처리되었습니다."));
-        }
+    function approveAct(id, isOk) {
+        if(!isOk) { if(confirm("보류하시겠습니까? 데이터가 삭제됩니다.")) db.ref('activities/'+id).remove(); return; }
+        if(confirm("이 활동을 최종 승인할까요?")) db.ref('activities/'+id).update({ isPassed: true });
     }
 
-    // [로직 보존] 미션 기능
+    // [로직 보존] 미션 기능 (Success 스탬프 구분을 위한 로직 포함)
     function addMissionPool() {
         const text = document.getElementById('new-mission-text').value;
         const isHidden = document.getElementById('mission-hidden-check').checked;
@@ -195,19 +204,24 @@
             document.getElementById('mission-hidden-check').checked = false;
         });
     }
+
     function setMonthlyMission() {
         const m = document.getElementById('match-month').value;
-        const text = document.getElementById('match-mission-select').value;
-        db.ref('monthly_missions/'+m).set({ text }).then(() => alert(m+"월 미션 배정 완료"));
+        const selectedText = document.getElementById('match-mission-select').value;
+        // 선택된 미션의 'isHidden' 속성 찾기
+        let targetHidden = false;
+        Object.values(missionPoolCache).forEach(p => { if(p.text === selectedText && p.isHidden) targetHidden = true; });
+        db.ref('monthly_missions/'+m).set({ text: selectedText, isHiddenMission: targetHidden }).then(() => alert(m+"월 배정 완료"));
     }
+
     function loadMissions() {
         db.ref('mission_pool').on('value', snap => {
-            const pool = snap.val() || {};
+            missionPoolCache = snap.val() || {};
             const listArea = document.getElementById('mission-pool-list');
             const select = document.getElementById('match-mission-select');
             listArea.innerHTML = ''; select.innerHTML = '';
-            Object.values(pool).forEach(item => {
-                const displayText = (!isAdmin && item.isHidden) ? "🔒 숨겨진 미션 (배정 시 공개)" : item.text;
+            Object.values(missionPoolCache).forEach(item => {
+                const displayText = (!isAdmin && item.isHidden) ? "🔒 숨겨진 미션" : item.text;
                 listArea.innerHTML += `<div class="card" style="padding:15px; font-size:14px; border-left:4px solid var(--passport-gold);">• ${displayText}</div>`;
                 select.innerHTML += `<option value="${item.text}">${item.text}</option>`;
             });
@@ -219,39 +233,45 @@
             const curM = new Date().getMonth() + 1;
             historyArea.innerHTML = '';
             for(let i=1;i<=12;i++){
-                if(monthly[i]) historyArea.innerHTML += `<div class="card" style="padding:12px; border-left:4px solid var(--passport-navy); display:flex; justify-content:space-between;"><b>${i}월</b> <span>${monthly[i].text}</span></div>`;
-                if(i == curM) homeText.innerText = monthly[i] ? monthly[i].text : "이번 달 미션을 배정해주세요.";
+                if(monthly[i]) historyArea.innerHTML += `<div class="card" style="padding:12px; border-left:4px solid var(--passport-navy);"><b>${i}월</b> ${monthly[i].text}</div>`;
+                if(i == curM) homeText.innerText = monthly[i] ? monthly[i].text : "미배정";
             }
         });
     }
 
-    // [로직 보존] 상세 조회
+    // [고급 스탬프 적용 상세 조회]
     function openDetail(month, allData) {
-        const body = document.getElementById('modal-body-content');
-        body.innerHTML = '';
-        const filtered = allData.filter(d => d.month == month && d.isPassed);
-        document.getElementById('modal-title').innerText = month + "월 피드";
-        filtered.sort((a,b) => b.timestamp - a.timestamp).forEach(item => {
-            const card = document.createElement('div');
-            card.style = "background:white; border-bottom:8px solid #f2f2f7; position:relative;";
-            card.innerHTML = `
-                <div style="display:flex; overflow-x:auto; background:#000; scroll-snap-type:x mandatory;">
-                    ${item.imgs.map(img => `<img src="${img}" style="min-width:100%; max-height:450px; object-fit:contain; scroll-snap-align:center;">`).join('')}
-                </div>
-                <div style="padding:20px;">
-                    <div style="margin-bottom:12px; display:flex; flex-wrap:wrap; gap:5px;">
-                        ${item.memberDetails.map(m => `<span style="font-size:12px; font-weight:700; background:#f9f9f9; border:1px solid #eee; padding:3px 8px; border-radius:6px;">${m.name} (+${m.score})</span>`).join('')}
+        db.ref('monthly_missions/'+month).once('value', mSnap => {
+            const mInfo = mSnap.val() || {};
+            const body = document.getElementById('modal-body-content');
+            body.innerHTML = '';
+            const filtered = allData.filter(d => d.month == month && d.isPassed);
+            document.getElementById('modal-title').innerText = month + "월 기록";
+            
+            filtered.sort((a,b) => b.timestamp - a.timestamp).forEach(item => {
+                const isSuccess = mInfo.isHiddenMission === true;
+                const card = document.createElement('div');
+                card.style = "background:white; border-bottom:10px solid #f2f2f7; position:relative;";
+                card.innerHTML = `
+                    <div class="stamp-base ${isSuccess ? 'stamp-success' : 'stamp-pass'}">${isSuccess ? 'Success' : 'Passed'}</div>
+                    <div style="display:flex; overflow-x:auto; background:#000;">
+                        ${item.imgs.map(img => `<img src="${img}" style="min-width:100%; max-height:450px; object-fit:contain;" onclick="zoomImg('${img}')">`).join('')}
                     </div>
-                    <div style="line-height:1.7; font-size:15px; color:#333;">${item.content || ""}</div>
-                    ${isAdmin ? `<button onclick="deleteAct('${item.id}')" style="margin-top:20px; color:#ff3b30; border:none; background:none; font-size:12px; padding:0;">기록 삭제</button>` : ''}
-                </div>`;
-            body.appendChild(card);
+                    <div style="padding:20px;">
+                        <div style="margin-bottom:12px; display:flex; flex-wrap:wrap; gap:5px;">
+                            ${item.memberDetails.map(m => `<span style="font-size:12px; font-weight:700; background:#f9f9f9; border:1px solid #eee; padding:3px 8px; border-radius:6px;">${m.name} (+${m.score})</span>`).join('')}
+                        </div>
+                        <div style="line-height:1.7;">${item.content || ""}</div>
+                        ${isAdmin ? `<button onclick="deleteAct('${item.id}')" style="margin-top:20px; color:red; border:none; background:none; font-size:12px;">기록 삭제</button>` : ''}
+                    </div>`;
+                body.appendChild(card);
+            });
+            document.getElementById('modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
         });
-        document.getElementById('modal').style.display = 'block';
-        document.body.style.overflow = 'hidden';
     }
 
-    // [로직 보존] 업로드
+    // [로직 보존] 점수 탭
     function drawScoreTabs() {
         const area = document.getElementById('score-tabs-container');
         const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== "");
@@ -259,7 +279,7 @@
         names.forEach((name, idx) => {
             const div = document.createElement('div');
             div.className = 'card'; div.style="padding:12px; margin-bottom:12px; background:#fcfcfc;";
-            div.innerHTML = `<div style="font-size:13px; font-weight:800; margin-bottom:8px; color:var(--passport-navy);">${name} 님 선택</div>
+            div.innerHTML = `<div style="font-size:13px; font-weight:800; margin-bottom:8px;">${name}</div>
                 <div class="score-tabs" data-idx="${idx}">
                     <div class="score-tab active-blue" data-val="5" onclick="this.classList.toggle('active-blue')">기본(+5)</div>
                     <div class="score-tab" data-val="2" onclick="this.classList.toggle('active-orange')">팀장(+2)</div>
@@ -272,8 +292,8 @@
     async function submitUpload() {
         const nameVal = document.getElementById('up-name').value.trim();
         const files = document.getElementById('up-img').files;
-        if(!nameVal || files.length === 0) return alert("참여자와 사진을 모두 넣어주세요.");
-        const btn = document.getElementById('up-btn'); btn.disabled = true; btn.innerText="처리 중...";
+        if(!nameVal || files.length === 0) return alert("참여자와 사진을 등록해주세요.");
+        const btn = document.getElementById('up-btn'); btn.disabled = true;
         const names = nameVal.split(',').map(n => n.trim());
         const memberDetails = [];
         document.querySelectorAll('.score-tabs').forEach((group, i) => {
@@ -284,7 +304,7 @@
         for(let f of files) { imgs.push(await new Promise(res => { const r = new FileReader(); r.readAsDataURL(f); r.onload = (e) => res(e.target.result); })); }
         const newRef = db.ref('activities').push();
         newRef.set({ id: newRef.key, names, memberDetails, month: document.getElementById('up-month').value, imgs, content: document.getElementById('up-content').value, isPassed: false, timestamp: Date.now() })
-        .then(() => { alert("스탬프 요청 완료! 관리자가 승인하면 반영됩니다."); location.hash = "#/passport"; btn.disabled = false; btn.innerText="인증 스탬프 요청"; });
+        .then(() => { alert("스탬프 요청 완료!"); location.hash = "#/passport"; btn.disabled = false; });
     }
 
     function loadPassport() {
@@ -297,7 +317,7 @@
                 box.className = 'month-box';
                 box.onclick = () => openDetail(i, all);
                 if(approved.length > 0) box.innerHTML = `<img src="${approved[0].imgs[0]}" style="width:100%; height:110px; object-fit:cover;"><div style="height:50px; display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--passport-navy);">${i}월 기록</div>`;
-                else box.innerHTML = `<div style="height:110px; background:#f0f0f0;"></div><div style="height:50px; display:flex; align-items:center; justify-content:center; color:#ccc; font-size:14px;">${i}월</div>`;
+                else box.innerHTML = `<div style="height:110px; background:#f0f0f0;"></div><div style="height:50px; display:flex; align-items:center; justify-content:center; color:#ccc;">${i}월</div>`;
                 grid.appendChild(box);
             }
         });
@@ -312,10 +332,8 @@
             const list = document.getElementById('rank-list');
             const podium = document.getElementById('podium-area');
             if(sorted.length > 0) {
-                podium.innerHTML = `<div style="background:var(--passport-navy); color:var(--passport-gold); text-align:center; padding:35px 20px; border-radius:15px; margin-bottom:15px; border:2px solid var(--passport-gold); box-shadow:0 4px 15px rgba(0,0,0,0.1);">
-                    <div style="font-size:12px; opacity:0.7; margin-bottom:8px; letter-spacing:2px;">BEST TRAVELER</div>
-                    <div style="font-size:30px; font-weight:800;">🏆 ${sorted[0][0]}</div><div style="font-size:16px; margin-top:5px;">${sorted[0][1]} POINT</div></div>`;
-                list.innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:18px 20px; border-bottom:1px solid #eee; background:white;"><span><b style="color:var(--passport-gold); margin-right:10px;">${i+1}</b> ${u[0]}</span><b style="color:var(--passport-navy);">${u[1]}점</b></div>`).join('');
+                podium.innerHTML = `<div style="background:var(--passport-navy); color:var(--passport-gold); text-align:center; padding:35px 20px; border-radius:15px; margin-bottom:15px; border:2px solid var(--passport-gold); box-shadow:0 4px 15px rgba(0,0,0,0.1); font-size:24px; font-weight:800;">🏆 ${sorted[0][0]}</div>`;
+                list.innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:18px 20px; border-bottom:1px solid #eee; background:white;"><span><b>${i+1}</b> ${u[0]}</span><b>${u[1]}점</b></div>`).join('');
             }
         });
     }
@@ -332,7 +350,6 @@
         if(hash === 'passport') loadPassport();
         if(hash === 'ranking') loadRanking();
         if(hash === 'home') loadMissions();
-        window.scrollTo(0,0);
     }
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
     function deleteAct(id) { if(confirm("삭제하시겠습니까?")) db.ref('activities/'+id).remove().then(() => closeModal()); }
