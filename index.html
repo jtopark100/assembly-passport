@@ -3,53 +3,53 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <title>조립1부 문화여권</title>
+    <title>조립1부 명예의 전당</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&display=swap');
-        :root { --primary: #051435; --gold: #c5a059; --bg: #f4f7fa; --white: #ffffff; }
-        body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); padding-bottom: 110px; -webkit-tap-highlight-color: transparent; }
-        header { background: linear-gradient(135deg, var(--primary), #1a2a4e); color: var(--gold); padding: 20px; text-align: center; border-bottom: 4px solid var(--gold); }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&family=Nanum+Gothic:wght@400;700&display=swap');
+        :root { --primary: #051435; --gold: #c5a059; --bg: #f8f9fa; --white: #ffffff; }
+        body { margin: 0; font-family: 'Nanum Gothic', sans-serif; background: var(--bg); padding-bottom: 110px; }
+        header { background: linear-gradient(135deg, var(--primary), #1a2a4e); color: var(--gold); padding: 25px; text-align: center; border-bottom: 4px solid var(--gold); }
+        header h1 { margin: 0; font-family: 'Noto Serif KR', serif; font-size: 22px; }
         .container { padding: 15px; max-width: 500px; margin: 0 auto; }
-        .card { background: var(--white); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #eee; }
+        .card { background: var(--white); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
+
+        /* [3번 요청] 명예의 전당 디자인 */
+        .hall-of-fame { background: linear-gradient(to bottom, #1a2a4e, #051435); border-radius: 20px; padding: 30px 10px; text-align: center; color: var(--gold); position: relative; border: 2px solid var(--gold); margin-bottom: 20px; }
+        .hall-of-fame::before { content: "🏛️"; font-size: 40px; display: block; margin-bottom: 10px; }
+        .podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 180px; margin-top: 20px; }
+        .rank-unit { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .rank-pillar { width: 100%; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; justify-content: center; color: #fff; font-weight: bold; padding-bottom: 10px; font-size: 12px; transition: 0.5s; box-shadow: inset 0 0 20px rgba(0,0,0,0.3); }
+        .p-1 { height: 120px; background: linear-gradient(to top, #bf953f, #fcf6ba, #b38728); color: #443300; }
+        .p-2 { height: 90px; background: linear-gradient(to top, #757f9a, #d7dde8); color: #232526; }
+        .p-3 { height: 70px; background: linear-gradient(to top, #804a00, #ca7345); }
+        .rank-name { color: #fff; font-size: 11px; margin-top: 8px; font-weight: bold; white-space: nowrap; overflow: hidden; width: 80px; text-overflow: ellipsis; }
+
+        /* [1, 2번 요청] 미션 관리 스타일 */
+        .mission-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .admin-edit-box { background: #fff9e6; padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); margin-top: 10px; }
         
-        /* 홈 메뉴 버튼 */
-        .home-menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .home-btn { background: white; border-radius: 20px; padding: 20px 10px; text-align: center; text-decoration: none; color: var(--primary); font-weight: bold; border: 1px solid #eee; font-size: 14px; }
+        /* [4번 요청] 참여자 입력창 최적화 */
+        .multi-user-input { background: #f0f2f5; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #ddd; }
 
-        /* [1번 요청] 미션 탭 이원화 디자인 */
-        .mission-header { font-size: 13px; color: var(--gold); font-weight: bold; margin-bottom: 5px; display: block; }
-        .mission-box { padding: 15px; border-radius: 15px; background: #fff; border-left: 5px solid var(--gold); margin-bottom: 10px; }
-        .mission-all-list { font-size: 14px; color: #444; }
-        .mission-item { padding: 12px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; }
-
-        /* [4번 요청] 활동 인증 점수판 모바일 최적화 */
-        .score-panel { background: #f8f9fa; padding: 15px; border-radius: 15px; margin: 15px 0; display: grid; grid-template-columns: 1fr; gap: 10px; }
-        .score-option { display: flex; align-items: center; background: white; padding: 12px; border-radius: 10px; border: 1px solid #eee; font-size: 14px; }
-        .score-option input { width: 20px; height: 20px; margin-right: 10px; }
-
-        /* 하단 네비게이션 & 관리자 버튼 */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #eee; z-index: 1000; }
+        /* 네비게이션 & 기타 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 25px; border-top: 1px solid #eee; z-index: 1000; }
         .bottom-nav a { color: #aaa; text-decoration: none; font-size: 11px; text-align: center; flex: 1; }
         .bottom-nav a.active-link { color: var(--primary); font-weight: bold; }
         .admin-trigger { position: fixed; bottom: 85px; right: 15px; padding: 8px 15px; background: rgba(0,0,0,0.4); color: white; border-radius: 20px; font-size: 11px; z-index: 999; border: none; }
-
-        /* 여권 그리드 */
+        
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .month-box { background: white; border-radius: 15px; overflow: hidden; position: relative; min-height: 140px; border: 1px solid #eee; }
-        .month-img { width: 100%; height: 100px; object-fit: cover; background: #f0f0f0; }
+        .month-img { width: 100%; height: 100px; object-fit: cover; background: #eee; }
         .stamp-badge { position: absolute; top: 10px; left: 10px; width: 50px; height: 50px; border: 2px double #d32f2f; border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: rotate(-20deg); color: #d32f2f; font-weight: bold; font-size: 13px; background: rgba(255,255,255,0.8); }
 
-        /* 관리자 모드 제어 */
-        .admin-only { display: none; }
-        .admin-mode .admin-only { display: block; }
-        
-        input, select, .btn-ui { width: 100%; padding: 15px; margin-top: 10px; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 16px; }
+        input, select, .btn-ui { width: 100%; padding: 15px; margin-top: 10px; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
         .btn-primary { background: var(--primary); color: var(--gold); border: none; font-weight: bold; }
+        .admin-only { display: none; } .admin-mode .admin-only { display: block; }
         [data-view] { display: none; } [data-view].active { display: block; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; box-sizing: border-box; }
-        .modal-content { background: white; border-radius: 25px; padding: 20px; margin-top: 40px; max-height: 80vh; overflow-y: auto; }
+        .modal-content { background: white; border-radius: 25px; padding: 20px; margin-top: 40px; }
     </style>
 </head>
 <body class="user-mode">
@@ -59,60 +59,73 @@
 <div class="container">
     <div id="view-home" data-view class="active">
         <div class="card" style="text-align: center;">
-            <div style="font-size: 40px; margin-bottom: 10px;">🎯</div>
-            <span class="mission-header">이번 달 매칭 미션</span>
-            <h3 id="home-month-mission" style="margin: 5px 0; color: var(--primary);">등록된 미션이 없습니다.</h3>
+            <div style="font-size: 40px; margin-bottom: 10px;">🏛️</div>
+            <span style="color:var(--gold); font-size:12px; font-weight:bold;">이번 달 매칭 미션</span>
+            <h3 id="home-month-mission" style="margin: 5px 0; color: var(--primary);">불러오는 중...</h3>
         </div>
-        <div class="home-menu-grid">
-            <a href="#/upload" class="home-btn">📸<br>사진 업로드</a>
-            <a href="#/passport" class="home-btn">📖<br>여권 보기</a>
-            <a href="#/ranking" class="home-btn">📊<br>명예의 전당</a>
-            <a href="#/mission" class="home-btn">🎯<br>미션 탭</a>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px;">
+            <a href="#/upload" class="card" style="text-align:center; text-decoration:none; color:inherit; margin:0;">📸<br><b>사진 업로드</b></a>
+            <a href="#/passport" class="card" style="text-align:center; text-decoration:none; color:inherit; margin:0;">📖<br><b>여권 보기</b></a>
+            <a href="#/ranking" class="card" style="text-align:center; text-decoration:none; color:inherit; margin:0;">🏆<br><b>명예의 전당</b></a>
+            <a href="#/mission" class="card" style="text-align:center; text-decoration:none; color:inherit; margin:0;">🎯<br><b>미션 관리</b></a>
         </div>
     </div>
 
     <div id="view-mission" data-view>
-        <h3 style="padding-left:10px;">월별 매칭 미션</h3>
+        <h3 style="padding-left:10px;">🎯 월별 매칭 미션</h3>
         <div id="mission-matched-area"></div>
         
-        <h3 style="padding-left:10px; margin-top:30px;">전체 미션 리스트</h3>
-        <div class="card mission-all-list" id="mission-all-area">
+        <h3 style="padding-left:10px; margin-top:30px;">📋 전체 미션 리스트</h3>
+        <div class="card" id="mission-all-area" style="padding:10px;"></div>
+
+        <div class="admin-only admin-edit-box">
+            <h4 style="margin:0 0 10px 0;">🛠️ 미션 시스템 관리</h4>
+            <div style="border-bottom:1px solid #ddd; padding-bottom:15px; margin-bottom:15px;">
+                <small>1. 전체 리스트에 미션 추가</small>
+                <input type="text" id="ms-new-title" placeholder="새로운 미션 내용">
+                <button onclick="addMissionMaster()" class="btn-ui btn-primary" style="padding:10px; font-size:14px;">리스트에 추가</button>
+            </div>
+            <div>
+                <small>2. 월별 미션 매칭 (리스트 중 선택)</small>
+                <select id="ms-month-select"><script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}월 매칭</option>`)</script></select>
+                <select id="ms-master-select"></select>
+                <button onclick="matchMission()" class="btn-ui btn-primary" style="padding:10px; font-size:14px;">해당 월에 매칭</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-ranking" data-view>
+        <div class="hall-of-fame">
+            <span style="font-weight:bold; letter-spacing:2px;">HALL OF FAME</span>
+            <div class="podium" id="podium-area"></div>
+        </div>
+        <div class="card" id="rank-list" style="padding:0; overflow:hidden;"></div>
+    </div>
+
+    <div id="view-upload" data-view>
+        <div class="card">
+            <h3>활동 기록 업로드</h3>
+            <div class="multi-user-input">
+                <label style="font-size:13px; font-weight:bold;">👥 참여자 (쉼표로 구분)</label>
+                <input type="text" id="up-name" placeholder="예: 홍길동, 김철수, 이영희">
+                <small style="color:#666;">※ 여러 명일 경우 쉼표(,)를 넣어주세요.</small>
+            </div>
+            <input type="text" id="up-content" placeholder="활동 내용 설명">
+            
+            <div style="background:#f8f9fa; padding:15px; border-radius:15px; margin-top:15px;">
+                <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:10px;">🎖️ 획득 점수 선택</label>
+                <label style="display:block; margin-bottom:10px;"><input type="checkbox" id="check-basic" checked> 기본 참여 (+5점)</label>
+                <label style="display:block; margin-bottom:10px;"><input type="checkbox" id="check-team"> 팀장 참여 (+2점)</label>
+                <label style="display:block;"><input type="checkbox" id="check-self"> 자발적 참여 (+3점)</label>
             </div>
 
-        <div class="admin-only card" style="background:#fff9e6;">
-            <h4>⚙️ 미션 매칭 설정 (관리자)</h4>
-            <select id="ms-month"><script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}월에 매칭</option>`)</script></select>
-            <input type="text" id="ms-title" placeholder="미션 내용 입력">
-            <label style="font-size:13px; margin-top:10px; display:block;"><input type="checkbox" id="ms-hidden"> 숨김(비밀) 미션으로 설정</label>
-            <button onclick="saveMission()" class="btn-ui btn-primary">매칭 업데이트</button>
+            <input type="file" id="up-files" accept="image/*" multiple style="margin-top:20px;">
+            <button onclick="saveToFirebase()" id="btn-submit" class="btn-ui btn-primary">사진 및 기록 제출</button>
         </div>
     </div>
 
     <div id="view-passport" data-view>
         <div class="passport-grid" id="passport-grid"></div>
-    </div>
-
-    <div id="view-ranking" data-view>
-        <div id="podium-area" style="display:flex; align-items:flex-end; height:150px; gap:10px; margin-bottom:20px;"></div>
-        <div class="card" id="rank-list" style="padding:0;"></div>
-    </div>
-
-    <div id="view-upload" data-view>
-        <div class="card">
-            <h3>사진 업로드</h3>
-            <input type="text" id="up-name" placeholder="참여자 성함">
-            <input type="text" id="up-content" placeholder="활동 내용 (예: 영화관람)">
-            
-            <div class="score-panel">
-                <span style="font-size:13px; font-weight:bold; color:var(--primary);">🎖️ 점수 혜택 선택</span>
-                <label class="score-option"><input type="checkbox" id="check-basic" checked> 기본 활동 참여 (+5점)</label>
-                <label class="score-option"><input type="checkbox" id="check-team"> 팀장 참여 (+2점)</label>
-                <label class="score-option"><input type="checkbox" id="check-self"> 자발적 참석 (+3점)</label>
-            </div>
-
-            <input type="file" id="up-files" accept="image/*" multiple style="border:none; margin-top:10px;">
-            <button onclick="saveToFirebase()" id="btn-submit" class="btn-ui btn-primary">활동 기록 제출하기</button>
-        </div>
     </div>
 </div>
 
@@ -120,7 +133,7 @@
     <a href="#/home" id="link-home">🏠<br>홈</a>
     <a href="#/mission" id="link-mission">🎯<br>미션</a>
     <a href="#/passport" id="link-passport">📖<br>여권</a>
-    <a href="#/ranking" id="link-ranking">📊<br>랭킹</a>
+    <a href="#/ranking" id="link-ranking">🏆<br>명예</a>
     <a href="#/upload" id="link-upload">📸<br>업로드</a>
 </nav>
 
@@ -129,11 +142,10 @@
 <div id="modal" class="modal" onclick="this.style.display='none'">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div id="modal-body"></div>
-        <div class="admin-only" style="margin-top:20px; display: flex; gap: 10px;">
-            <button id="btn-approve" onclick="approveActivity()" style="flex:1; padding:15px; background:#28a745; color:white; border:none; border-radius:12px; font-weight:bold;">✅ 승인 (스탬프)</button>
-            <button onclick="deleteActivity()" style="flex:1; padding:15px; background:#dc3545; color:white; border:none; border-radius:12px; font-weight:bold;">🗑️ 삭제</button>
+        <div class="admin-only" style="margin-top:20px; display:flex; gap:10px;">
+            <button onclick="approveActivity()" style="flex:1; padding:15px; background:#28a745; color:#fff; border:none; border-radius:12px; font-weight:bold;">승인하기</button>
+            <button onclick="deleteActivity()" style="flex:1; padding:15px; background:#dc3545; color:#fff; border:none; border-radius:12px; font-weight:bold;">삭제하기</button>
         </div>
-        <button onclick="document.getElementById('modal').style.display='none'" class="btn-ui" style="margin-top:10px; background:#eee; border:none;">닫기</button>
     </div>
 </div>
 
@@ -148,136 +160,92 @@
     const db = firebase.database();
     let isAdmin = false; let selectedItem = null;
 
-    // [1번 요청] 전체 미션 데이터 (임시 18개 예시)
-    const allMissionsMaster = [
-        "팀원과 점심식사 인증", "카페 방문 인증", "영화 관람 인증", "전시회 관람 인증", 
-        "운동 오운완 인증", "독서 인증", "봉사활동 인증", "산책 인증", "맛집 탐방 인증",
-        "자기계발 수강 인증", "가족 모임 인증", "반려동물 산책 인증", "악기 연주 인증",
-        "사진 촬영 출사 인증", "베이킹 인증", "전통시장 방문 인증", "캠핑 인증", "등산 인증"
-    ];
-
     function adminAuth() {
         if(!isAdmin) {
             if(prompt("관리자 비밀번호") === "assy") {
                 isAdmin = true;
                 document.body.classList.replace('user-mode', 'admin-mode');
                 document.getElementById('admin-toggle-btn').innerText = "로그아웃";
-                alert("관리자 권한이 실행되었습니다.");
-                router();
+                alert("관리자 모드 활성화"); router();
             }
         } else {
             isAdmin = false;
             document.body.classList.replace('admin-mode', 'user-mode');
             document.getElementById('admin-toggle-btn').innerText = "관리자 로그인";
-            alert("로그아웃 되었습니다.");
             location.reload();
         }
     }
 
-    // 미션 저장 및 렌더링
-    function saveMission() {
-        const month = document.getElementById('ms-month').value;
-        const title = document.getElementById('ms-title').value;
-        const isHidden = document.getElementById('ms-hidden').checked;
-        if(!title) return alert("미션 내용을 입력하세요.");
-        db.ref('missions/' + month).set({ month, title, isHidden }).then(() => {
-            alert(month + "월 미션 매칭 완료!");
+    // [1번 요청] 전체 미션 리스트 관리 (추가/삭제)
+    function addMissionMaster() {
+        const title = document.getElementById('ms-new-title').value;
+        if(!title) return;
+        db.ref('missionMaster').push(title).then(() => {
+            document.getElementById('ms-new-title').value = '';
+            renderMissions();
+        });
+    }
+
+    function deleteMissionMaster(key) {
+        if(confirm("이 미션을 리스트에서 삭제할까요?")) {
+            db.ref('missionMaster/' + key).remove().then(() => renderMissions());
+        }
+    }
+
+    // [2번 요청] 월별 미션 매칭
+    function matchMission() {
+        const month = document.getElementById('ms-month-select').value;
+        const title = document.getElementById('ms-master-select').value;
+        db.ref('missions/' + month).set({ month, title }).then(() => {
+            alert(month + "월 미션 매칭 완료");
             renderMissions();
         });
     }
 
     function renderMissions() {
+        // 전체 리스트 렌더링
+        db.ref('missionMaster').on('value', snap => {
+            const area = document.getElementById('mission-all-area');
+            const select = document.getElementById('ms-master-select');
+            area.innerHTML = ''; select.innerHTML = '';
+            snap.forEach(child => {
+                const item = document.createElement('div');
+                item.className = 'mission-item';
+                item.innerHTML = `<span>• ${child.val()}</span>
+                                  <button class="admin-only" onclick="deleteMissionMaster('${child.key}')" style="color:red; border:none; background:none;">삭제</button>`;
+                area.appendChild(item);
+                select.innerHTML += `<option value="${child.val()}">${child.val()}</option>`;
+            });
+        });
+        // 월별 매칭 렌더링
         db.ref('missions').on('value', snap => {
             const matchedArea = document.getElementById('mission-matched-area');
             const homeMission = document.getElementById('home-month-mission');
-            const allArea = document.getElementById('mission-all-area');
-            matchedArea.innerHTML = ''; 
-            allArea.innerHTML = '';
-            
+            matchedArea.innerHTML = '';
             const data = snap.val() || {};
             const nowMonth = new Date().getMonth() + 1;
-
-            // 상단: 월별 매칭 미션 (1~12월)
             for(let i=1; i<=12; i++) {
-                const m = data[i];
-                if(m) {
-                    const box = document.createElement('div');
-                    box.className = 'mission-box';
-                    const isLocked = m.isHidden && !isAdmin;
-                    box.innerHTML = `<span class="mission-header">${i}월 매칭 미션</span>
-                                     <div style="font-weight:bold;">${isLocked ? '🔒 숨겨진 미션입니다.' : m.title}</div>`;
-                    matchedArea.appendChild(box);
-                    if(i == nowMonth) homeMission.innerText = isLocked ? "🔒 비밀 미션 진행 중" : m.title;
+                if(data[i]) {
+                    const div = document.createElement('div');
+                    div.style = "padding:12px; border-left:4px solid var(--gold); background:#fff; margin-bottom:8px; font-size:14px;";
+                    div.innerHTML = `<b>${i}월:</b> ${data[i].title}`;
+                    matchedArea.appendChild(div);
+                    if(i == nowMonth) homeMission.innerText = data[i].title;
                 }
-            }
-
-            // 하단: 전체 미션 리스트
-            allMissionsMaster.forEach((text, idx) => {
-                const item = document.createElement('div');
-                item.className = 'mission-item';
-                item.innerHTML = `<span>${idx+1}. ${text}</span> <span style="font-size:10px; color:#aaa;">대기</span>`;
-                allArea.appendChild(item);
-            });
-        });
-    }
-
-    // [2, 5번 요청] 여권 클릭 시 상세 조회 및 승인 로직
-    function renderPassport() {
-        db.ref('activities').on('value', snap => {
-            const grid = document.getElementById('passport-grid');
-            grid.innerHTML = '';
-            const data = Object.values(snap.val() || {});
-            const nowMonth = new Date().getMonth() + 1;
-
-            for(let i=1; i<=12; i++) {
-                const mData = data.filter(d => d.month == i);
-                const displayItem = mData.find(d => d.isPassed) || (isAdmin ? mData[0] : null);
-                
-                const box = document.createElement('div');
-                box.className = 'month-box';
-                if(displayItem) {
-                    box.onclick = () => showDetail(displayItem);
-                    box.innerHTML = `<img src="${displayItem.imgs[0]}" class="month-img">
-                                     <div style="text-align:center; padding:10px; font-size:12px; font-weight:bold;">${i}월: ${displayItem.name}</div>`;
-                    if(displayItem.isPassed) box.innerHTML += `<div class="stamp-badge">PASS</div>`;
-                    else if(isAdmin) box.innerHTML += `<div style="position:absolute; bottom:5px; right:5px; background:red; color:white; font-size:9px; padding:2px 4px; border-radius:3px;">대기</div>`;
-                } else {
-                    box.innerHTML = `<div class="month-img" style="display:flex; align-items:center; justify-content:center; color:#ccc; font-size:11px;">기록없음</div>
-                                     <div style="text-align:center; padding:10px; font-size:12px; color:#999;">${i}월</div>`;
-                }
-                grid.appendChild(box);
             }
         });
     }
 
-    function showDetail(item) {
-        selectedItem = item;
-        const body = document.getElementById('modal-body');
-        body.innerHTML = `
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:15px;">
-                ${item.imgs.map(img => `<img src="${img}" style="width:100%; border-radius:15px;">`).join('')}
-            </div>
-            <div style="line-height:1.6; font-size:15px;">
-                <p><b>기록자:</b> ${item.name} | <b>월:</b> ${item.month}월</p>
-                <p><b>활동내용:</b> ${item.content || '-'}</p>
-                <p><b>획득점수:</b> ${item.score}점</p>
-                <p style="font-size:12px; color:#999;">등록일: ${item.date}</p>
-            </div>
-        `;
-        // 이미 승인된 건은 승인 버튼 숨김
-        document.getElementById('btn-approve').style.display = item.isPassed ? 'none' : 'block';
-        document.getElementById('modal').style.display = 'block';
-    }
-
-    // 사진 업로드 (7번 요청: 월 선택 제거하고 현재 월로 고정)
+    // [4번 요청] 복수 참여자 데이터 처리
     async function saveToFirebase() {
-        const name = document.getElementById('up-name').value.trim();
+        const namesStr = document.getElementById('up-name').value.trim();
         const files = document.getElementById('up-files').files;
-        if(!name || files.length === 0) return alert("이름과 사진을 등록해주세요.");
-
+        if(!namesStr || files.length === 0) return alert("참여자와 사진을 확인하세요.");
+        
         const btn = document.getElementById('btn-submit');
         btn.disabled = true; btn.innerText = "제출 중...";
 
+        const names = namesStr.split(',').map(n => n.trim());
         let score = 0;
         if(document.getElementById('check-basic').checked) score += 5;
         if(document.getElementById('check-team').checked) score += 2;
@@ -285,52 +253,46 @@
 
         const imgs = [];
         for(let f of files) {
+            const reader = new FileReader();
             const data = await new Promise(res => {
-                const reader = new FileReader();
                 reader.readAsDataURL(f);
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let w = img.width, h = img.height;
-                        if(w > 500) { h *= 500/w; w = 500; }
-                        canvas.width = w; canvas.height = h;
-                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                        res(canvas.toDataURL('image/jpeg', 0.5));
-                    };
-                };
+                reader.onload = (e) => res(e.target.result);
             });
             imgs.push(data);
         }
 
         const id = Date.now();
         db.ref('activities/' + id).set({
-            id, name, month: new Date().getMonth() + 1, // 현재 월 자동 선택
+            id, names, // 배열로 저장
+            month: new Date().getMonth() + 1,
             score, imgs, content: document.getElementById('up-content').value,
             isPassed: false, date: new Date().toLocaleDateString()
         }).then(() => {
-            alert("제출 완료! 여권에서 확인하세요 (승인 대기)");
+            alert("기록이 제출되었습니다. (승인 대기)");
             location.hash = "#/passport";
-            btn.disabled = false; btn.innerText = "활동 기록 제출하기";
+            btn.disabled = false; btn.innerText = "사진 및 기록 제출";
         });
     }
 
-    // 랭킹 (동점자 처리 로직)
+    // [3번 요청] 명예의 전당 렌더링
     function renderRanking() {
         db.ref('activities').on('value', snap => {
             const data = Object.values(snap.val() || {}).filter(d => d.isPassed);
-            const scores = data.reduce((acc, c) => { acc[c.name] = (acc[c.name] || 0) + c.score; return acc; }, {});
-            const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+            const userScores = {};
+            data.forEach(d => {
+                d.names.forEach(name => {
+                    userScores[name] = (userScores[name] || 0) + d.score;
+                });
+            });
+            const sorted = Object.entries(userScores).sort((a,b) => b[1] - a[1]);
             
             const podium = document.getElementById('podium-area');
-            const top3 = [sorted[1], sorted[0], sorted[2]];
+            const top3 = [sorted[1], sorted[0], sorted[2]]; // 은, 금, 동 순서 배치
             podium.innerHTML = top3.map((u, i) => {
-                if(!u) return '<div style="flex:1;"></div>';
-                const h = [70, 110, 50][i];
-                const c = ['#d7dde8', '#fcf6ba', '#cd7f32'];
-                return `<div style="flex:1; background:${c}; height:${h}px; border-radius:10px 10px 0 0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding-bottom:10px; font-weight:bold; font-size:12px;">
-                    ${u[0]}<br>${u[1]}점
+                if(!u) return '<div class="rank-unit"></div>';
+                return `<div class="rank-unit">
+                    <div class="rank-pillar p-${[2,1,3][i]}">${u[1]}점</div>
+                    <div class="rank-name">${u[0]}</div>
                 </div>`;
             }).join('');
 
@@ -345,18 +307,50 @@
         });
     }
 
-    function approveActivity() {
-        db.ref('activities/' + selectedItem.id).update({ isPassed: true }).then(() => {
-            alert("승인 완료! 패스 스탬프가 부여되었습니다.");
-            document.getElementById('modal').style.display = 'none';
+    function renderPassport() {
+        db.ref('activities').on('value', snap => {
+            const grid = document.getElementById('passport-grid');
+            grid.innerHTML = '';
+            const data = Object.values(snap.val() || {});
+            for(let i=1; i<=12; i++) {
+                const mData = data.filter(d => d.month == i);
+                const item = mData.find(d => d.isPassed) || (isAdmin ? mData[0] : null);
+                const box = document.createElement('div'); box.className = 'month-box';
+                if(item) {
+                    box.onclick = () => showDetail(item);
+                    box.innerHTML = `<img src="${item.imgs[0]}" class="month-img">
+                                     <div style="padding:10px; font-size:11px; font-weight:bold; text-align:center;">${i}월: ${item.names[0]} 외</div>`;
+                    if(item.isPassed) box.innerHTML += `<div class="stamp-badge">PASS</div>`;
+                } else {
+                    box.innerHTML = `<div class="month-img"></div><div style="padding:10px; font-size:12px; text-align:center; color:#999;">${i}월</div>`;
+                }
+                grid.appendChild(box);
+            }
         });
     }
 
+    function showDetail(item) {
+        selectedItem = item;
+        document.getElementById('modal-body').innerHTML = `
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:15px;">
+                ${item.imgs.map(img => `<img src="${img}" style="width:100%; border-radius:10px;">`).join('')}
+            </div>
+            <p><b>참여자:</b> ${item.names.join(', ')}</p>
+            <p><b>활동:</b> ${item.content}</p>
+            <p><b>점수:</b> ${item.score}점</p>
+        `;
+        document.getElementById('modal').style.display = 'block';
+    }
+
+    function approveActivity() {
+        db.ref('activities/' + selectedItem.id).update({ isPassed: true }).then(() => {
+            alert("승인 완료!"); document.getElementById('modal').style.display = 'none';
+        });
+    }
     function deleteActivity() {
-        if(confirm("이 활동 기록을 삭제하시겠습니까?")) {
+        if(confirm("기록을 삭제하시겠습니까?")) {
             db.ref('activities/' + selectedItem.id).remove().then(() => {
-                alert("삭제되었습니다.");
-                document.getElementById('modal').style.display = 'none';
+                alert("삭제 완료!"); document.getElementById('modal').style.display = 'none';
             });
         }
     }
@@ -370,9 +364,9 @@
         const link = document.getElementById('link-' + hash);
         if(link) link.classList.add('active-link');
         
-        if(hash === 'mission' || hash === 'home') renderMissions();
-        if(hash === 'passport') renderPassport();
+        if(hash === 'mission') renderMissions();
         if(hash === 'ranking') renderRanking();
+        if(hash === 'passport') renderPassport();
     }
     window.addEventListener('hashchange', router);
     window.addEventListener('load', router);
