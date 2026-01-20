@@ -10,46 +10,46 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&family=Nanum+Gothic:wght@400;700&display=swap');
         :root { --primary: #051435; --gold: #c5a059; --bg: #f8f9fa; --white: #ffffff; }
         body { margin: 0; font-family: 'Nanum Gothic', sans-serif; background: var(--bg); padding-bottom: 110px; }
-        header { background: linear-gradient(135deg, var(--primary), #1a2a4e); color: var(--gold); padding: 25px; text-align: center; border-bottom: 4px solid var(--gold); }
-        header h1 { margin: 0; font-family: 'Noto Serif KR', serif; font-size: 22px; }
+        header { background: linear-gradient(135deg, var(--primary), #1a2a4e); color: var(--gold); padding: 20px; text-align: center; border-bottom: 4px solid var(--gold); }
         .container { padding: 15px; max-width: 500px; margin: 0 auto; }
         .card { background: var(--white); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
 
-        /* [3번 요청] 명예의 전당 디자인 */
-        .hall-of-fame { background: linear-gradient(to bottom, #1a2a4e, #051435); border-radius: 20px; padding: 30px 10px; text-align: center; color: var(--gold); position: relative; border: 2px solid var(--gold); margin-bottom: 20px; }
-        .hall-of-fame::before { content: "🏛️"; font-size: 40px; display: block; margin-bottom: 10px; }
-        .podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 180px; margin-top: 20px; }
+        /* [1번 요청] 여권 격자 그리드 복구 */
+        .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .month-box { background: white; border-radius: 15px; overflow: hidden; position: relative; min-height: 150px; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .month-img { width: 100%; height: 100px; object-fit: cover; background: #f0f0f0; display: block; }
+        .stamp-badge { position: absolute; top: 10px; left: 10px; width: 45px; height: 45px; border: 2px double #d32f2f; border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: rotate(-20deg); color: #d32f2f; font-weight: bold; font-size: 12px; background: rgba(255,255,255,0.8); z-index: 2; }
+        .month-label { padding: 10px; font-size: 13px; font-weight: bold; text-align: center; background: #fff; }
+
+        /* [4번 요청] 점수 칸 모바일 최적화 */
+        .score-selection { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .score-option { display: flex; align-items: center; background: #fff; border: 1.5px solid #eee; padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.2s; }
+        .score-option input { width: 22px; height: 22px; margin-right: 12px; accent-color: var(--primary); }
+        .score-option span { font-size: 15px; font-weight: 500; }
+        .score-option:active { background: #f0f0f0; }
+
+        /* 명예의 전당 */
+        .hall-of-fame { background: linear-gradient(to bottom, #1a2a4e, #051435); border-radius: 20px; padding: 25px 10px; text-align: center; color: var(--gold); border: 2px solid var(--gold); margin-bottom: 20px; }
+        .podium { display: flex; align-items: flex-end; justify-content: center; gap: 8px; height: 160px; margin-top: 15px; }
         .rank-unit { flex: 1; display: flex; flex-direction: column; align-items: center; }
-        .rank-pillar { width: 100%; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; justify-content: center; color: #fff; font-weight: bold; padding-bottom: 10px; font-size: 12px; transition: 0.5s; box-shadow: inset 0 0 20px rgba(0,0,0,0.3); }
-        .p-1 { height: 120px; background: linear-gradient(to top, #bf953f, #fcf6ba, #b38728); color: #443300; }
-        .p-2 { height: 90px; background: linear-gradient(to top, #757f9a, #d7dde8); color: #232526; }
-        .p-3 { height: 70px; background: linear-gradient(to top, #804a00, #ca7345); }
-        .rank-name { color: #fff; font-size: 11px; margin-top: 8px; font-weight: bold; white-space: nowrap; overflow: hidden; width: 80px; text-overflow: ellipsis; }
+        .rank-pillar { width: 100%; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; justify-content: center; color: #fff; font-weight: bold; padding-bottom: 8px; font-size: 11px; }
+        .p-1 { height: 110px; background: linear-gradient(to top, #bf953f, #fcf6ba, #b38728); color: #443300; }
+        .p-2 { height: 80px; background: linear-gradient(to top, #757f9a, #d7dde8); color: #232526; }
+        .p-3 { height: 60px; background: linear-gradient(to top, #804a00, #ca7345); }
 
-        /* [1, 2번 요청] 미션 관리 스타일 */
-        .mission-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
-        .admin-edit-box { background: #fff9e6; padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); margin-top: 10px; }
-        
-        /* [4번 요청] 참여자 입력창 최적화 */
-        .multi-user-input { background: #f0f2f5; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #ddd; }
-
-        /* 네비게이션 & 기타 */
+        /* 네비게이션 & UI */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 25px; border-top: 1px solid #eee; z-index: 1000; }
         .bottom-nav a { color: #aaa; text-decoration: none; font-size: 11px; text-align: center; flex: 1; }
         .bottom-nav a.active-link { color: var(--primary); font-weight: bold; }
-        .admin-trigger { position: fixed; bottom: 85px; right: 15px; padding: 8px 15px; background: rgba(0,0,0,0.4); color: white; border-radius: 20px; font-size: 11px; z-index: 999; border: none; }
-        
-        .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .month-box { background: white; border-radius: 15px; overflow: hidden; position: relative; min-height: 140px; border: 1px solid #eee; }
-        .month-img { width: 100%; height: 100px; object-fit: cover; background: #eee; }
-        .stamp-badge { position: absolute; top: 10px; left: 10px; width: 50px; height: 50px; border: 2px double #d32f2f; border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: rotate(-20deg); color: #d32f2f; font-weight: bold; font-size: 13px; background: rgba(255,255,255,0.8); }
-
+        .admin-trigger { position: fixed; bottom: 85px; right: 15px; padding: 8px 15px; background: rgba(0,0,0,0.5); color: white; border-radius: 20px; font-size: 11px; z-index: 999; border: none; }
+        .admin-only { display: none; } .admin-mode .admin-only { display: block; }
         input, select, .btn-ui { width: 100%; padding: 15px; margin-top: 10px; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
         .btn-primary { background: var(--primary); color: var(--gold); border: none; font-weight: bold; }
-        .admin-only { display: none; } .admin-mode .admin-only { display: block; }
+        
         [data-view] { display: none; } [data-view].active { display: block; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; box-sizing: border-box; }
-        .modal-content { background: white; border-radius: 25px; padding: 20px; margin-top: 40px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; padding: 15px; box-sizing: border-box; overflow-y: auto; }
+        .modal-content { background: white; border-radius: 25px; padding: 20px; margin-top: 20px; width: 100%; box-sizing: border-box; }
+        .activity-list-item { border-bottom: 1px solid #eee; padding: 15px 0; }
     </style>
 </head>
 <body class="user-mode">
@@ -66,7 +66,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px;">
             <a href="#/upload" class="card" style="text-align:center; text-decoration:none; color:inherit; margin:0;">📸<br><b>사진 업로드</b></a>
             <a href="#/passport" class="card" style="text-align:center; text-decoration:none; color:inherit; margin:0;">📖<br><b>여권 보기</b></a>
-            <a href="#/ranking" class="card" style="text-align:center; text-decoration:none; color:inherit; margin:0;">🏆<br><b>명예의 전당</b></a>
+            <a href="#/ranking" class="card" style="text-align:center; text-decoration:none; color:inherit; margin:0;">🏆<br><b>명예 전당</b></a>
             <a href="#/mission" class="card" style="text-align:center; text-decoration:none; color:inherit; margin:0;">🎯<br><b>미션 관리</b></a>
         </div>
     </div>
@@ -74,29 +74,22 @@
     <div id="view-mission" data-view>
         <h3 style="padding-left:10px;">🎯 월별 매칭 미션</h3>
         <div id="mission-matched-area"></div>
-        
         <h3 style="padding-left:10px; margin-top:30px;">📋 전체 미션 리스트</h3>
         <div class="card" id="mission-all-area" style="padding:10px;"></div>
-
-        <div class="admin-only admin-edit-box">
+        <div class="admin-only card" style="background:#fff9e6; border: 1px dashed var(--gold);">
             <h4 style="margin:0 0 10px 0;">🛠️ 미션 시스템 관리</h4>
-            <div style="border-bottom:1px solid #ddd; padding-bottom:15px; margin-bottom:15px;">
-                <small>1. 전체 리스트에 미션 추가</small>
-                <input type="text" id="ms-new-title" placeholder="새로운 미션 내용">
-                <button onclick="addMissionMaster()" class="btn-ui btn-primary" style="padding:10px; font-size:14px;">리스트에 추가</button>
-            </div>
-            <div>
-                <small>2. 월별 미션 매칭 (리스트 중 선택)</small>
-                <select id="ms-month-select"><script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}월 매칭</option>`)</script></select>
-                <select id="ms-master-select"></select>
-                <button onclick="matchMission()" class="btn-ui btn-primary" style="padding:10px; font-size:14px;">해당 월에 매칭</button>
-            </div>
+            <input type="text" id="ms-new-title" placeholder="새로운 미션 내용 입력">
+            <button onclick="addMissionMaster()" class="btn-ui btn-primary">리스트에 추가</button>
+            <hr style="margin:15px 0; border:0; border-top:1px solid #ddd;">
+            <select id="ms-month-select"><script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}월 매칭</option>`)</script></select>
+            <select id="ms-master-select"></select>
+            <button onclick="matchMission()" class="btn-ui btn-primary">해당 월에 매칭</button>
         </div>
     </div>
 
     <div id="view-ranking" data-view>
         <div class="hall-of-fame">
-            <span style="font-weight:bold; letter-spacing:2px;">HALL OF FAME</span>
+            <span style="font-weight:bold; letter-spacing:2px; font-size:12px;">HALL OF FAME</span>
             <div class="podium" id="podium-area"></div>
         </div>
         <div class="card" id="rank-list" style="padding:0; overflow:hidden;"></div>
@@ -104,23 +97,29 @@
 
     <div id="view-upload" data-view>
         <div class="card">
-            <h3>활동 기록 업로드</h3>
-            <div class="multi-user-input">
-                <label style="font-size:13px; font-weight:bold;">👥 참여자 (쉼표로 구분)</label>
-                <input type="text" id="up-name" placeholder="예: 홍길동, 김철수, 이영희">
-                <small style="color:#666;">※ 여러 명일 경우 쉼표(,)를 넣어주세요.</small>
-            </div>
-            <input type="text" id="up-content" placeholder="활동 내용 설명">
+            <h3 style="margin-top:0;">기록 업로드</h3>
+            <label style="font-size:13px; font-weight:bold; color:var(--primary);">👥 참여자 (쉼표로 구분)</label>
+            <input type="text" id="up-name" placeholder="예: 홍길동, 김철수, 이영희">
+            <input type="text" id="up-content" placeholder="활동 내용을 간단히 적어주세요">
             
-            <div style="background:#f8f9fa; padding:15px; border-radius:15px; margin-top:15px;">
-                <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:10px;">🎖️ 획득 점수 선택</label>
-                <label style="display:block; margin-bottom:10px;"><input type="checkbox" id="check-basic" checked> 기본 참여 (+5점)</label>
-                <label style="display:block; margin-bottom:10px;"><input type="checkbox" id="check-team"> 팀장 참여 (+2점)</label>
-                <label style="display:block;"><input type="checkbox" id="check-self"> 자발적 참여 (+3점)</label>
+            <div class="score-selection">
+                <label style="font-size:13px; font-weight:bold; color:var(--primary); margin: 10px 0 5px;">🎖️ 획득 점수 선택</label>
+                <div class="score-option" onclick="document.getElementById('check-basic').click()">
+                    <input type="checkbox" id="check-basic" checked onclick="event.stopPropagation()">
+                    <span>기본 참여 (+5점)</span>
+                </div>
+                <div class="score-option" onclick="document.getElementById('check-team').click()">
+                    <input type="checkbox" id="check-team" onclick="event.stopPropagation()">
+                    <span>팀장 참여 (+2점)</span>
+                </div>
+                <div class="score-option" onclick="document.getElementById('check-self').click()">
+                    <input type="checkbox" id="check-self" onclick="event.stopPropagation()">
+                    <span>자발적 참석 (+3점)</span>
+                </div>
             </div>
 
-            <input type="file" id="up-files" accept="image/*" multiple style="margin-top:20px;">
-            <button onclick="saveToFirebase()" id="btn-submit" class="btn-ui btn-primary">사진 및 기록 제출</button>
+            <input type="file" id="up-files" accept="image/*" multiple style="margin-top:20px; border:none;">
+            <button onclick="saveToFirebase()" id="btn-submit" class="btn-ui btn-primary" style="margin-top:20px;">사진 및 기록 제출</button>
         </div>
     </div>
 
@@ -141,11 +140,9 @@
 
 <div id="modal" class="modal" onclick="this.style.display='none'">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <div id="modal-body"></div>
-        <div class="admin-only" style="margin-top:20px; display:flex; gap:10px;">
-            <button onclick="approveActivity()" style="flex:1; padding:15px; background:#28a745; color:#fff; border:none; border-radius:12px; font-weight:bold;">승인하기</button>
-            <button onclick="deleteActivity()" style="flex:1; padding:15px; background:#dc3545; color:#fff; border:none; border-radius:12px; font-weight:bold;">삭제하기</button>
-        </div>
+        <h3 id="modal-title" style="margin-top:0; border-bottom:2px solid var(--gold); padding-bottom:10px;"></h3>
+        <div id="modal-list-body"></div>
+        <button onclick="document.getElementById('modal').style.display='none'" class="btn-ui" style="margin-top:20px; background:#eee; border:none;">닫기</button>
     </div>
 </div>
 
@@ -158,7 +155,7 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let isAdmin = false; let selectedItem = null;
+    let isAdmin = false;
 
     function adminAuth() {
         if(!isAdmin) {
@@ -176,7 +173,7 @@
         }
     }
 
-    // [1번 요청] 전체 미션 리스트 관리 (추가/삭제)
+    // [3번 요청] 미션 삭제 기능 (마스터 리스트 및 매칭 미션)
     function addMissionMaster() {
         const title = document.getElementById('ms-new-title').value;
         if(!title) return;
@@ -187,37 +184,40 @@
     }
 
     function deleteMissionMaster(key) {
-        if(confirm("이 미션을 리스트에서 삭제할까요?")) {
-            db.ref('missionMaster/' + key).remove().then(() => renderMissions());
+        if(confirm("이 미션을 전체 리스트에서 삭제할까요?")) {
+            db.ref('missionMaster/' + key).remove();
         }
     }
 
-    // [2번 요청] 월별 미션 매칭
+    function deleteMatchedMission(month) {
+        if(confirm(month + "월 매칭 미션을 취소할까요?")) {
+            db.ref('missions/' + month).remove();
+        }
+    }
+
     function matchMission() {
         const month = document.getElementById('ms-month-select').value;
         const title = document.getElementById('ms-master-select').value;
         db.ref('missions/' + month).set({ month, title }).then(() => {
-            alert(month + "월 미션 매칭 완료");
+            alert(month + "월 매칭 완료");
             renderMissions();
         });
     }
 
     function renderMissions() {
-        // 전체 리스트 렌더링
         db.ref('missionMaster').on('value', snap => {
             const area = document.getElementById('mission-all-area');
             const select = document.getElementById('ms-master-select');
             area.innerHTML = ''; select.innerHTML = '';
             snap.forEach(child => {
-                const item = document.createElement('div');
-                item.className = 'mission-item';
-                item.innerHTML = `<span>• ${child.val()}</span>
-                                  <button class="admin-only" onclick="deleteMissionMaster('${child.key}')" style="color:red; border:none; background:none;">삭제</button>`;
-                area.appendChild(item);
+                const div = document.createElement('div');
+                div.style = "display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f9f9f9; font-size:14px;";
+                div.innerHTML = `<span>• ${child.val()}</span>
+                                 <button class="admin-only" onclick="deleteMissionMaster('${child.key}')" style="color:#ff4757; border:none; background:none; font-size:12px;">삭제</button>`;
+                area.appendChild(div);
                 select.innerHTML += `<option value="${child.val()}">${child.val()}</option>`;
             });
         });
-        // 월별 매칭 렌더링
         db.ref('missions').on('value', snap => {
             const matchedArea = document.getElementById('mission-matched-area');
             const homeMission = document.getElementById('home-month-mission');
@@ -227,8 +227,9 @@
             for(let i=1; i<=12; i++) {
                 if(data[i]) {
                     const div = document.createElement('div');
-                    div.style = "padding:12px; border-left:4px solid var(--gold); background:#fff; margin-bottom:8px; font-size:14px;";
-                    div.innerHTML = `<b>${i}월:</b> ${data[i].title}`;
+                    div.style = "padding:12px; border-left:4px solid var(--gold); background:#fff; margin-bottom:8px; font-size:14px; display:flex; justify-content:space-between;";
+                    div.innerHTML = `<span><b>${i}월:</b> ${data[i].title}</span>
+                                     <button class="admin-only" onclick="deleteMatchedMission('${i}')" style="color:#ff4757; border:none; background:none; font-size:12px;">매칭취소</button>`;
                     matchedArea.appendChild(div);
                     if(i == nowMonth) homeMission.innerText = data[i].title;
                 }
@@ -236,14 +237,84 @@
         });
     }
 
-    // [4번 요청] 복수 참여자 데이터 처리
+    // [1번 요청] 여권 격자 그리드 복구 및 [2번 요청] 월 클릭 시 전체 내역 조회
+    function renderPassport() {
+        db.ref('activities').on('value', snap => {
+            const grid = document.getElementById('passport-grid');
+            grid.innerHTML = '';
+            const data = Object.values(snap.val() || {});
+            for(let i=1; i<=12; i++) {
+                const mData = data.filter(d => d.month == i);
+                const approvedItem = mData.find(d => d.isPassed) || (isAdmin ? mData[0] : null);
+                const box = document.createElement('div');
+                box.className = 'month-box';
+                box.onclick = () => showMonthActivities(i, mData);
+
+                if(approvedItem) {
+                    box.innerHTML = `<img src="${approvedItem.imgs[0]}" class="month-img">
+                                     <div class="month-label">${i}월 활동 (${mData.length})</div>`;
+                    if(approvedItem.isPassed) box.innerHTML += `<div class="stamp-badge">PASS</div>`;
+                } else {
+                    box.innerHTML = `<div class="month-img"></div><div class="month-label" style="color:#999;">${i}월</div>`;
+                }
+                grid.appendChild(box);
+            }
+        });
+    }
+
+    // [2번 요청] 특정 월의 모든 업로드 내역 표시
+    function showMonthActivities(month, activities) {
+        const modal = document.getElementById('modal');
+        const title = document.getElementById('modal-title');
+        const body = document.getElementById('modal-list-body');
+        
+        title.innerText = month + "월 활동 내역 (" + activities.length + "건)";
+        body.innerHTML = activities.length === 0 ? '<p style="text-align:center; padding:40px; color:#999;">기록된 활동이 없습니다.</p>' : '';
+        
+        activities.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'activity-list-item';
+            div.innerHTML = `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:10px;">
+                    ${item.imgs.map(img => `<img src="${img}" style="width:100%; border-radius:10px;">`).join('')}
+                </div>
+                <div style="font-size:14px; line-height:1.6;">
+                    <b>참여자:</b> ${item.names.join(', ')}<br>
+                    <b>활동내용:</b> ${item.content || '-'}<br>
+                    <b>획득점수:</b> ${item.score}점 | <b>상태:</b> ${item.isPassed ? '✅ 승인완료' : '⏳ 승인대기'}
+                </div>
+                <div class="admin-only" style="margin-top:10px; display:flex; gap:10px;">
+                    ${!item.isPassed ? `<button onclick="approveActivity('${item.id}')" style="flex:1; padding:10px; background:#28a745; color:#fff; border:none; border-radius:8px;">승인</button>` : ''}
+                    <button onclick="deleteActivity('${item.id}')" style="flex:1; padding:10px; background:#dc3545; color:#fff; border:none; border-radius:8px;">삭제</button>
+                </div>
+            `;
+            body.appendChild(div);
+        });
+        modal.style.display = 'block';
+    }
+
+    function approveActivity(id) {
+        db.ref('activities/' + id).update({ isPassed: true }).then(() => {
+            alert("승인되었습니다."); document.getElementById('modal').style.display = 'none';
+        });
+    }
+
+    function deleteActivity(id) {
+        if(confirm("기록을 삭제하시겠습니까?")) {
+            db.ref('activities/' + id).remove().then(() => {
+                alert("삭제되었습니다."); document.getElementById('modal').style.display = 'none';
+            });
+        }
+    }
+
+    // 사진 업로드
     async function saveToFirebase() {
         const namesStr = document.getElementById('up-name').value.trim();
         const files = document.getElementById('up-files').files;
-        if(!namesStr || files.length === 0) return alert("참여자와 사진을 확인하세요.");
+        if(!namesStr || files.length === 0) return alert("참여자와 사진을 입력하세요.");
         
         const btn = document.getElementById('btn-submit');
-        btn.disabled = true; btn.innerText = "제출 중...";
+        btn.disabled = true; btn.innerText = "업로드 중...";
 
         const names = namesStr.split(',').map(n => n.trim());
         let score = 0;
@@ -253,46 +324,40 @@
 
         const imgs = [];
         for(let f of files) {
-            const reader = new FileReader();
             const data = await new Promise(res => {
+                const reader = new FileReader();
                 reader.readAsDataURL(f);
                 reader.onload = (e) => res(e.target.result);
             });
             imgs.push(data);
         }
 
-        const id = Date.now();
-        db.ref('activities/' + id).set({
-            id, names, // 배열로 저장
-            month: new Date().getMonth() + 1,
+        db.ref('activities/' + Date.now()).set({
+            id: Date.now(), names, month: new Date().getMonth() + 1,
             score, imgs, content: document.getElementById('up-content').value,
             isPassed: false, date: new Date().toLocaleDateString()
         }).then(() => {
-            alert("기록이 제출되었습니다. (승인 대기)");
+            alert("제출 완료! (관리자 승인 대기)");
             location.hash = "#/passport";
             btn.disabled = false; btn.innerText = "사진 및 기록 제출";
         });
     }
 
-    // [3번 요청] 명예의 전당 렌더링
+    // 명예의 전당 렌더링
     function renderRanking() {
         db.ref('activities').on('value', snap => {
             const data = Object.values(snap.val() || {}).filter(d => d.isPassed);
             const userScores = {};
-            data.forEach(d => {
-                d.names.forEach(name => {
-                    userScores[name] = (userScores[name] || 0) + d.score;
-                });
-            });
+            data.forEach(d => d.names.forEach(name => userScores[name] = (userScores[name] || 0) + d.score));
             const sorted = Object.entries(userScores).sort((a,b) => b[1] - a[1]);
             
             const podium = document.getElementById('podium-area');
-            const top3 = [sorted[1], sorted[0], sorted[2]]; // 은, 금, 동 순서 배치
+            const top3 = [sorted[1], sorted[0], sorted[2]];
             podium.innerHTML = top3.map((u, i) => {
                 if(!u) return '<div class="rank-unit"></div>';
                 return `<div class="rank-unit">
                     <div class="rank-pillar p-${[2,1,3][i]}">${u[1]}점</div>
-                    <div class="rank-name">${u[0]}</div>
+                    <div style="color:#fff; font-size:11px; margin-top:5px; font-weight:bold;">${u[0]}</div>
                 </div>`;
             }).join('');
 
@@ -301,72 +366,23 @@
             list.innerHTML = sorted.map((u, i) => {
                 if(i > 0 && u[1] < sorted[i-1][1]) rank = i + 1;
                 return `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-size:14px;">
-                    <span><b>${rank}위</b> ${u[0]}</span><span>${u[1]}점</span>
+                    <span><b>${rank}위</b> ${u[0]}</span><span style="font-weight:bold; color:var(--primary);">${u[1]}점</span>
                 </div>`;
             }).join('');
         });
-    }
-
-    function renderPassport() {
-        db.ref('activities').on('value', snap => {
-            const grid = document.getElementById('passport-grid');
-            grid.innerHTML = '';
-            const data = Object.values(snap.val() || {});
-            for(let i=1; i<=12; i++) {
-                const mData = data.filter(d => d.month == i);
-                const item = mData.find(d => d.isPassed) || (isAdmin ? mData[0] : null);
-                const box = document.createElement('div'); box.className = 'month-box';
-                if(item) {
-                    box.onclick = () => showDetail(item);
-                    box.innerHTML = `<img src="${item.imgs[0]}" class="month-img">
-                                     <div style="padding:10px; font-size:11px; font-weight:bold; text-align:center;">${i}월: ${item.names[0]} 외</div>`;
-                    if(item.isPassed) box.innerHTML += `<div class="stamp-badge">PASS</div>`;
-                } else {
-                    box.innerHTML = `<div class="month-img"></div><div style="padding:10px; font-size:12px; text-align:center; color:#999;">${i}월</div>`;
-                }
-                grid.appendChild(box);
-            }
-        });
-    }
-
-    function showDetail(item) {
-        selectedItem = item;
-        document.getElementById('modal-body').innerHTML = `
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:15px;">
-                ${item.imgs.map(img => `<img src="${img}" style="width:100%; border-radius:10px;">`).join('')}
-            </div>
-            <p><b>참여자:</b> ${item.names.join(', ')}</p>
-            <p><b>활동:</b> ${item.content}</p>
-            <p><b>점수:</b> ${item.score}점</p>
-        `;
-        document.getElementById('modal').style.display = 'block';
-    }
-
-    function approveActivity() {
-        db.ref('activities/' + selectedItem.id).update({ isPassed: true }).then(() => {
-            alert("승인 완료!"); document.getElementById('modal').style.display = 'none';
-        });
-    }
-    function deleteActivity() {
-        if(confirm("기록을 삭제하시겠습니까?")) {
-            db.ref('activities/' + selectedItem.id).remove().then(() => {
-                alert("삭제 완료!"); document.getElementById('modal').style.display = 'none';
-            });
-        }
     }
 
     function router() {
         const hash = location.hash.replace('#/', '') || 'home';
         document.querySelectorAll('[data-view]').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active-link'));
-        const target = document.getElementById('view-' + hash);
-        if(target) target.classList.add('active');
+        document.getElementById('view-' + hash).classList.add('active');
         const link = document.getElementById('link-' + hash);
         if(link) link.classList.add('active-link');
         
-        if(hash === 'mission') renderMissions();
-        if(hash === 'ranking') renderRanking();
+        if(hash === 'mission' || hash === 'home') renderMissions();
         if(hash === 'passport') renderPassport();
+        if(hash === 'ranking') renderRanking();
     }
     window.addEventListener('hashchange', router);
     window.addEventListener('load', router);
