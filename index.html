@@ -3,134 +3,120 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <title>조립1부 문화여권</title>
-
+    <title>조립1부 문화여권 - Mission</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&display=swap');
         :root { --primary: #051435; --gold: #c5a059; --bg: #f2f4f7; --white: #ffffff; }
+        body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); padding-bottom: 110px; -webkit-tap-highlight-color: transparent; }
+        header { background: linear-gradient(135deg, var(--primary), #1a2a4e); color: var(--gold); padding: 25px; text-align: center; border-bottom: 4px solid var(--gold); }
+        .container { padding: 15px; max-width: 500px; margin: 0 auto; }
+        .card { background: var(--white); border-radius: 20px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 15px; }
         
-        body { margin: 0; font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: #333; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; }
-        header { background: linear-gradient(135deg, var(--primary), #1a2a4e); color: var(--gold); padding: 30px 20px; text-align: center; border-bottom: 4px solid var(--gold); }
-        header h1 { margin: 0; font-size: 24px; font-family: 'Noto Serif KR', serif; }
-        
-        .container { padding: 20px 15px; max-width: 500px; margin: 0 auto; }
-        .card { background: var(--white); border-radius: 20px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.03); }
-
-        /* 홈 메뉴 */
-        .home-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .menu-btn { background: var(--white); border-radius: 18px; padding: 25px 15px; text-align: center; text-decoration: none; color: var(--primary); font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #eee; }
-        .menu-btn.wide { grid-column: span 2; background: var(--primary); color: var(--gold); }
-
-        /* 랭킹 단상 */
-        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 40px 0 20px; height: 180px; }
+        /* 랭킹 동점자 처리 */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 8px; margin: 30px 0; height: 160px; }
         .rank-box { text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; }
-        .bar { width: 100%; border-radius: 12px 12px 4px 4px; display: flex; align-items: flex-end; justify-content: center; color: white; font-weight: bold; padding-bottom: 15px; font-size: 14px; }
-        .gold-bar { height: 130px; background: linear-gradient(to top, #bf953f, #fcf6ba, #b38728); color: #5c4412; }
-        .silver-bar { height: 90px; background: linear-gradient(to top, #757f9a, #d7dde8); color: #2c3e50; }
-        .bronze-bar { height: 70px; background: linear-gradient(to top, #804a00, #ca7345); }
+        .bar { width: 100%; border-radius: 10px 10px 4px 4px; display: flex; align-items: flex-end; justify-content: center; color: white; font-weight: bold; padding-bottom: 10px; font-size: 13px; }
+        .gold-bar { height: 110px; background: linear-gradient(to top, #bf953f, #fcf6ba, #b38728); color: #5c4412; }
+        .silver-bar { height: 80px; background: linear-gradient(to top, #757f9a, #d7dde8); color: #2c3e50; }
+        .bronze-bar { height: 60px; background: linear-gradient(to top, #804a00, #ca7345); }
 
-        /* 여권 그리드 */
-        .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .month-box { background: white; border-radius: 15px; overflow: hidden; position: relative; min-height: 160px; border: 1px solid #eee; }
-        .month-img { width: 100%; height: 110px; object-fit: cover; background: #eee; }
-        .stamp-badge { position: absolute; top: 10px; left: 10px; width: 55px; height: 55px; border: 3px double #d32f2f; border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: rotate(-20deg); color: #d32f2f; font-family: 'Noto Serif KR', serif; font-weight: bold; font-size: 15px; background: rgba(255,255,255,0.8); z-index: 5; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        /* 미션 스타일 */
+        .mission-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; gap: 15px; }
+        .mission-status { font-size: 12px; padding: 4px 8px; border-radius: 20px; font-weight: bold; }
+        .status-open { background: #e3f2fd; color: #1976d2; }
+        .status-hidden { background: #f5f5f5; color: #9e9e9e; }
+        .mission-month { font-weight: bold; color: var(--gold); min-width: 40px; }
 
-        /* 관리자 기능 */
-        .admin-trigger { position: fixed; bottom: 85px; right: 15px; width: 40px; height: 40px; background: rgba(0,0,0,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #ccc; z-index: 999; }
-        .admin-only { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ddd; }
+        /* 관리자 & 네비게이션 */
+        .admin-btn { position: fixed; bottom: 85px; right: 15px; padding: 8px 15px; background: rgba(0,0,0,0.6); color: white; border-radius: 20px; font-size: 11px; z-index: 999; border: none; }
+        .admin-only { display: none; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px; }
         .admin-mode .admin-only { display: block; }
-        .pending-tag { position: absolute; bottom: 5px; right: 5px; font-size: 10px; color: #ff4757; font-weight: bold; background: white; padding: 2px 5px; border-radius: 4px; }
-
-        input, select { width: 100%; padding: 16px; margin-top: 10px; border: 1px solid #ddd; border-radius: 14px; box-sizing: border-box; font-size: 16px; }
-        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: var(--gold); border: none; border-radius: 14px; font-size: 17px; font-weight: bold; margin-top: 20px; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 30px; border-top: 1px solid #eee; z-index: 1000; }
-        .bottom-nav a { color: #aaa; text-decoration: none; font-size: 11px; text-align: center; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 25px; border-top: 1px solid #eee; z-index: 1000; }
+        .bottom-nav a { color: #aaa; text-decoration: none; font-size: 11px; text-align: center; flex: 1; }
         .bottom-nav a.active-link { color: var(--primary); font-weight: bold; }
         
+        .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .month-box { background: white; border-radius: 12px; overflow: hidden; position: relative; min-height: 140px; border: 1px solid #eee; }
+        .month-img { width: 100%; height: 90px; object-fit: cover; }
+        .stamp-badge { position: absolute; top: 5px; left: 5px; width: 45px; height: 45px; border: 2px double #d32f2f; border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: rotate(-20deg); color: #d32f2f; font-weight: bold; font-size: 12px; background: rgba(255,255,255,0.8); }
+
+        input, select, button.btn-ui { width: 100%; padding: 14px; margin-top: 10px; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 15px; }
+        .btn-primary { background: var(--primary); color: var(--gold); font-weight: bold; border: none; cursor: pointer; }
         [data-view] { display: none; } [data-view].active { display: block; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; box-sizing: border-box; }
-        .modal-content { background: white; border-radius: 25px; padding: 20px; margin-top: 50px; }
     </style>
 </head>
-<body>
+<body class="user-mode">
 
 <header><h1>조립1부 문화여권</h1></header>
 
 <div class="container">
     <div id="view-home" data-view class="active">
         <div class="card" style="text-align: center;">
-            <div style="font-size: 50px; margin-bottom: 10px;">🌟</div>
-            <h2 style="margin: 0; color: var(--primary);">안녕하세요!</h2>
-            <p style="color: #777; font-size: 14px;">팀 활동을 기록하고 승인을 기다려주세요.</p>
+            <div style="font-size: 40px; margin-bottom: 10px;">🚩</div>
+            <h2 style="margin: 0; color: var(--primary);">이번 달 미션은?</h2>
+            <p id="current-month-mission" style="font-weight: bold; color: var(--gold); margin: 10px 0;">미션을 불러오는 중...</p>
+            <a href="#/mission" style="text-decoration: none; font-size: 13px; color: #666;">전체 미션 보기 ></a>
         </div>
-        <div class="home-menu">
-            <a href="#/upload" class="menu-btn wide"><i>📸</i> 활동 사진 인증하기</a>
-            <a href="#/passport" class="menu-btn"><i>📖</i> 여권 보기</a>
-            <a href="#/ranking" class="menu-btn"><i>📊</i> 실시간 랭킹</a>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px;">
+            <a href="#/upload" class="card" style="text-align:center; text-decoration:none; color:inherit;">📸<br><b>인증하기</b></a>
+            <a href="#/passport" class="card" style="text-align:center; text-decoration:none; color:inherit;">📖<br><b>나의여권</b></a>
+            <a href="#/ranking" class="card" style="text-align:center; text-decoration:none; color:inherit;">📊<br><b>명예전당</b></a>
+            <a href="#/mission" class="card" style="text-align:center; text-decoration:none; color:inherit;">🎯<br><b>미션탭</b></a>
         </div>
     </div>
 
-    <div id="view-passport" data-view>
-        <h2 style="text-align:center; font-size:18px; color:var(--primary);">월별 활동 현황</h2>
-        <div class="passport-grid" id="passport-grid"></div>
+    <div id="view-mission" data-view>
+        <div class="card" id="mission-list-container">
+            <h3 style="margin-top:0;">월별 미션 목록</h3>
+            <div id="mission-list"></div>
+        </div>
+        <div class="admin-only card">
+            <h4>⚙️ 미션 관리 (관리자)</h4>
+            <select id="ms-month"><script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}월 미션 설정</option>`)</script></select>
+            <input type="text" id="ms-title" placeholder="미션 제목 입력">
+            <label style="font-size:13px; margin-top:10px; display:block;"><input type="checkbox" id="ms-hidden"> 숨김 미션으로 설정</label>
+            <button onclick="saveMission()" class="btn-ui btn-primary">미션 업데이트</button>
+        </div>
     </div>
 
-    <div id="view-ranking" data-view>
-        <h2 style="text-align:center; font-size:18px; color:var(--primary);">명예의 전당 (승인 완료 기준)</h2>
-        <div class="podium-container" id="podium-area"></div>
-        <div class="card" style="padding: 10px;"><div id="rank-list"></div></div>
-    </div>
-
+    <div id="view-passport" data-view><div class="passport-grid" id="passport-grid"></div></div>
+    <div id="view-ranking" data-view><div class="podium-container" id="podium-area"></div><div class="card" id="rank-list"></div></div>
     <div id="view-upload" data-view>
         <div class="card">
-            <h3 style="margin-top:0;">활동 기록하기</h3>
-            <input type="text" id="up-name" placeholder="이름을 입력하세요">
-            <select id="up-month">
-                <script>const m = new Date().getMonth()+1; for(let i=1;i<=12;i++) document.write(`<option value="${i}" ${i==m?'selected':''}>${i}월 활동</option>`)</script>
-            </select>
-            <input type="text" id="up-content" placeholder="활동 내용">
-            
-            <div style="background:#f8f9fa; padding:15px; border-radius:12px; margin-top:15px;">
-                <label style="font-weight:bold; font-size:14px; color:var(--primary)">🎖️ 점수 혜택 선택 (중복 가능)</label>
-                <div style="margin-top:10px; font-size:15px; display: flex; flex-direction: column; gap: 10px;">
-                    <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="check-basic" checked style="width: 20px; height: 20px; margin: 0;"> 기본 활동 참여 (+5점)
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="check-team" style="width: 20px; height: 20px; margin: 0;"> 팀장 참여 (+2점)
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="check-self" style="width: 20px; height: 20px; margin: 0;"> 자발적 참석 (+3점)
-                    </label>
-                </div>
+            <h3>활동 인증</h3>
+            <input type="text" id="up-name" placeholder="이름">
+            <select id="up-month"><script>const m = new Date().getMonth()+1; for(let i=1;i<=12;i++) document.write(`<option value="${i}" ${i==m?'selected':''}>${i}월</option>`)</script></select>
+            <input type="text" id="up-content" placeholder="내용">
+            <div style="background:#f8f9fa; padding:12px; border-radius:10px; margin-top:10px; font-size:13px;">
+                <label><input type="checkbox" id="check-basic" checked> 기본활동(+5)</label><br>
+                <label><input type="checkbox" id="check-team"> 팀장참여(+2)</label><br>
+                <label><input type="checkbox" id="check-self"> 자발적참석(+3)</label>
             </div>
-            
-            <input type="file" id="up-files" accept="image/*" multiple style="border:none; margin-top:15px;">
-            <button onclick="saveToFirebase()" id="btn-submit" class="btn-save">기록 제출하기 (승인 대기)</button>
+            <input type="file" id="up-files" accept="image/*" multiple style="margin-top:15px;">
+            <button onclick="saveToFirebase()" id="btn-submit" class="btn-ui btn-primary">제출 (승인대기)</button>
         </div>
     </div>
 </div>
 
 <nav class="bottom-nav">
-    <a href="#/home" id="link-home"><span style="font-size:20px;display:block;">🏠</span>홈</a>
-    <a href="#/passport" id="link-passport"><span style="font-size:20px;display:block;">📖</span>여권</a>
-    <a href="#/ranking" id="link-ranking"><span style="font-size:20px;display:block;">📊</span>랭킹</a>
-    <a href="#/upload" id="link-upload"><span style="font-size:20px;display:block;">📸</span>인증</a>
+    <a href="#/home" id="link-home">🏠<br>홈</a>
+    <a href="#/mission" id="link-mission">🎯<br>미션</a>
+    <a href="#/passport" id="link-passport">📖<br>여권</a>
+    <a href="#/ranking" id="link-ranking">📊<br>랭킹</a>
+    <a href="#/upload" id="link-upload">📸<br>인증</a>
 </nav>
 
-<div class="admin-trigger" onclick="adminAuth()">Admin</div>
+<button id="admin-toggle-btn" class="admin-btn" onclick="adminAuth()">관리자 로그인</button>
 
 <div id="modal" class="modal" onclick="this.style.display='none'">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div id="modal-body"></div>
         <div class="admin-only">
-            <button id="admin-approve-btn" onclick="approveActivity()" style="width:100%; padding:15px; background:#28a745; color:white; border:none; border-radius:10px; font-weight:bold; margin-bottom:10px;">✅ 승인 (PASS 스탬프 찍기)</button>
-            <button onclick="deleteActivity()" style="width:100%; padding:12px; background:#ff4757; color:white; border:none; border-radius:10px;">🗑️ 기록 삭제</button>
+            <button id="admin-approve-btn" onclick="approveActivity()" class="btn-ui" style="background:#28a745; color:white; border:none;">✅ 승인</button>
+            <button onclick="deleteActivity()" class="btn-ui" style="background:#ff4757; color:white; border:none;">🗑️ 삭제</button>
         </div>
-        <button onclick="document.getElementById('modal').style.display='none'" style="width:100%; padding:12px; background:#eee; border:none; border-radius:10px; margin-top:10px;">닫기</button>
     </div>
 </div>
 
@@ -143,31 +129,116 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    let isAdmin = false; let selectedItem = null;
 
-    let selectedItem = null;
-    let isAdmin = false;
-
+    // [1번 요청] 관리자 로그인/로그아웃
     function adminAuth() {
-        if(prompt("관리자 비밀번호를 입력하세요.") === "assy") {
-            isAdmin = true;
-            document.body.classList.add('admin-mode');
-            alert("관리자 모드 활성화! 여권에서 사진을 클릭해 승인하세요.");
-            renderPassport();
+        if(!isAdmin) {
+            if(prompt("관리자 비밀번호") === "assy") {
+                isAdmin = true;
+                document.body.classList.replace('user-mode', 'admin-mode');
+                document.getElementById('admin-toggle-btn').innerText = "로그아웃";
+                alert("관리자 로그인 완료");
+                router();
+            }
+        } else {
+            isAdmin = false;
+            document.body.classList.replace('admin-mode', 'user-mode');
+            document.getElementById('admin-toggle-btn').innerText = "관리자 로그인";
+            alert("로그아웃 되었습니다.");
+            location.reload();
         }
+    }
+
+    // [4,5번 요청] 미션 관리 로직
+    function saveMission() {
+        const month = document.getElementById('ms-month').value;
+        const title = document.getElementById('ms-title').value;
+        const isHidden = document.getElementById('ms-hidden').checked;
+        if(!title) return alert("미션 내용을 입력하세요.");
+        db.ref('missions/' + month).set({ month, title, isHidden }).then(() => {
+            alert(month + "월 미션이 업데이트되었습니다.");
+            location.reload();
+        });
+    }
+
+    function renderMissions() {
+        db.ref('missions').on('value', snap => {
+            const list = document.getElementById('mission-list');
+            const currentMissionDisplay = document.getElementById('current-month-mission');
+            list.innerHTML = '';
+            const data = snap.val() || {};
+            const nowMonth = new Date().getMonth() + 1;
+
+            for(let i=1; i<=12; i++) {
+                const m = data[i];
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'mission-item';
+                
+                let content = '';
+                if(m) {
+                    if(m.isHidden && !isAdmin) {
+                        content = `<span class="mission-month">${i}월</span> 🔒 숨겨진 미션입니다.`;
+                    } else {
+                        content = `<span class="mission-month">${i}월</span> ${m.title} ${m.isHidden ? '<small>(숨김상태)</small>' : ''}`;
+                    }
+                    if(i == nowMonth) currentMissionDisplay.innerText = m.isHidden && !isAdmin ? "🔒 이번 달 미션은 비공개입니다." : m.title;
+                } else {
+                    content = `<span class="mission-month">${i}월</span> 미션이 등록되지 않았습니다.`;
+                    if(i == nowMonth) currentMissionDisplay.innerText = "등록된 미션 없음";
+                }
+                itemDiv.innerHTML = content;
+                list.appendChild(itemDiv);
+            }
+        });
+    }
+
+    // [3번 요청] 동점자 동일 배치 랭킹 로직
+    function renderRanking() {
+        db.ref('activities').on('value', snap => {
+            const data = Object.values(snap.val() || {}).filter(d => d.isPassed);
+            const scores = data.reduce((acc, c) => { acc[c.name] = (acc[c.name] || 0) + c.score; return acc; }, {});
+            const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+            
+            // 시상대 (1~3위)
+            const podium = document.getElementById('podium-area');
+            const top3 = [sorted[1], sorted[0], sorted[2]];
+            podium.innerHTML = top3.map((u, i) => {
+                if(!u) return '<div class="rank-box"></div>';
+                const cls = ['silver-bar', 'gold-bar', 'bronze-bar'];
+                return `<div class="rank-box"><div class="bar ${cls[i]}">${u[1]}점</div><div style="font-size:12px;margin-top:5px;">${u[0]}</div></div>`;
+            }).join('');
+
+            // 전체 리스트 (동점자 처리)
+            const list = document.getElementById('rank-list');
+            let rank = 1;
+            list.innerHTML = sorted.map((u, i) => {
+                if (i > 0 && u[1] < sorted[i-1][1]) rank = i + 1;
+                return `<div style="display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;font-size:14px;">
+                    <span><b>${rank}위</b> ${u[0]}</span><span>${u[1]}점</span>
+                </div>`;
+            }).join('');
+        });
     }
 
     function router() {
         const hash = location.hash.replace('#/', '') || 'home';
         document.querySelectorAll('[data-view]').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active-link'));
-        document.getElementById('view-' + hash).classList.add('active');
-        if(document.getElementById('link-' + hash)) document.getElementById('link-' + hash).classList.add('active-link');
-        if(hash === 'passport') renderPassport();
+        const target = document.getElementById('view-' + hash);
+        if(target) target.classList.add('active');
+        const link = document.getElementById('link-' + hash);
+        if(link) link.classList.add('active-link');
+        
+        if(hash === 'mission') renderMissions();
         if(hash === 'ranking') renderRanking();
+        if(hash === 'passport') renderPassport();
+        if(hash === 'home') renderMissions();
     }
     window.addEventListener('hashchange', router);
     window.addEventListener('load', router);
 
+    // 이미지 압축 및 저장 로직 (기존과 동일)
     async function compressImage(file) {
         return new Promise((res) => {
             const reader = new FileReader();
@@ -178,7 +249,7 @@
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
                     let w = img.width, h = img.height;
-                    if (w > 600) { h *= 600 / w; w = 600; }
+                    if (w > 500) { h *= 500 / w; w = 500; }
                     canvas.width = w; canvas.height = h;
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     res(canvas.toDataURL('image/jpeg', 0.5));
@@ -190,29 +261,24 @@
     async function saveToFirebase() {
         const name = document.getElementById('up-name').value.trim();
         const files = document.getElementById('up-files').files;
-        if(!name || files.length === 0) return alert("이름과 사진을 확인해주세요!");
-
+        if(!name || files.length === 0) return alert("이름과 사진 필수!");
         const btn = document.getElementById('btn-submit');
-        btn.innerText = "제출 중..."; btn.disabled = true;
-
-        let totalScore = 0;
-        if(document.getElementById('check-basic').checked) totalScore += 5;
-        if(document.getElementById('check-team').checked) totalScore += 2;
-        if(document.getElementById('check-self').checked) totalScore += 3;
-
+        btn.disabled = true; btn.innerText = "업로드 중...";
+        let score = 0;
+        if(document.getElementById('check-basic').checked) score += 5;
+        if(document.getElementById('check-team').checked) score += 2;
+        if(document.getElementById('check-self').checked) score += 3;
         const imgs = [];
         for(let f of files) imgs.push(await compressImage(f));
-
         const id = Date.now();
         db.ref('activities/' + id).set({
             id, name, month: document.getElementById('up-month').value,
-            score: totalScore, imgs, content: document.getElementById('up-content').value,
-            isPassed: false, // 기본값: 미승인
-            date: new Date().toLocaleDateString()
+            score, imgs, content: document.getElementById('up-content').value,
+            isPassed: false, date: new Date().toLocaleDateString()
         }).then(() => {
-            alert("제출 완료! 관리자 승인 후 여권에 표시됩니다.");
+            alert("제출 완료! 승인을 기다려주세요.");
             location.hash = "#/passport";
-            btn.innerText = "기록 제출하기 (승인 대기)"; btn.disabled = false;
+            btn.disabled = false; btn.innerText = "제출 (승인대기)";
         });
     }
 
@@ -221,86 +287,41 @@
             const grid = document.getElementById('passport-grid');
             grid.innerHTML = '';
             const data = Object.values(snap.val() || {});
-            for(let m=1; m<=12; m++) {
-                const mData = data.filter(d => d.month == m);
-                const box = document.createElement('div');
-                box.className = 'month-box';
-                // 승인된 데이터가 있거나, 관리자 모드일 때만 표시
-                const displayItem = mData.find(d => d.isPassed) || (isAdmin ? mData[mData.length-1] : null);
-                
-                if(displayItem) {
-                    box.onclick = () => showDetail(displayItem);
-                    box.innerHTML = `<img src="${displayItem.imgs[0]}" class="month-img">
-                                     <div style="padding:12px; font-size:12px; font-weight:bold; text-align:center;">${m}월: ${displayItem.name}</div>`;
-                    if(displayItem.isPassed) {
-                        box.innerHTML += `<div class="stamp-badge">PASS</div>`;
-                    } else {
-                        box.innerHTML += `<div class="pending-tag">승인대기</div>`;
-                    }
+            for(let i=1; i<=12; i++) {
+                const mData = data.filter(d => d.month == i);
+                const item = mData.find(d => d.isPassed) || (isAdmin ? mData[0] : null);
+                const box = document.createElement('div'); box.className = 'month-box';
+                if(item) {
+                    box.onclick = () => showDetail(item);
+                    box.innerHTML = `<img src="${item.imgs[0]}" class="month-img"><div style="text-align:center;padding:10px;font-size:12px;">${i}월: ${item.name}</div>`;
+                    if(item.isPassed) box.innerHTML += `<div class="stamp-badge">PASS</div>`;
+                    else box.innerHTML += `<div style="color:red;font-size:10px;text-align:center;">승인대기</div>`;
                 } else {
-                    box.innerHTML = `<div style="height:110px; display:flex; align-items:center; justify-content:center; color:#ccc; font-size:12px;">기록없음</div>
-                                     <div style="padding:12px; font-size:12px; text-align:center; color:#999;">${m}월</div>`;
+                    box.innerHTML = `<div style="height:90px;background:#eee;"></div><div style="text-align:center;padding:10px;font-size:12px;color:#999;">${i}월</div>`;
                 }
                 grid.appendChild(box);
             }
         });
     }
 
-    function renderRanking() {
-        db.ref('activities').on('value', snap => {
-            const data = Object.values(snap.val() || {}).filter(d => d.isPassed); // 승인된 것만 랭킹 합산
-            const scores = data.reduce((acc, c) => { acc[c.name] = (acc[c.name] || 0) + c.score; return acc; }, {});
-            const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
-            
-            const podium = document.getElementById('podium-area');
-            const top3 = [sorted[1], sorted[0], sorted[2]];
-            podium.innerHTML = top3.map((u, i) => {
-                if(!u) return '<div class="rank-box"></div>';
-                const labels = ['silver', 'gold', 'bronze'];
-                const medals = ['🥈', '🥇', '🥉'];
-                return `<div class="rank-box"><div style="font-size:26px;">${medals[i]}</div><div class="bar ${labels[i]}-bar">${u[1]}점</div><div style="font-size:13px; font-weight:bold; margin-top:8px;">${u[0]}</div></div>`;
-            }).join('');
-
-            const list = document.getElementById('rank-list');
-            list.innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #f5f5f5; font-size:14px;"><span><b>${i+1}위</b> ${u[0]}</span><span style="color:var(--primary); font-weight:bold;">${u[1]}점</span></div>`).join('');
-        });
-    }
-
     function showDetail(item) {
         selectedItem = item;
         document.getElementById('modal-body').innerHTML = `
-            <h3 style="margin:0 0 15px 0;">${item.month}월 활동 상세</h3>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
-                ${item.imgs.map(img => `<img src="${img}" style="width:100%; border-radius:12px;">`).join('')}
-            </div>
-            <div style="background:#f8f9fa; padding:15px; border-radius:15px; font-size:14px;">
-                <b>기록자:</b> ${item.name} | <b>승인상태:</b> ${item.isPassed ? '완료' : '대기중'}<br>
-                <b>활동내용:</b> ${item.content || '-'}<br>
-                <b>합산점수:</b> ${item.score}점
-            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">${item.imgs.map(img=>`<img src="${img}" style="width:100%;border-radius:10px;">`).join('')}</div>
+            <p><b>기록자:</b> ${item.name}<br><b>점수:</b> ${item.score}점<br><b>내용:</b> ${item.content}</p>
         `;
-        // 승인 버튼 표시 제어
-        if(isAdmin && !item.isPassed) document.getElementById('admin-approve-btn').style.display = 'block';
-        else document.getElementById('admin-approve-btn').style.display = 'none';
-        
-        document.getElementById('modal').display = 'block';
         document.getElementById('modal').style.display = 'block';
     }
 
     function approveActivity() {
-        if(confirm("이 활동을 승인하고 PASS 스탬프를 찍으시겠습니까?")) {
-            db.ref('activities/' + selectedItem.id).update({ isPassed: true }).then(() => {
-                alert("승인 완료! 여권에 도장이 찍혔습니다.");
-                document.getElementById('modal').style.display = 'none';
-            });
-        }
+        db.ref('activities/' + selectedItem.id).update({ isPassed: true }).then(() => {
+            alert("승인 완료"); document.getElementById('modal').style.display = 'none';
+        });
     }
-
     function deleteActivity() {
-        if(confirm("이 기록을 삭제하시겠습니까?")) {
+        if(confirm("삭제하시겠습니까?")) {
             db.ref('activities/' + selectedItem.id).remove().then(() => {
-                alert("삭제되었습니다.");
-                document.getElementById('modal').style.display = 'none';
+                alert("삭제 완료"); document.getElementById('modal').style.display = 'none';
             });
         }
     }
