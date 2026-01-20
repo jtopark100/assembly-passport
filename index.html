@@ -12,120 +12,112 @@
         :root { 
             --passport-navy: #1a2e5a; 
             --passport-gold: #d4af37; 
-            --passport-inner: #fdfaf2; /* 여권 속지색 */
+            --passport-inner: #fdfaf2;
             --kia-red: #bb0a30; 
         }
         
-        body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--passport-inner); color: #1c1c1e; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--passport-inner); color: #1c1c1e; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         
-        /* 공통 헤더 여권 스타일 */
         header { 
             background: var(--passport-navy); color: var(--passport-gold); 
             padding: calc(15px + env(safe-area-inset-top)) 20px 15px; 
             text-align: center; border-bottom: 2px solid var(--passport-gold); 
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        header h1 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: 2px; }
-
-        /* [Home] 고급 여권 커버 */
-        .passport-home {
-            background: var(--passport-navy); height: 75vh; margin: 15px; border-radius: 20px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--passport-gold); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 2px solid var(--passport-gold); position: relative; padding: 20px; text-align: center;
-        }
-        .passport-logo { font-size: 60px; margin-bottom: 20px; filter: drop-shadow(0 0 5px rgba(212,175,55,0.5)); }
-        .passport-title { font-size: 32px; font-weight: 800; margin-bottom: 40px; letter-spacing: 2px; }
-        .current-mission-box {
-            background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;
-            border: 1px dashed var(--passport-gold); width: 85%; color: white;
+            position: sticky; top: 0; z-index: 1000;
         }
 
-        /* [Common] 여권 속지 느낌의 카드 */
         .container { padding: 15px; max-width: 500px; margin: 0 auto; }
         .card { 
             background: white; border-radius: 15px; padding: 20px; 
             box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; 
-            border: 1px solid #eee; position: relative; overflow: hidden;
-        }
-        .card::before { /* 여권 속지 패턴 느낌 */
-            content: ""; position: absolute; top:0; left:0; width:100%; height:4px; background: var(--passport-navy); 
+            border: 1px solid #eee; position: relative;
         }
 
-        /* 점수 선택 탭 */
+        /* 여권 커버 홈 */
+        .passport-home {
+            background: var(--passport-navy); min-height: 70vh; margin: 15px; border-radius: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--passport-gold); border: 2px solid var(--passport-gold); padding: 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* 점수 선택 탭 (Chip UI) */
         .score-tabs { display: flex; gap: 8px; margin-top: 10px; }
         .score-tab { 
             flex: 1; padding: 12px 5px; border-radius: 10px; font-size: 13px; font-weight: 700; 
-            text-align: center; background: #f0f0f0; color: #888; transition: 0.2s; cursor: pointer;
+            text-align: center; background: #f0f0f0; color: #888; cursor: pointer;
         }
-        .score-tab.active-blue { background: #eef4ff; color: #007aff; box-shadow: inset 0 0 0 2px #007aff; }
-        .score-tab.active-orange { background: #fff4ee; color: #ff9500; box-shadow: inset 0 0 0 2px #ff9500; }
-        .score-tab.active-green { background: #eefff2; color: #34c759; box-shadow: inset 0 0 0 2px #34c759; }
+        .score-tab.active-blue { background: #eef4ff; color: #007aff; outline: 2px solid #007aff; }
+        .score-tab.active-orange { background: #fff4ee; color: #ff9500; outline: 2px solid #ff9500; }
+        .score-tab.active-green { background: #eefff2; color: #34c759; outline: 2px solid #34c759; }
+
+        /* 하단바 */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); 
+            display: flex; padding-bottom: env(safe-area-inset-bottom); height: 75px; z-index: 1000; border-top: 2px solid var(--passport-gold); 
+        }
+        .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 11px; }
+        .bottom-nav a.active-link { color: var(--passport-gold); font-weight: 800; }
+        .nav-icon { font-size: 20px; margin-bottom: 4px; }
 
         /* 여권 그리드 & 스탬프 */
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .month-box { background: white; border-radius: 15px; overflow: hidden; height: 160px; border: 1px solid #e5e5ea; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .month-img { width: 100%; height: 110px; object-fit: cover; background: #eaebef; }
-        .month-label { height: 50px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--passport-navy); }
+        .month-box { background: white; border-radius: 15px; overflow: hidden; height: 160px; border: 1px solid #e5e5ea; position: relative; }
         .pass-stamp { 
             position: absolute; top: 15px; right: 15px; border: 3px solid var(--kia-red); 
-            color: var(--kia-red); font-family: 'Dancing Script', cursive; font-size: 24px; 
-            padding: 2px 8px; border-radius: 8px; transform: rotate(-15deg); font-weight: 700; background: rgba(255,255,255,0.9);
+            color: var(--kia-red); font-family: 'Dancing Script', cursive; font-size: 22px; 
+            padding: 2px 8px; border-radius: 8px; transform: rotate(-15deg); font-weight: 700; background: rgba(255,255,255,0.8);
         }
 
-        /* 하단바 여권 테마 */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); display: flex; padding-bottom: env(safe-area-inset-bottom); height: 75px; z-index: 1000; border-top: 2px solid var(--passport-gold); }
-        .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 11px; font-weight: 600; }
-        .bottom-nav a.active-link { color: var(--passport-gold); font-weight: 800; }
-        .nav-icon { font-size: 22px; margin-bottom: 4px; }
-
-        input, select { -webkit-appearance: none; border-radius: 10px; border: 1px solid #ddd; padding: 14px; width: 100%; box-sizing: border-box; font-size: 16px; margin-top: 8px; background: white; }
-        .btn-main { width: 100%; height: 55px; border-radius: 12px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; font-size: 16px; margin-top: 20px; }
+        input, select, textarea { -webkit-appearance: none; border-radius: 10px; border: 1px solid #ddd; padding: 12px; width: 100%; box-sizing: border-box; font-size: 16px; margin-top: 8px; background: white; font-family: inherit; }
+        .btn-main { width: 100%; height: 50px; border-radius: 12px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; margin-top: 15px; cursor: pointer; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--passport-inner); z-index: 2000; overflow-y: auto; }
         [data-view] { display: none; } [data-view].active { display: block; }
+        
+        .admin-badge { font-size: 10px; background: var(--kia-red); color: white; padding: 2px 6px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
     </style>
 </head>
 <body>
 
-<header id="app-header"><h1>KIA ASSEMBLY PART 1</h1></header>
+<header id="app-header" style="display:none;"><h1>KIA ASSEMBLY PART 1</h1></header>
 
 <div id="view-home" data-view class="active">
     <div class="passport-home">
-        <div style="font-size: 12px; letter-spacing: 4px; margin-bottom: 10px;">REPUBLIC OF KOREA</div>
-        <div class="passport-title">문화여권</div>
-        <div class="passport-logo">🇰🇷</div>
-        <div style="font-weight: 800; margin-bottom: 10px; color: var(--passport-gold); letter-spacing: 2px;">KIA 조립1부</div>
-        <div class="current-mission-box">
-            <div style="font-size: 10px; opacity: 0.7; margin-bottom: 5px; letter-spacing: 1px;">CURRENT MISSION</div>
-            <div id="home-mission-text" style="font-size: 18px; font-weight: 800;">배정된 미션이 없습니다.</div>
+        <div style="font-size: 11px; letter-spacing: 4px; margin-bottom: 10px; opacity:0.8;">REPUBLIC OF KOREA</div>
+        <div style="font-size: 32px; font-weight: 800; margin-bottom: 30px;">문화여권</div>
+        <div style="font-size: 60px; margin-bottom: 20px;">🇰🇷</div>
+        <div style="font-weight: 800; color: var(--passport-gold); margin-bottom: 20px;">KIA 조립1부</div>
+        <div class="card" style="background: rgba(255,255,255,0.05); color: white; border: 1px dashed var(--passport-gold); width: 85%;">
+            <div style="font-size: 10px; opacity: 0.7; margin-bottom: 5px;">MONTHLY MISSION</div>
+            <div id="home-mission-text" style="font-size: 18px; font-weight: 800;">데이터를 불러오는 중...</div>
         </div>
     </div>
 </div>
 
 <div class="container">
     <div id="view-mission" data-view>
-        <div id="admin-mission-area" style="display:none; border: 2px solid var(--passport-gold); padding: 15px; border-radius: 20px; margin-bottom: 25px; background:white;">
-            <h3 style="margin-top:0; color:var(--passport-navy);">🛠️ 미션 컨트롤러</h3>
-            <input type="text" id="new-mission-text" placeholder="미션 풀에 추가할 내용">
-            <button onclick="addMissionPool()" class="btn-main" style="height:45px; margin-top:10px;">미션 후보 등록</button>
-            <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
-            <div style="display:flex; gap:10px;">
-                <select id="match-month" style="flex:1;"><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월</option>`)</script></select>
-                <select id="match-mission-select" style="flex:2;"></select>
-            </div>
-            <button onclick="setMonthlyMission()" class="btn-main" style="height:45px; background:var(--kia-red); border-color:var(--kia-red); color:white;">월별 미션 배정</button>
+        <div id="admin-mission-area" style="display:none; border: 2px solid var(--passport-gold); padding: 15px; border-radius: 15px; margin-bottom: 20px; background:white;">
+            <h4 style="margin:0 0 10px 0;">🛠️ 미션 관리자</h4>
+            <input type="text" id="new-mission-text" placeholder="미션 내용">
+            <label style="font-size:13px; display:block; margin-top:10px;">
+                <input type="checkbox" id="mission-hidden-check" style="width:auto; margin:0 5px 0 0;"> 숨은 미션으로 설정 (배정 전까지 ??? 표시)
+            </label>
+            <button onclick="addMissionPool()" class="btn-main" style="height:40px;">미션 풀 등록</button>
+            <hr style="margin:15px 0; border:0; border-top:1px solid #eee;">
+            <select id="match-month"><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월</option>`)</script></select>
+            <select id="match-mission-select" style="margin-top:8px;"></select>
+            <button onclick="setMonthlyMission()" class="btn-main" style="height:40px; background:var(--kia-red); color:white; border:none;">월별 확정 배정</button>
         </div>
         
-        <h3 style="color:var(--passport-navy);"><span style="color:var(--passport-gold);">|</span> 전체 미션 가이드</h3>
-        <div id="mission-pool-list" style="margin-bottom: 30px;"></div>
+        <h3>🎯 연간 미션 가이드</h3>
+        <div id="mission-pool-list"></div>
         
-        <h3 style="color:var(--passport-navy);"><span style="color:var(--passport-gold);">|</span> 월별 배정 현황</h3>
+        <h3 style="margin-top:30px;">📅 월별 진행 현황</h3>
         <div id="monthly-history-list"></div>
     </div>
 
     <div id="view-passport" data-view>
-        <h3 style="color:var(--passport-navy); margin-bottom:15px;">📖 활동 기록부</h3>
+        <h3>📖 활동 기록부 <span id="admin-status" class="admin-badge" style="display:none;">Admin Mode</span></h3>
         <div class="passport-grid" id="passport-grid"></div>
     </div>
 
@@ -136,13 +128,13 @@
 
     <div id="view-upload" data-view>
         <div class="card">
-            <h3 style="margin-top:0; color:var(--passport-navy);">📸 활동 인증 제출</h3>
+            <h3 style="margin:0 0 15px 0;">📸 인증샷 제출</h3>
             <select id="up-month"><script>const cm=new Date().getMonth()+1;for(let i=1;i<=12;i++)document.write(`<option value="${i}" ${i===cm?'selected':''}>${i}월 활동</option>`)</script></select>
-            <input type="text" id="up-name" placeholder="참여자 성함 (쉼표로 구분)" oninput="drawScoreTabs()">
+            <input type="text" id="up-name" placeholder="참여자 성함 (쉼표 구분)" oninput="drawScoreTabs()">
             <div id="score-tabs-container"></div>
-            <input type="text" id="up-content" placeholder="오늘의 소감 한마디">
-            <input type="file" id="up-img" accept="image/*" multiple style="margin-top:20px;">
-            <button onclick="submitUpload()" id="up-btn" class="btn-main">활동 승인 요청</button>
+            <textarea id="up-content" placeholder="활동 소감을 적어주세요 (공백 가능)" rows="3"></textarea>
+            <input type="file" id="up-img" accept="image/*" multiple style="margin-top:15px;">
+            <button onclick="submitUpload()" id="up-btn" class="btn-main">문화여권 스탬프 요청</button>
         </div>
     </div>
 </div>
@@ -157,13 +149,13 @@
 
 <div id="modal" class="modal">
     <div style="background:white; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom:1px solid #eee;">
-        <div id="modal-title" style="font-weight:800; color:var(--passport-navy);">활동 피드</div>
+        <div id="modal-title" style="font-weight:800;">활동 피드</div>
         <div onclick="closeModal()" style="font-size:30px; color:#ccc; cursor:pointer;">&times;</div>
     </div>
     <div id="modal-body-content"></div>
 </div>
 
-<button onclick="handleAdminAuth()" id="admin-tag" style="position:fixed; bottom:85px; right:15px; background:rgba(0,0,0,0.03); color:transparent; border:none; padding:10px; z-index:900;">.</button>
+<button onclick="handleAdminAuth()" style="position:fixed; bottom:85px; right:15px; background:none; border:none; color:rgba(0,0,0,0.05); font-size:10px;">Admin</button>
 
 <script>
     const firebaseConfig = {
@@ -177,38 +169,28 @@
     let isAdmin = false;
 
     function handleAdminAuth() {
-        if(!isAdmin) { if(prompt("관리자 코드")==="assy") { isAdmin=true; document.getElementById('admin-mission-area').style.display='block'; } }
-        else { isAdmin=false; document.getElementById('admin-mission-area').style.display='none'; }
+        if(!isAdmin) { if(prompt("관리자 코드")==="assy") { 
+            isAdmin=true; 
+            document.getElementById('admin-mission-area').style.display='block'; 
+            document.getElementById('admin-status').style.display='inline-block';
+        } }
+        else { isAdmin=false; document.getElementById('admin-mission-area').style.display='none'; document.getElementById('admin-status').style.display='none'; }
         router();
     }
 
-    // [로직 보존] 점수 탭 UI
-    function drawScoreTabs() {
-        const area = document.getElementById('score-tabs-container');
-        const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== "");
-        area.innerHTML = '';
-        names.forEach((name, idx) => {
-            const div = document.createElement('div');
-            div.className = 'card'; div.style = "margin-top:10px; padding:15px; border-top:3px solid var(--passport-gold);";
-            div.innerHTML = `<div style="font-size:13px; font-weight:800; margin-bottom:10px; color:var(--passport-navy);">${name} 님 옵션</div>
-                <div class="score-tabs" data-idx="${idx}">
-                    <div class="score-tab active-blue" data-val="5" onclick="this.classList.toggle('active-blue')">기본(+5)</div>
-                    <div class="score-tab" data-val="2" onclick="this.classList.toggle('active-orange')">팀장(+2)</div>
-                    <div class="score-tab" data-val="3" onclick="this.classList.toggle('active-green')">자발(+3)</div>
-                </div>`;
-            area.appendChild(div);
-        });
-    }
-
-    // 미션 로직 보존 및 현황 표시 개선
+    // [미션 로직] 숨은 미션 기능 포함
     function addMissionPool() {
         const text = document.getElementById('new-mission-text').value;
-        if(text) db.ref('mission_pool').push({text}).then(()=>document.getElementById('new-mission-text').value='');
+        const isHidden = document.getElementById('mission-hidden-check').checked;
+        if(text) db.ref('mission_pool').push({ text, isHidden }).then(() => {
+            document.getElementById('new-mission-text').value = '';
+            document.getElementById('mission-hidden-check').checked = false;
+        });
     }
     function setMonthlyMission() {
         const m = document.getElementById('match-month').value;
         const text = document.getElementById('match-mission-select').value;
-        db.ref('monthly_missions/'+m).set({text}).then(()=>alert(m+"월 미션 배정 완료"));
+        db.ref('monthly_missions/'+m).set({ text }).then(() => alert(m+"월 미션 배정 완료"));
     }
     function loadMissions() {
         db.ref('mission_pool').on('value', snap => {
@@ -217,7 +199,9 @@
             const select = document.getElementById('match-mission-select');
             listArea.innerHTML = ''; select.innerHTML = '';
             Object.values(pool).forEach(item => {
-                listArea.innerHTML += `<div class="card" style="padding:15px; margin-bottom:8px; font-size:14px; border-left:4px solid var(--passport-gold);">• ${item.text}</div>`;
+                // 사용자에겐 숨은 미션은 ??? 로 표시 (관리자 제외)
+                const displayText = (!isAdmin && item.isHidden) ? "🔒 숨겨진 미션 (배정 시 공개)" : item.text;
+                listArea.innerHTML += `<div class="card" style="padding:12px; margin-bottom:8px; font-size:14px; border-left:4px solid var(--passport-gold);">• ${displayText}</div>`;
                 select.innerHTML += `<option value="${item.text}">${item.text}</option>`;
             });
         });
@@ -227,43 +211,45 @@
             const homeText = document.getElementById('home-mission-text');
             const curM = new Date().getMonth() + 1;
             historyArea.innerHTML = '';
-            // 미션이 배정된 달만 표시
-            let hasAny = false;
             for(let i=1;i<=12;i++){
                 if(monthly[i]) {
-                    hasAny = true;
-                    historyArea.innerHTML += `<div class="card" style="padding:12px; margin-bottom:10px; border-top:0; border-left:4px solid var(--passport-navy); display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:800; color:var(--passport-navy); min-width:40px;">${i}월</span>
-                        <span style="font-size:14px; flex:1; text-align:right;">${monthly[i].text}</span>
-                    </div>`;
+                    historyArea.innerHTML += `<div class="card" style="padding:12px; margin-bottom:8px; border-left:4px solid var(--passport-navy); display:flex; justify-content:space-between;"><b>${i}월</b> <span>${monthly[i].text}</span></div>`;
                 }
                 if(i == curM) homeText.innerText = monthly[i] ? monthly[i].text : "배정된 미션이 없습니다.";
             }
-            if(!hasAny) historyArea.innerHTML = `<div style="text-align:center; padding:20px; color:#aaa; font-size:13px;">배정된 월별 미션이 없습니다.</div>`;
         });
     }
 
-    // [로직 보존] 월별 전체 조회
+    // [로직 보존] 월별 조회 + 관리자 수정/삭제 기능 추가
     function openDetail(month, allData) {
         const body = document.getElementById('modal-body-content');
         body.innerHTML = '';
         const filtered = allData.filter(d => d.month == month && d.isPassed);
-        document.getElementById('modal-title').innerText = month + "월 활동 내역 (" + filtered.length + ")";
+        document.getElementById('modal-title').innerText = month + "월 피드";
 
         filtered.sort((a,b) => b.timestamp - a.timestamp).forEach(item => {
             const card = document.createElement('div');
-            card.style = "background:white; margin-bottom:20px; position:relative; border-bottom:1px solid #eee;";
+            card.className = 'card'; card.style = "padding:0; margin-bottom:20px; border-radius:0; border:none;";
             card.innerHTML = `
                 <div class="pass-stamp">Passed</div>
                 <div style="display:flex; overflow-x:auto; background:#000; scroll-snap-type:x mandatory;">
                     ${item.imgs.map(img => `<img src="${img}" style="min-width:100%; max-height:400px; object-fit:contain; scroll-snap-align:center;">`).join('')}
                 </div>
                 <div style="padding:20px;">
-                    <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px;">
-                        ${(item.memberDetails || []).map(m => `<span style="background:var(--passport-inner); border:1px solid var(--passport-gold); padding:4px 10px; border-radius:8px; font-size:12px; font-weight:700; color:var(--passport-navy);">${m.name} (+${m.score})</span>`).join('')}
+                    <div id="display-${item.id}">
+                        <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">
+                            ${(item.memberDetails || []).map(m => `<span style="background:white; border:1px solid #ddd; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">${m.name} (+${m.score})</span>`).join('')}
+                        </div>
+                        <div style="font-size:15px; line-height:1.6;">${item.content || "완료!"}</div>
+                        ${isAdmin ? `<div style="margin-top:15px; display:flex; gap:10px;">
+                            <button onclick="editMode('${item.id}')" style="font-size:11px; color:#007aff; border:none; background:none;">수정</button>
+                            <button onclick="deleteAct('${item.id}')" style="font-size:11px; color:red; border:none; background:none;">삭제</button>
+                        </div>` : ''}
                     </div>
-                    <div style="font-size:15px; line-height:1.7; color:#333;">${item.content || "활동을 성공적으로 완료했습니다."}</div>
-                    ${isAdmin ? `<button onclick="delAct('${item.id}')" style="color:#ccc; margin-top:20px; border:none; background:none; font-size:11px;">데이터 관리 삭제</button>` : ''}
+                    <div id="edit-form-${item.id}" style="display:none;">
+                        <textarea id="edit-content-${item.id}" rows="3">${item.content || ""}</textarea>
+                        <button onclick="saveEdit('${item.id}')" class="btn-main" style="height:35px; font-size:12px;">저장</button>
+                    </div>
                 </div>`;
             body.appendChild(card);
         });
@@ -271,17 +257,41 @@
         document.body.style.overflow = 'hidden';
     }
 
-    // [로직 보존] 업로드
+    // 관리자 수정/삭제 실로직
+    function editMode(id) { document.getElementById('display-'+id).style.display='none'; document.getElementById('edit-form-'+id).style.display='block'; }
+    function saveEdit(id) {
+        const newContent = document.getElementById('edit-content-'+id).value;
+        db.ref('activities/'+id).update({ content: newContent }).then(() => { alert("수정되었습니다."); closeModal(); });
+    }
+    function deleteAct(id) { if(confirm("정말 삭제하시겠습니까? 점수도 삭제됩니다.")) db.ref('activities/'+id).remove().then(() => { alert("삭제완료"); closeModal(); }); }
+
+    // [로직 보존] 업로드 기능
+    function drawScoreTabs() {
+        const area = document.getElementById('score-tabs-container');
+        const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== "");
+        area.innerHTML = '';
+        names.forEach((name, idx) => {
+            const div = document.createElement('div');
+            div.style = "background:#f9f9f9; padding:12px; border-radius:12px; margin-bottom:10px; border:1px solid #eee;";
+            div.innerHTML = `<div style="font-size:12px; font-weight:800; margin-bottom:8px;">${name}</div>
+                <div class="score-tabs" data-idx="${idx}">
+                    <div class="score-tab active-blue" data-val="5" onclick="this.classList.toggle('active-blue')">기본(+5)</div>
+                    <div class="score-tab" data-val="2" onclick="this.classList.toggle('active-orange')">팀장(+2)</div>
+                    <div class="score-tab" data-val="3" onclick="this.classList.toggle('active-green')">자발(+3)</div>
+                </div>`;
+            area.appendChild(div);
+        });
+    }
+
     async function submitUpload() {
         const nameVal = document.getElementById('up-name').value.trim();
         const files = document.getElementById('up-img').files;
-        if(!nameVal || files.length === 0) return alert("참여자와 사진을 모두 등록해주세요.");
-        const btn = document.getElementById('up-btn'); btn.disabled = true; btn.innerText="업로드 중...";
+        if(!nameVal || files.length === 0) return alert("참여자와 사진을 등록해주세요.");
+        const btn = document.getElementById('up-btn'); btn.disabled = true;
         const names = nameVal.split(',').map(n => n.trim());
         const memberDetails = [];
         document.querySelectorAll('.score-tabs').forEach((group, i) => {
-            let s = 0; 
-            group.querySelectorAll('.score-tab').forEach(t => {
+            let s = 0; group.querySelectorAll('.score-tab').forEach(t => {
                 if(t.classList.contains('active-blue') || t.classList.contains('active-orange') || t.classList.contains('active-green')) s += parseInt(t.dataset.val);
             });
             memberDetails.push({ name: names[i], score: s });
@@ -293,7 +303,7 @@
             id: newRef.key, names, memberDetails, month: document.getElementById('up-month').value,
             imgs, content: document.getElementById('up-content').value,
             isPassed: false, timestamp: Date.now(), date: new Date().toLocaleDateString()
-        }).then(() => { alert("인증 요청이 완료되었습니다."); location.hash = "#/passport"; btn.disabled = false; btn.innerText="활동 승인 요청"; });
+        }).then(() => { alert("승인 요청 완료!"); location.hash = "#/passport"; btn.disabled = false; });
     }
 
     function loadPassport() {
@@ -306,9 +316,9 @@
                 box.className = 'month-box';
                 box.onclick = () => openDetail(i, all);
                 if(approved.length > 0) {
-                    box.innerHTML = `<img src="${approved[0].imgs[0]}" class="month-img"><div class="month-label">${i}월 활동 기록</div>`;
+                    box.innerHTML = `<img src="${approved[0].imgs[0]}" style="width:100%; height:110px; object-fit:cover;"><div style="height:50px; display:flex; align-items:center; justify-content:center; font-weight:800;">${i}월 기록</div>`;
                 } else {
-                    box.innerHTML = `<div class="month-img" style="display:flex; align-items:center; justify-content:center; color:#ccc; font-size:24px;">?</div><div class="month-label" style="color:#ccc;">${i}월</div>`;
+                    box.innerHTML = `<div style="height:110px; background:#f0f0f0;"></div><div style="height:50px; display:flex; align-items:center; justify-content:center; color:#ccc;">${i}월</div>`;
                 }
                 grid.appendChild(box);
             }
@@ -324,10 +334,9 @@
             const list = document.getElementById('rank-list');
             const podium = document.getElementById('podium-area');
             if(sorted.length > 0) {
-                podium.innerHTML = `<div style="background:var(--passport-navy); color:var(--passport-gold); text-align:center; padding:40px 20px; border-radius:20px; margin-bottom:15px; border:2px solid var(--passport-gold); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-                    <div style="font-size:12px; opacity:0.7; margin-bottom:10px; letter-spacing:2px;">TOP CONTRIBUTOR</div>
-                    <div style="font-size:32px; font-weight:800;">🏆 ${sorted[0][0]}</div><div style="font-size:18px; margin-top:5px;">${sorted[0][1]} POINT</div></div>`;
-                list.innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:18px 20px; border-bottom:1px solid #eee; background:white;"><span><b style="color:var(--passport-gold); margin-right:10px;">${i+1}</b> ${u[0]}</span><b style="color:var(--passport-navy);">${u[1]}점</b></div>`).join('');
+                podium.innerHTML = `<div style="background:var(--passport-navy); color:var(--passport-gold); text-align:center; padding:30px; border-radius:15px; margin-bottom:15px; border:1px solid var(--passport-gold);">
+                    <div style="font-size:28px; font-weight:800;">🏆 ${sorted[0][0]}</div><div>${sorted[0][1]} POINT</div></div>`;
+                list.innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;"><span><b>${i+1}</b> ${u[0]}</span><b>${u[1]}점</b></div>`).join('');
             }
         });
     }
@@ -339,17 +348,13 @@
         document.getElementById('view-' + hash).classList.add('active');
         const link = document.getElementById('link-' + hash);
         if(link) link.classList.add('active-link');
-        
-        // 홈 화면일 때만 헤더 숨기기 (여권 커버 느낌 강조)
         document.getElementById('app-header').style.display = (hash === 'home') ? 'none' : 'block';
-
         if(hash === 'mission') loadMissions();
         if(hash === 'passport') loadPassport();
         if(hash === 'ranking') loadRanking();
         if(hash === 'home') loadMissions();
     }
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
-    function delAct(id) { if(confirm("삭제하시겠습니까?")) db.ref('activities/'+id).remove().then(()=>closeModal()); }
     window.addEventListener('hashchange', router); window.addEventListener('load', router);
 </script>
 </body>
