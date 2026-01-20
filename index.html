@@ -10,42 +10,39 @@
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
         :root { --primary: #051435; --gold: #c5a059; --bg: #f4f6f8; --white: #ffffff; --red: #ff4d4d; --gray: #8e8e93; }
         
-        body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--bg); color: #1c1c1e; padding-bottom: calc(90px + env(safe-area-inset-bottom)); -webkit-font-smoothing: antialiased; }
+        body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--bg); color: #1c1c1e; padding-bottom: calc(90px + env(safe-area-inset-bottom)); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         header { background: var(--primary); color: var(--gold); padding: calc(15px + env(safe-area-inset-top)) 20px 15px; text-align: center; border-bottom: 3px solid var(--gold); position: sticky; top:0; z-index: 1000; }
         header h1 { margin: 0; font-size: 20px; font-weight: 800; }
 
         .container { padding: 15px; max-width: 500px; margin: 0 auto; }
         .card { background: var(--white); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); margin-bottom: 15px; }
 
-        /* 월별 그리드 */
+        /* 여권 그리드 */
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .month-box { background: white; border-radius: 18px; overflow: hidden; position: relative; min-height: 145px; border: 1px solid #e5e5ea; cursor: pointer; transition: 0.2s; }
-        .month-box:active { transform: scale(0.96); }
+        .month-box { background: white; border-radius: 18px; overflow: hidden; position: relative; min-height: 145px; border: 1px solid #e5e5ea; cursor: pointer; }
         .month-img { width: 100%; height: 100px; object-fit: cover; background: #eaebef; }
         .month-label { padding: 10px; font-size: 15px; font-weight: 800; text-align: center; color: var(--primary); }
-        .count-badge { position: absolute; top: 10px; right: 10px; background: var(--red); color: white; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .count-badge { position: absolute; top: 10px; right: 10px; background: var(--red); color: white; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: bold; }
 
-        /* 피드 모달 */
+        /* 모달 피드 */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; overflow-y: auto; }
         .modal-header { position: sticky; top: 0; background: white; padding: calc(15px + env(safe-area-inset-top)) 20px 15px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; z-index: 2100; }
         
-        /* 카드 형식 피드 스타일 */
         .feed-card { background: white; border-radius: 24px; overflow: hidden; margin-bottom: 20px; border: 1px solid #eee; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .feed-img-box { width: 100%; max-height: 400px; background: #000; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; }
         .feed-img-box img { min-width: 100%; object-fit: contain; scroll-snap-align: center; }
         .feed-info { padding: 20px; }
-        .tag-passed { border: 2px solid var(--red); color: var(--red); padding: 4px 10px; border-radius: 6px; font-weight: 900; font-size: 12px; display: inline-block; transform: rotate(-5deg); margin-bottom: 12px; }
 
-        /* 하단 네비게이션 */
+        /* 네비게이션 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; border-top: 1px solid #e5e5ea; padding-bottom: env(safe-area-inset-bottom); height: 75px; align-items: center; z-index: 1000; }
         .bottom-nav a { color: var(--gray); text-decoration: none; font-size: 11px; text-align: center; flex: 1; font-weight: 600; }
         .bottom-nav a.active-link { color: var(--primary); font-weight: 800; }
 
-        /* 공통 UI */
-        input[type="text"], .btn-ui { width: 100%; height: 55px; padding: 0 15px; margin-top: 10px; border: 1.5px solid #e5e5ea; border-radius: 15px; font-size: 16px; box-sizing: border-box; outline: none; }
+        /* 입력 및 버튼 */
+        input[type="text"], select, .btn-ui { width: 100%; height: 55px; padding: 0 15px; margin-top: 10px; border: 1.5px solid #e5e5ea; border-radius: 15px; font-size: 16px; box-sizing: border-box; outline: none; background: white; }
         .btn-primary { background: var(--primary); color: var(--gold); border: none; font-weight: 800; }
-        .btn-delete { background: #fff1f1; color: var(--red); border: 1px solid var(--red); font-size: 13px; padding: 12px; border-radius: 12px; margin-top: 15px; width: 100%; font-weight: bold; cursor: pointer; }
-        .score-chip { padding: 10px 14px; border-radius: 12px; border: 1.5px solid #ddd; font-size: 13px; background: white; cursor: pointer; flex: 1; text-align: center; }
+        .btn-danger { background: #fff1f1; color: var(--red); border: 1px solid var(--red); font-size: 13px; font-weight: bold; margin-top: 10px; }
+        .score-chip { padding: 10px; border-radius: 12px; border: 1.5px solid #ddd; font-size: 13px; background: white; cursor: pointer; flex: 1; text-align: center; }
         .score-chip.active { background: var(--primary); color: white; border-color: var(--primary); font-weight: 700; }
 
         [data-view] { display: none; } [data-view].active { display: block; }
@@ -59,17 +56,26 @@
     <div id="view-home" data-view class="active">
         <div class="card" style="text-align: center; border: 2.5px solid var(--gold); margin-top: 20px; padding: 45px 20px;">
             <div style="font-size: 50px; margin-bottom: 15px;">🚩</div>
-            <h2 id="home-mission-title" style="margin: 0; color: var(--primary); font-size: 22px;">미션 로딩 중...</h2>
-            <p style="font-size:14px; color:var(--gray); margin-top:10px;">함께 활동하고 기록을 남겨보세요!</p>
+            <h2 id="home-mission-title" style="margin: 0; color: var(--primary); font-size: 22px;">이번 달 미션 확인 중...</h2>
+            <p style="font-size:14px; color:var(--gray); margin-top:10px;">함께 소중한 추억을 만들어보세요!</p>
         </div>
     </div>
 
     <div id="view-mission" data-view>
         <div id="admin-area" style="display:none; margin-bottom: 30px;">
-            <h3 style="color:var(--red);">⏳ 승인 대기 상세</h3>
+            <h3 style="color:var(--red);">🛠️ 관리자 전용 메뉴</h3>
             <div id="admin-pending-list"></div>
+            <button onclick="resetAllData()" class="btn-ui btn-danger">⚠️ 모든 활동 데이터 초기화</button>
+            <div class="card" style="margin-top:20px; border:1px solid var(--primary);">
+                <h4 style="margin:0 0 10px 0;">월별 미션 설정</h4>
+                <select id="set-month" style="margin-bottom:10px;">
+                    <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}월 미션 설정</option>`)</script>
+                </select>
+                <input type="text" id="set-mission-title" placeholder="미션 내용을 입력하세요">
+                <button onclick="saveMission()" class="btn-ui btn-primary">미션 저장하기</button>
+            </div>
         </div>
-        <h3 style="margin-bottom:15px;">🎯 연간 미션 현황</h3>
+        <h3>🎯 연간 미션 현황</h3>
         <div id="mission-matched-list"></div>
     </div>
 
@@ -86,11 +92,18 @@
     <div id="view-upload" data-view>
         <div class="card">
             <h3>📸 활동 인증</h3>
-            <input type="text" id="up-name" placeholder="참여자 이름 (쉼표 구분)" oninput="generateScoreFields()">
+            <label style="font-size:13px; font-weight:700; color:var(--gray);">언제 활동하셨나요?</label>
+            <select id="up-month">
+                <script>
+                    const curM = new Date().getMonth() + 1;
+                    for(let i=1;i<=12;i++) document.write(`<option value="${i}" ${i===curM?'selected':''}>${i}월 활동</option>`)
+                </script>
+            </select>
+            <input type="text" id="up-name" placeholder="참여자 이름 (쉼표 구분)" oninput="generateScoreFields()" style="margin-top:20px;">
             <div id="score-fields-area"></div>
-            <input type="text" id="up-content" placeholder="오늘 활동 소감 한마디!" style="margin-top:15px;">
+            <input type="text" id="up-content" placeholder="오늘의 소감 한마디" style="margin-top:15px;">
             <input type="file" id="up-img" accept="image/*" multiple style="margin-top:20px; width:100%;">
-            <button onclick="submitUpload()" id="up-btn" class="btn-ui btn-primary" style="margin-top:30px; height:60px;">활동 인증 제출</button>
+            <button onclick="submitUpload()" id="up-btn" class="btn-ui btn-primary" style="margin-top:30px; height:60px;">기록 제출하기</button>
         </div>
     </div>
 </div>
@@ -124,12 +137,32 @@
     const db = firebase.database();
     let isAdmin = false;
 
+    // 관리자 인증
     function handleAdminAuth() {
         if(!isAdmin) { if(prompt("관리자 비밀번호")==="assy") { isAdmin=true; document.getElementById('admin-area').style.display='block'; } }
         else { isAdmin=false; document.getElementById('admin-area').style.display='none'; }
         router();
     }
 
+    // 1. 데이터 초기화 기능
+    function resetAllData() {
+        if(confirm("모든 활동 기록과 점수를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+            db.ref('activities').remove().then(() => alert("활동 데이터가 모두 삭제되었습니다."));
+        }
+    }
+
+    // 2. 미션 저장 기능
+    function saveMission() {
+        const m = document.getElementById('set-month').value;
+        const t = document.getElementById('set-mission-title').value;
+        if(!t) return alert("미션 내용을 입력하세요.");
+        db.ref('missions/' + m).set({ title: t }).then(() => {
+            alert(m + "월 미션이 저장되었습니다.");
+            document.getElementById('set-mission-title').value = '';
+        });
+    }
+
+    // 3. 점수 칩 생성
     function generateScoreFields() {
         const area = document.getElementById('score-fields-area');
         const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== "");
@@ -147,34 +180,33 @@
         });
     }
 
-    // 🏆 [해결] 월별 클릭 시 해당 월의 모든 데이터를 카드 형식으로 조회
+    // 4. [해결] 월별 모든 승인 내역 조회
     function openDetail(month, allData) {
         const body = document.getElementById('modal-body-content');
         body.innerHTML = '';
         
-        // 해당 월의 승인된 항목 필터링
+        // 해당 월에 업로드된 승인된 데이터 전체 필터링
         const filteredList = allData.filter(d => d.month == month && (isAdmin || d.isPassed));
-        filteredList.sort((a,b) => b.timestamp - a.timestamp); // 최신순 정렬
+        filteredList.sort((a,b) => b.timestamp - a.timestamp); 
 
-        document.getElementById('modal-title').innerText = `${month}월 참여 피드 (${filteredList.length}건)`;
+        document.getElementById('modal-title').innerText = `${month}월 활동 참여 피드 (${filteredList.length}건)`;
 
         if(filteredList.length === 0) {
-            body.innerHTML = '<div style="text-align:center; padding:100px 0; color:#999;">승인된 기록이 없습니다.</div>';
+            body.innerHTML = '<div style="text-align:center; padding:100px 0; color:#999;">승인된 기록이 아직 없습니다.</div>';
         } else {
-            // [중요] 필터링된 모든 데이터를 루프 돌려 각각 카드로 생성
+            // 모든 항목을 루프로 돌려 카드로 생성 (1개만 보이던 버그 해결)
             filteredList.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'feed-card';
                 card.innerHTML = `
                     <div class="feed-img-box">${item.imgs.map(img => `<img src="${img}">`).join('')}</div>
                     <div class="feed-info">
-                        <div class="tag-passed">APPROVED</div>
                         <div style="font-size:12px; color:var(--gray); margin-bottom:8px;">📅 활동일: ${item.date}</div>
                         <div style="margin-bottom:12px; display:flex; flex-wrap:wrap; gap:6px;">
                             ${(item.memberDetails || []).map(m => `<span style="background:#f2f2f7; padding:5px 10px; border-radius:8px; font-size:12px; font-weight:700; color:var(--primary);">${m.name} (+${m.score})</span>`).join('')}
                         </div>
-                        <div style="font-size:15px; font-weight:700; line-height:1.6;">${item.content || "팀 문화활동을 완료했습니다!"}</div>
-                        ${isAdmin ? `<button onclick="delAct('${item.id}')" class="btn-delete">활동 기록 삭제</button>` : ''}
+                        <div style="font-size:15px; font-weight:700; line-height:1.6;">${item.content || "팀 활동 완료!"}</div>
+                        ${isAdmin ? `<button onclick="delAct('${item.id}')" class="btn-ui btn-danger">활동 기록 삭제</button>` : ''}
                     </div>`;
                 body.appendChild(card);
             });
@@ -183,37 +215,14 @@
         document.body.style.overflow = 'hidden';
     }
 
-    function loadAdminPending() {
-        db.ref('activities').on('value', snap => {
-            const area = document.getElementById('admin-pending-list'); area.innerHTML = '';
-            snap.forEach(c => {
-                const item = c.val();
-                if(!item.isPassed) {
-                    const div = document.createElement('div');
-                    div.className = 'card';
-                    div.style = "padding:0; overflow:hidden; border: 2px solid #ddd;";
-                    div.innerHTML = `<div style="display:flex; background:#000; height:180px; overflow-x:auto;">
-                            ${item.imgs.map(img => `<img src="${img}" style="height:100%; min-width:100%; object-fit:contain;">`).join('')}
-                        </div>
-                        <div style="padding:15px;">
-                            <div style="font-weight:800; font-size:16px;">${item.month}월: ${item.names.join(', ')}</div>
-                            <div style="display:flex; gap:10px; margin-top:15px;">
-                                <button onclick="approve('${item.id}')" class="btn-ui btn-primary" style="flex:2; height:45px; margin:0;">승인</button>
-                                <button onclick="delAct('${item.id}')" class="btn-ui" style="flex:1; height:45px; margin:0; border-color:red; color:red;">보류</button>
-                            </div>
-                        </div>`;
-                    area.appendChild(div);
-                }
-            });
-        });
-    }
-
+    // 5. 업로드 (Push ID 사용으로 동일인/동일월 중복 해결)
     async function submitUpload() {
         const nameVal = document.getElementById('up-name').value.trim();
         const files = document.getElementById('up-img').files;
-        if(!nameVal || files.length === 0) return alert("참여자 정보와 사진을 등록해주세요.");
+        if(!nameVal || files.length === 0) return alert("이름과 사진을 등록해 주세요.");
+        
         const btn = document.getElementById('up-btn');
-        btn.disabled = true; btn.innerText = "데이터 전송 중...";
+        btn.disabled = true; btn.innerText = "제출 중...";
         
         const names = nameVal.split(',').map(n => n.trim());
         const memberDetails = [];
@@ -225,19 +234,26 @@
         const imgs = [];
         for(let f of files) { imgs.push(await new Promise(res => { const r = new FileReader(); r.readAsDataURL(f); r.onload = (e) => res(e.target.result); })); }
 
-        // [중요] .push()를 사용하여 고유 ID 생성 (데이터 덮어쓰기 방지)
+        // push()를 사용하여 매번 고유한 ID 생성
         const newRef = db.ref('activities').push();
         newRef.set({
-            id: newRef.key, names, memberDetails, month: new Date().getMonth() + 1,
-            imgs, content: document.getElementById('up-content').value,
-            isPassed: false, timestamp: Date.now(), date: new Date().toLocaleDateString()
+            id: newRef.key, 
+            names, 
+            memberDetails, 
+            month: document.getElementById('up-month').value,
+            imgs, 
+            content: document.getElementById('up-content').value,
+            isPassed: false, 
+            timestamp: Date.now(), 
+            date: new Date().toLocaleDateString()
         }).then(() => {
-            alert("인증 완료! 관리자 승인 대기 중입니다.");
+            alert("제출 완료! 승인 후 피드에 나타납니다.");
             location.hash = "#/passport";
-            btn.disabled = false; btn.innerText = "활동 인증 제출";
+            btn.disabled = false; btn.innerText = "기록 제출하기";
         });
     }
 
+    // 6. 데이터 로드 로직
     function loadPassport() {
         db.ref('activities').on('value', snap => {
             const grid = document.getElementById('passport-grid');
@@ -258,19 +274,6 @@
         });
     }
 
-    function approve(id) { db.ref('activities/' + id).update({ isPassed: true }).then(()=>alert("승인 완료!")); }
-    
-    function delAct(id) { 
-        if(confirm("이 활동 기록을 삭제하시겠습니까? 관리자 권한으로 삭제됩니다.")) {
-            db.ref('activities/' + id).remove().then(() => {
-                alert("삭제되었습니다.");
-                closeModal();
-            });
-        }
-    }
-
-    function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
-
     function loadRanking() {
         db.ref('activities').on('value', snap => {
             const userMap = {};
@@ -278,15 +281,14 @@
                 d.memberDetails.forEach(m => userMap[m.name] = (userMap[m.name] || 0) + m.score);
             }});
             const sorted = Object.entries(userMap).sort((a,b) => b[1] - a[1]);
-            const list = document.getElementById('rank-list');
             const podium = document.getElementById('podium-area');
+            const list = document.getElementById('rank-list');
             if(sorted.length > 0) {
                 podium.innerHTML = `<div class="card" style="background:var(--primary); color:var(--gold); text-align:center; padding:35px 20px;">
-                    <div style="font-size:14px; opacity:0.8; margin-bottom:5px;">CURRENT RANK NO.1</div>
                     <div style="font-size:32px; font-weight:800;">🏆 ${sorted[0][0]}</div>
-                    <div style="font-size:18px; margin-top:5px;">${sorted[0][1]}점</div>
+                    <div style="font-size:18px;">${sorted[0][1]}점</div>
                 </div>`;
-                list.innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:18px 20px; border-bottom:1px solid #f2f2f7;"><span><b style="color:var(--gold); margin-right:10px;">${i+1}</b> ${u[0]}</span><b>${u[1]}점</b></div>`).join('');
+                list.innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:18px 20px; border-bottom:1px solid #f2f2f7;"><span><b>${i+1}</b> ${u[0]}</span><b>${u[1]}점</b></div>`).join('');
             }
         });
     }
@@ -299,10 +301,14 @@
             listArea.innerHTML = '';
             for(let i=1; i<=12; i++) { if(data[i]) {
                 listArea.innerHTML += `<div class="card" style="padding:15px; border-left:5px solid var(--gold);"><b>${i}월 미션:</b> ${data[i].title}</div>`;
-                if(i === cur) document.getElementById('home-mission-title').innerText = data[i].title;
+                if(i == cur) document.getElementById('home-mission-title').innerText = data[i].title;
             }}
         });
     }
+
+    function approve(id) { db.ref('activities/' + id).update({ isPassed: true }).then(()=>alert("승인 완료")); }
+    function delAct(id) { if(confirm("삭제하시겠습니까?")) db.ref('activities/' + id).remove().then(()=>closeModal()); }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
     function router() {
         const hash = location.hash.replace('#/', '') || 'home';
@@ -310,10 +316,10 @@
         document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active-link'));
         document.getElementById('view-' + hash).classList.add('active');
         document.getElementById('link-' + hash).classList.add('active-link');
-        if(hash === 'mission') { loadMissions(); if(isAdmin) loadAdminPending(); }
-        if(hash === 'home' || hash === 'upload') loadMissions();
+        if(hash === 'mission') { loadMissions(); if(isAdmin) { loadAdminPending(); document.getElementById('admin-area').style.display='block'; } }
         if(hash === 'passport') loadPassport();
         if(hash === 'ranking') loadRanking();
+        if(hash === 'home') loadMissions();
     }
     window.addEventListener('hashchange', router); window.addEventListener('load', router);
 </script>
