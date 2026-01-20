@@ -1,26 +1,182 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <title>HTML Anchor Test</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>조립1부 문화여권 - Safe v2.4</title>
+    <style>
+        /* 바탕으로 완성된 CSS */
+        :root{--navy:#081C46;--gold:#E5C255;--ink:#0d1a3a;--bg:#fbf9f4;--line:#d7d2c8;--text:#0e1320;--muted:#7b7f8a}
+        *{box-sizing:border-box}
+        body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif; line-height:1.5}
+        header.app{background:var(--navy);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap}
+        .brand{display:flex;align-items:center;gap:12px}
+        .topnav{display:flex;gap:8px;margin-left:auto}
+        .link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:6px 10px;border-radius:8px;font-size:14px}
+        .container{padding:16px 16px 96px}
+        .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+        .points{font-size:28px;font-weight:700;color:var(--navy)}
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+        .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+        .btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 12px;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--text);text-decoration:none;font-weight:700;cursor:pointer}
+        .btn.primary{background:var(--gold);border-color:#c7a64a}
+        .month{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:12px;min-height:150px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:box-shadow .15s ease}
+        .month:hover{box-shadow:0 4px 18px rgba(0,0,0,.06)}
+        .thumb{width:100%;aspect-ratio:4/3;border:1px dashed #cfc9bb;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#9b9182;font-size:12px}
+        .caption{font-size:12px;color:#3b3f52;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        [data-view]{display:none}
+        [data-view].show{display:block}
+        .field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+        select, input[type="text"]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;outline:none}
+        .footer{position:sticky;bottom:0;padding:10px 16px;background:linear-gradient(180deg,rgba(251,249,244,0),rgba(251,249,244,1));color:var(--muted);text-align:center;font-size:12px}
+    </style>
 </head>
-<body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans KR',sans-serif;padding:16px">
-  <h3>HTML Anchor Test</h3>
+<body>
+    <header class="app">
+        <div class="brand">
+            <h1 style="margin:0;font-size:18px;">조립1부 문화여권</h1>
+        </div>
+        <nav class="topnav">
+            <a href="#/home" class="link">홈</a>
+            <a href="#/passport" class="link">여권</a>
+            <a href="#/ranking" class="link">랭킹</a>
+            <a href="#/admin" class="link">관리</a>
+        </nav>
+    </header>
 
+    <main class="container">
+        <section id="view-home" data-view class="show">
+            <section class="card">
+                <h2>이번 달 미션</h2>
+                [span_0](start_span)<p id="mission-title">대표 썸네일 업로드 테스트[span_0](end_span)</p>
+                <div class="points"><span id="my-points">0</span>점</div>
+            </section>
+            <nav class="grid-2">
+                <a href="#/passport" class="btn">여권 보기</a>
+                <a href="#/upload" class="btn">사진 업로드</a>
+            </nav>
+            <section class="card">
+                <h2>내 포인트</h2>
+                <div class="points"><span id="my-points-dup">0</span>점</div>
+            </section>
+        </section>
 
-  <!-- 이 줄이 '링크'로 보이면 정상, '#passport여권 보기'로 보이면 태그가 또 깨진 겁니다. -->
-  <p>#passport여권 보기</a></p>
+        <section id="view-passport" data-view>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                <a href="#/home" style="text-decoration:none; color:var(--text)">← 홈</a>
+                <h2 style="margin:0;">여권</h2>
+            </div>
+            <div class="grid-3" id="months-grid"></div>
+        </section>
 
+        <section id="view-upload" data-view>
+            <div style="margin-bottom:12px;"><a href="#/home" style="text-decoration:none; color:var(--text)">← 홈</a></div>
+            <div class="card">
+                <h2>사진 업로드(데모)</h2>
+                <div class="field">
+                    <label>월 선택</label>
+                    <select id="up-month">
+                        <option value="2">2월</option><option value="3">3월</option><option value="4">4월</option>
+                        <option value="5">5월</option><option value="6">6월</option><option value="7">7월</option>
+                        <option value="8">8월</option><option value="9">9월</option><option value="10">10월</option>
+                        <option value="11">11월</option><option value="12">12월</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>캡션(1줄)</label>
+                    <input type="text" id="up-caption" placeholder="설명을 입력하세요 (최대 60자)"/>
+                </div>
+                <button class="btn primary" id="btn-upload">제출(데모)</button>
+            </div>
+        </section>
 
-  <!-- 아래 섹션은 #passport로 이동했을 때 보이는 영역입니다. -->
-  <div id="passport" style="margin-top:24px;padding:12px;border:1px solid #ddd;border-radius:10px">
-    <strong>PASS</strong> — 여기 보이면 앵커가 정상 작동한 것입니다.
-  </div>
+        <section id="view-ranking" data-view><div class="card"><h2>실시간 랭킹</h2><div id="rank-list"></div></div></section>
+        <section id="view-admin" data-view><div class="card"><h2>관리자 승인</h2><div id="admin-queue"></div></div></section>
+    </main>
 
+    [span_1](start_span)<footer class="footer">© 2026 조립1부 Safe v2.4[span_1](end_span)</footer>
 
-  <div style="margin-top:24px;color:#666">MARK FIX0</div>
+    <script>
+        [span_2](start_span)/*[span_2](end_span) 로직 통합 및 오류 수정 */
+        const byId = id => document.getElementById(id);
+        const V = {
+            home: byId('view-home'),
+            passport: byId('view-passport'),
+            upload: byId('view-upload'),
+            ranking: byId('view-ranking'),
+            admin: byId('view-admin')
+        };
+
+        [span_3](start_span)// 화면 전환 로직[span_3](end_span)
+        function show(v) {
+            Object.values(V).forEach(s => { if(s) s.classList.remove('show') });
+            const target = V[v] || V.home;
+            target.classList.add('show');
+            
+            if(v === 'passport') renderPassport();
+            if(v === 'home') renderMyPoints();
+        }
+
+        function onHash() {
+            const x = location.hash.replace(/^#\/?/, '') || 'home';
+            show(x);
+        }
+
+        window.addEventListener('hashchange', onHash);
+        window.addEventListener('load', onHash);
+
+        [span_4](start_span)// 데이터 처리[span_4](end_span)
+        function getLS(k, fb) { try { return JSON.parse(localStorage.getItem(k)) ?? fb } catch { return fb } }
+        function setLS(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+        function mergedMedia() {
+            const local = getLS('pass_media', {});
+            const out = {};
+            [2,3,4,5,6,7,8,9,10,11,12].forEach(m => {
+                out[m] = [...(local[m] || [])];
+            });
+            return out;
+        }
+
+        [span_5](start_span)//[span_5](end_span) 여권 렌더링 수정
+        function renderPassport() {
+            const grid = byId('months-grid');
+            if (!grid) return;
+            grid.innerHTML = "";
+            const mmd = mergedMedia();
+            
+            for (let m = 2; m <= 12; m++) {
+                const hasData = mmd[m] && mmd[m].length > 0;
+                const card = document.createElement('div');
+                card.className = 'month';
+                card.innerHTML = `
+                    <h3>${m}월</h3>
+                    <div class="thumb">${hasData ? '대표 썸네일' : '+ 사진 추가'}</div>
+                    <div class="caption">${hasData ? mmd[m][0].cap : '설명 없음'}</div>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        function renderMyPoints() {
+            const pts = getLS('pass_points', {total: 0});
+            if(byId('my-points')) byId('my-points').textContent = pts.total;
+            if(byId('my-points-dup')) byId('my-points-dup').textContent = pts.total;
+        }
+
+        [span_6](start_span)//[span_6](end_span) 업로드 기능 간단 구현
+        byId('btn-upload')?.addEventListener('click', () => {
+            const month = byId('up-month').value;
+            const caption = byId('up-caption').value || '활동 기록';
+            
+            const media = getLS('pass_media', {});
+            if(!media[month]) media[month] = [];
+            media[month].push({cap: caption, ts: Date.now()});
+            setLS('pass_media', media);
+            
+            alert(month + '월 활동이 제출되었습니다!');
+            location.hash = '#/passport';
+        });
+    </script>
 </body>
- 
-
 </html>
