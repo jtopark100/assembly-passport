@@ -3,31 +3,75 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <title>조립1부 문화여권</title>
+    <title>ASSEMBLY 1 - Premium Culture Passport</title>
     <style>
-        :root { --primary: #0a235b; --accent: #f39c12; --bg: #f8f9fa; --text: #2c3e50; }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); padding-bottom: 50px; }
-        header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 10; }
-        .nav-bar { display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; }
-        .nav-link { color: white; text-decoration: none; font-size: 13px; background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 15px; white-space: nowrap; }
-        
-        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
-        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        
-        /* 여권 그리드 디자인 */
-        .passport-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .month-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #ddd; position: relative; min-height: 180px; }
-        .month-label { position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.6); color: white; padding: 2px 8px; border-radius: 5px; font-size: 12px; z-index: 2; }
-        .passport-img { width: 100%; height: 150px; object-fit: cover; background: #eee; display: block; }
-        .no-img { height: 150px; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 12px; border-bottom: 1px solid #eee; }
-        .caption-text { padding: 8px; font-size: 12px; color: #555; background: #fff; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&display=swap');
 
-        /* 업로드 폼 */
-        .upload-field { margin-bottom: 15px; }
-        .upload-field label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
-        .btn-submit { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        :root {
+            --primary: #051435; --gold: #c5a059; --bg: #f2f2f2;
+            --white: #ffffff; --text: #1a1a1a; --danger: #e74c3c;
+        }
+
+        body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 60px; }
         
+        /* 고급 헤더 디자인 */
+        header { 
+            background: linear-gradient(135deg, var(--primary), #102a6b); 
+            color: var(--gold); padding: 25px 20px; text-align: center;
+            border-bottom: 3px solid var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        header h1 { margin: 0; font-size: 22px; letter-spacing: 2px; font-family: 'Noto Serif KR', serif; }
+
+        /* 네비게이션 */
+        .nav-bar { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+        .nav-link { color: white; text-decoration: none; font-size: 14px; opacity: 0.8; transition: 0.3s; }
+        .nav-link:hover { color: var(--gold); opacity: 1; }
+
+        .container { padding: 20px 15px; max-width: 600px; margin: 0 auto; }
+        
+        /* 프리미엄 카드 스타일 */
+        .card { 
+            background: var(--white); border-radius: 0; border-left: 5px solid var(--gold);
+            padding: 25px; box-shadow: 5px 5px 20px rgba(0,0,0,0.05); margin-bottom: 20px;
+        }
+
+        /* 랭킹 스타일 */
+        .rank-item { 
+            display: flex; justify-content: space-between; padding: 15px; 
+            border-bottom: 1px solid #eee; align-items: center; 
+        }
+        .rank-number { font-weight: bold; color: var(--gold); width: 30px; }
+
+        /* 여권 그리드 & 스탬프 디자인 */
+        .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .month-card { 
+            background: white; border: 1px solid var(--gold); overflow: hidden; 
+            position: relative; cursor: pointer; transition: 0.3s;
+        }
+        .passport-img { width: 100%; height: 160px; object-fit: cover; filter: sepia(20%); }
+        
+        /* 중요: PASS 스탬프 아트 배지 */
+        .stamp-badge {
+            position: absolute; top: 20%; left: 20%; width: 80px; height: 80px;
+            border: 3px solid rgba(197, 160, 89, 0.8); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transform: rotate(-25deg); color: rgba(197, 160, 89, 0.9);
+            font-family: 'Noto Serif KR', serif; font-weight: bold; font-size: 20px;
+            pointer-events: none; border-style: double; box-shadow: 0 0 5px rgba(197, 160, 89, 0.5);
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(1px);
+        }
+
+        /* 상세 보기 모달 */
+        .modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); z-index: 1000; padding: 20px; overflow-y: auto;
+        }
+        .modal-content { background: white; max-width: 500px; margin: auto; padding: 20px; border-radius: 10px; }
+
+        /* 관리자 전용 버튼 */
+        .admin-btn { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; margin-top: 5px; }
+        .pass-btn { background: #27ae60; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; margin-left: 5px; }
+
         [data-view] { display: none; }
         [data-view].active { display: block; }
     </style>
@@ -35,117 +79,198 @@
 <body>
 
 <header>
-    <div style="font-weight: bold; font-size: 18px;">ASSEMBLY 1 PASSPORT</div>
+    <h1>ASSEMBLY 1 PASSPORT</h1>
     <nav class="nav-bar">
-        <a href="#/home" class="nav-link">홈</a>
-        <a href="#/passport" class="nav-link">나의 여권</a>
-        <a href="#/upload" class="nav-link">사진 업로드</a>
+        <a href="#/home" class="nav-link">HOME</a>
+        <a href="#/passport" class="nav-link">PASSPORT</a>
+        <a href="#/ranking" class="nav-link">RANKING</a>
+        <a href="#/upload" class="nav-link">UPLOAD</a>
     </nav>
 </header>
 
 <div class="container">
     <div id="view-home" data-view class="active">
         <div class="card">
-            <h2>반가워요! 👋</h2>
-            <p>오늘의 활동 사진을 업로드하고<br>문화여권 스탬프를 채워보세요.</p>
-            <a href="#/upload" style="color: var(--accent); font-weight: bold; text-decoration: none;">지금 업로드하기 →</a>
+            <h2 style="color:var(--primary)">Premium Membership</h2>
+            <p>조립1부만의 특별한 조직문화 여권입니다.<br>활동을 통해 품격을 완성하세요.</p>
+            <button onclick="adminLogin()" style="background:none; border:none; color:#ccc; font-size:10px;">Admin</button>
         </div>
     </div>
 
     <div id="view-passport" data-view>
-        <h2 style="margin-bottom: 15px;">나의 문화 기록</h2>
-        <div class="passport-grid" id="passport-grid">
-            </div>
+        <h2 style="text-align:center; color:var(--primary); letter-spacing:3px;">CULTURE LOG</h2>
+        <div class="passport-grid" id="passport-grid"></div>
+    </div>
+
+    <div id="view-ranking" data-view>
+        <div class="card">
+            <h2 style="color:var(--primary)">Honor Ranking</h2>
+            <div id="rank-list"></div>
+        </div>
     </div>
 
     <div id="view-upload" data-view>
         <div class="card">
-            <h2>인증샷 제출</h2>
-            <div class="upload-field">
-                <label>해당 월</label>
-                <select id="up-month">
-                    <option value="1">1월</option><option value="2">2월</option><option value="3">3월</option>
-                    <option value="4">4월</option><option value="5">5월</option><option value="6">6월</option>
-                    <option value="7">7월</option><option value="8">8월</option><option value="9">9월</option>
-                    <option value="10">10월</option><option value="11">11월</option><option value="12">12월</option>
-                </select>
+            <h2>Activity Report</h2>
+            <div style="margin-bottom:15px;">
+                <label>이름</label>
+                <input type="text" id="up-name" placeholder="성함을 입력하세요">
             </div>
-            <div class="upload-field">
-                <label>사진 선택</label>
+            <div style="margin-bottom:15px;">
+                <label>월 선택</label>
+                <select id="up-month"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option></select>
+            </div>
+            <div style="margin-bottom:15px;">
+                <label>활동 유형 (점수 자동 합산)</label><br>
+                <input type="checkbox" id="check-team"> 팀장 참여 (+2)<br>
+                <input type="checkbox" id="check-self"> 자발적 참석 (+3)<br>
+                <input type="checkbox" id="check-multi"> 사진 5장 이상 (+1)
+            </div>
+            <div style="margin-bottom:15px;">
+                <label>대표 사진</label>
                 <input type="file" id="up-file" accept="image/*">
             </div>
-            <div class="upload-field">
-                <label>한 줄 메모</label>
-                <input type="text" id="up-caption" placeholder="활동 내용을 적어주세요">
-            </div>
-            <button class="btn-submit" onclick="savePhoto()">제출하기</button>
+            <button class="rank-number" style="width:100%; background:var(--primary); color:var(--gold); padding:15px; border:none; cursor:pointer;" onclick="saveActivity()">활동 인증 제출</button>
         </div>
     </div>
 </div>
 
+<div id="modal" class="modal" onclick="this.style.display='none'">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div id="modal-body"></div>
+        <button onclick="document.getElementById('modal').style.display='none'" style="width:100%; margin-top:10px; padding:10px;">닫기</button>
+    </div>
+</div>
+
 <script>
-    // 1. 라우팅 (화면 전환)
+    const ADMIN_PW = "1234"; // 관리자 비밀번호 (변경 가능)
+    let isAdmin = false;
+
+    function adminLogin() {
+        const pw = prompt("관리자 비밀번호를 입력하세요.");
+        if(pw === ADMIN_PW) { isAdmin = true; alert("관리자 모드 활성화"); renderPassport(); }
+    }
+
+    // 1. 라우팅
     function router() {
         const hash = location.hash.replace('#/', '') || 'home';
         document.querySelectorAll('[data-view]').forEach(v => v.classList.remove('active'));
         const target = document.getElementById('view-' + hash);
         if(target) target.classList.add('active');
         if(hash === 'passport') renderPassport();
+        if(hash === 'ranking') renderRanking();
     }
     window.addEventListener('hashchange', router);
     window.addEventListener('load', router);
 
-    // 2. 사진 저장 로직 (Base64 변환 후 LocalStorage 저장)
-    function savePhoto() {
+    // 2. 활동 저장 (점수 로직 포함)
+    function saveActivity() {
+        const name = document.getElementById('up-name').value;
         const month = document.getElementById('up-month').value;
-        const caption = document.getElementById('up-caption').value || '기록 없음';
         const fileInput = document.getElementById('up-file');
-        
-        if (!fileInput.files[0]) {
-            alert('사진을 선택해주세요!');
-            return;
-        }
+        if(!name || !fileInput.files[0]) return alert("이름과 사진은 필수입니다.");
+
+        let score = 5; // 기본 참여 점수
+        if(document.getElementById('check-team').checked) score += 2;
+        if(document.getElementById('check-self').checked) score += 3;
+        if(document.getElementById('check-multi').checked) score += 1;
 
         const reader = new FileReader();
         reader.onload = function(e) {
-            const imageData = e.target.result; // 이미지 데이터 (Base64)
-            
-            // 기존 데이터 가져오기
-            const savedData = JSON.parse(localStorage.getItem('culture_photos') || '{}');
-            // 해당 월에 사진 저장
-            savedData[month] = {
-                img: imageData,
-                cap: caption,
+            const activities = JSON.parse(localStorage.getItem('assembly_data') || '[]');
+            activities.push({
+                id: Date.now(),
+                name, month, score, 
+                img: e.target.result,
+                isPassed: false,
                 date: new Date().toLocaleDateString()
-            };
-            
-            localStorage.setItem('culture_photos', JSON.stringify(savedData));
-            alert(month + '월 사진이 등록되었습니다!');
-            location.hash = '#/passport'; // 여권 페이지로 이동
+            });
+            localStorage.setItem('assembly_data', JSON.stringify(activities));
+            alert("활동이 제출되었습니다.");
+            location.hash = "#/passport";
         };
         reader.readAsDataURL(fileInput.files[0]);
     }
 
-    // 3. 여권 화면에 이미지 렌더링
+    // 3. 여권 보기 (스탬프 및 관리 기능)
     function renderPassport() {
         const grid = document.getElementById('passport-grid');
         grid.innerHTML = '';
-        const savedData = JSON.parse(localStorage.getItem('culture_photos') || '{}');
+        const data = JSON.parse(localStorage.getItem('assembly_data') || '[]');
 
-        for(let m=1; m<=12; m++) {
-            const data = savedData[m];
-            const box = document.createElement('div');
-            box.className = 'month-card';
-            
-            box.innerHTML = `
-                <div class="month-label">${m}월</div>
-                ${data 
-                    ? `<img src="${data.img}" class="passport-img">` 
-                    : `<div class="no-img">미등록</div>`}
-                <div class="caption-text">${data ? data.cap : '활동을 등록하세요'}</div>
+        data.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'month-card';
+            div.onclick = () => showDetail(item);
+            div.innerHTML = `
+                <img src="${item.img}" class="passport-img">
+                <div style="padding:10px; font-size:12px;"><b>${item.month}월</b> - ${item.name}</div>
+                ${item.isPassed ? '<div class="stamp-badge">PASS</div>' : ''}
+                ${isAdmin ? `
+                    <div style="padding:5px;">
+                        <button class="admin-btn" onclick="deleteItem(${item.id}, event)">삭제</button>
+                        <button class="pass-btn" onclick="togglePass(${item.id}, event)">PASS 스탬프</button>
+                    </div>
+                ` : ''}
             `;
-            grid.appendChild(box);
-        }
+            grid.appendChild(div);
+        });
+    }
+
+    // 4. 관리자 기능 (삭제 및 스탬프)
+    function deleteItem(id, e) {
+        e.stopPropagation();
+        let data = JSON.parse(localStorage.getItem('assembly_data') || '[]');
+        data = data.filter(i => i.id !== id);
+        localStorage.setItem('assembly_data', JSON.stringify(data));
+        renderPassport();
+    }
+
+    function togglePass(id, e) {
+        e.stopPropagation();
+        let data = JSON.parse(localStorage.getItem('assembly_data') || '[]');
+        const item = data.find(i => i.id === id);
+        if(item) item.isPassed = !item.isPassed;
+        localStorage.setItem('assembly_data', JSON.stringify(data));
+        renderPassport();
+    }
+
+    // 5. 상세 보기 모달
+    function showDetail(item) {
+        const modal = document.getElementById('modal');
+        const body = document.getElementById('modal-body');
+        body.innerHTML = `
+            <img src="${item.img}" style="width:100%; border-radius:10px;">
+            <h3>${item.month}월 활동 보고</h3>
+            <p>성함: ${item.name}</p>
+            <p>획득 점수: ${item.score}점</p>
+            <p>인증 날짜: ${item.date}</p>
+        `;
+        modal.style.display = 'block';
+    }
+
+    // 6. 랭킹 시스템
+    function renderRanking() {
+        const list = document.getElementById('rank-list');
+        list.innerHTML = '';
+        const data = JSON.parse(localStorage.getItem('assembly_data') || '[]');
+        
+        // 이름별 점수 합산
+        const userScores = data.reduce((acc, curr) => {
+            acc[curr.name] = (acc[curr.name] || 0) + curr.score;
+            return acc;
+        }, {});
+
+        const sorted = Object.entries(userScores).sort((a,b) => b[1] - a[1]);
+
+        sorted.forEach((u, i) => {
+            list.innerHTML += `
+                <div class="rank-item">
+                    <span><span class="rank-number">${i+1}</span> ${u[0]}</span>
+                    <b>${u[1]}점</b>
+                </div>
+            `;
+        });
     }
 </script>
 
