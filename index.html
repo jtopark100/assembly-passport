@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <title>조립1부 문화여권 - 공용 시스템</title>
+    <title>조립1부 문화여권 - 프리미엄</title>
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
@@ -12,102 +12,133 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&display=swap');
         :root { --primary: #051435; --gold: #c5a059; --bg: #f4f4f4; --white: #ffffff; }
         body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--bg); color: #333; padding-bottom: 80px; }
-        header { background: linear-gradient(135deg, var(--primary), #102a6b); color: var(--gold); padding: 20px; text-align: center; border-bottom: 3px solid var(--gold); }
-        header h1 { margin: 0; font-size: 20px; font-family: 'Noto Serif KR', serif; }
+        
+        /* [3번 요청] 이전의 세련된 헤더/홈 디자인 복구 */
+        header { background: linear-gradient(135deg, var(--primary), #102a6b); color: var(--gold); padding: 30px 20px; text-align: center; border-bottom: 3px solid var(--gold); }
+        header h1 { margin: 0; font-size: 24px; font-family: 'Noto Serif KR', serif; letter-spacing: 2px; }
+        header p { margin: 10px 0 0; font-size: 14px; opacity: 0.8; color: white; }
+
         .container { padding: 20px 15px; max-width: 600px; margin: 0 auto; }
-        .card { background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
-        
-        /* 랭킹 시상대 */
-        .podium { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 30px 0; min-height: 180px; }
-        .rank-box { text-align: center; width: 85px; }
-        .rank-box .bar { border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; justify-content: center; color: white; font-weight: bold; padding-bottom: 10px; font-size: 14px; }
-        .gold-bar { height: 110px; background: linear-gradient(to top, #b8860b, #ffd700); border: 2px solid var(--gold); }
-        .silver-bar { height: 80px; background: linear-gradient(to top, #707070, #c0c0c0); }
-        .bronze-bar { height: 60px; background: linear-gradient(to top, #8b4513, #cd7f32); }
+        .card { background: var(--white); border-radius: 15px; padding: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.05); }
 
-        /* 여권 그리드 */
-        .passport-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .month-box { background: white; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; position: relative; min-height: 160px; cursor: pointer; }
-        .month-img { width: 100%; height: 110px; object-fit: cover; background: #eee; }
-        .stamp-badge { position: absolute; top: 10px; left: 10px; width: 65px; height: 65px; border: 3px double var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: rotate(-20deg); color: var(--gold); font-family: 'Noto Serif KR', serif; font-weight: bold; font-size: 18px; background: rgba(255,255,255,0.4); z-index: 5; }
+        /* [2번 요청] 올림픽 단상(Podium) 디자인 강화 */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 40px 0 20px; height: 200px; }
+        .rank-box { text-align: center; width: 90px; display: flex; flex-direction: column; align-items: center; }
+        .medal-icon { font-size: 35px; margin-bottom: 5px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .bar { width: 100%; border-radius: 10px 10px 0 0; display: flex; align-items: flex-end; justify-content: center; color: white; font-weight: bold; padding-bottom: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.1); transition: height 0.5s ease; }
+        .gold-bar { height: 130px; background: linear-gradient(to top, #b8860b, #ffd700); border: 2px solid #fff; }
+        .silver-bar { height: 95px; background: linear-gradient(to top, #707070, #e0e0e0); color: #333; }
+        .bronze-bar { height: 75px; background: linear-gradient(to top, #8b4513, #cd7f32); }
+        .rank-name { font-size: 14px; font-weight: bold; margin-top: 10px; color: var(--primary); }
 
-        /* 네비게이션 */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--primary); display: flex; justify-content: space-around; padding: 15px 0; z-index: 1000; }
-        .bottom-nav a { color: white; text-decoration: none; font-size: 13px; font-weight: bold; }
+        /* 여권 디자인 */
+        .passport-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .month-box { background: white; border-radius: 12px; overflow: hidden; position: relative; min-height: 170px; cursor: pointer; border: 1px solid #eee; transition: transform 0.2s; }
+        .month-box:active { transform: scale(0.97); }
+        .month-img { width: 100%; height: 120px; object-fit: cover; background: #f9f9f9; }
+        .stamp-badge { position: absolute; top: 15px; left: 15px; width: 60px; height: 60px; border: 4px double var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: rotate(-25deg); color: var(--gold); font-family: 'Noto Serif KR', serif; font-weight: bold; font-size: 16px; background: rgba(255,255,255,0.7); z-index: 5; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+
+        /* 공통 UI */
+        .btn { display: block; width: 100%; padding: 15px; border-radius: 10px; text-decoration: none; font-weight: bold; text-align: center; border: none; cursor: pointer; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: var(--gold); }
+        .btn-outline { border: 2px solid var(--primary); color: var(--primary); margin-top: 10px; }
+
+        input, select { width: 100%; padding: 14px; margin-top: 8px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--primary); display: flex; justify-content: space-around; padding: 18px 0; z-index: 1000; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); }
+        .bottom-nav a { color: white; text-decoration: none; font-size: 13px; font-weight: 500; opacity: 0.7; }
+        .bottom-nav a.active-link { opacity: 1; color: var(--gold); }
         
-        input, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
         [data-view] { display: none; } [data-view].active { display: block; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; padding: 20px; overflow-y: auto; box-sizing: border-box; }
-        .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 500px; margin: auto; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; padding: 20px; overflow-y: auto; box-sizing: border-box; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; max-width: 500px; margin: auto; position: relative; }
+        
+        /* [1번 요청] 관리자 전용 스타일 */
+        .admin-only { display: none; border-top: 2px dashed #eee; margin-top: 15px; padding-top: 15px; }
+        .admin-active .admin-only { display: block; }
+        .admin-tag { position: fixed; bottom: 85px; right: 20px; font-size: 11px; color: #ccc; cursor: pointer; padding: 5px; }
     </style>
 </head>
 <body>
 
-<header><h1>조립1부 문화여권</h1></header>
+<header>
+    <h1>조립1부 문화여권</h1>
+    <p>우리 팀의 소중한 순간과 영광의 기록</p>
+</header>
 
 <div class="container">
     <div id="view-home" data-view class="active">
-        <div class="card" style="text-align: center;">
-            <h2 style="color:var(--primary)">실시간 팀 활동</h2>
-            <p>팀원들과 활동 기록을 실시간으로 공유하세요.</p>
-            <a href="#/upload" style="display:block; background:var(--primary); color:white; padding:15px; border-radius:10px; text-decoration:none; font-weight:bold; margin-top:15px;">📸 활동 인증샷 올리기</a>
+        <div class="card" style="text-align: center; padding: 40px 20px;">
+            <div style="font-size: 50px; margin-bottom: 20px;">📸</div>
+            <h2 style="color:var(--primary); margin-bottom: 10px;">활동을 기록하세요</h2>
+            <p style="color: #666; margin-bottom: 30px;">팀원들과 함께한 문화 활동을 공유하고<br>이달의 주인공이 되어보세요.</p>
+            <a href="#/upload" class="btn btn-primary">지금 인증샷 올리기</a>
+            <a href="#/passport" class="btn btn-outline">나의 여권 확인하기</a>
         </div>
     </div>
 
     <div id="view-passport" data-view>
-        <h2 style="text-align:center; color:var(--primary);">월별 활동 여권</h2>
+        <h2 style="text-align:center; color:var(--primary); margin-bottom:20px;">월별 문화 기록</h2>
         <div class="passport-grid" id="passport-grid"></div>
     </div>
 
     <div id="view-ranking" data-view>
-        <h2 style="text-align:center; color:var(--primary);">명예의 전당</h2>
-        <div class="podium" id="podium-area"></div>
-        <div class="card"><div id="rank-list"></div></div>
+        <h2 style="text-align:center; color:var(--primary); margin-bottom:0;">명예의 전당</h2>
+        <div class="podium-container" id="podium-area">
+            </div>
+        <div class="card" style="padding: 10px;"><div id="rank-list"></div></div>
     </div>
 
     <div id="view-upload" data-view>
         <div class="card">
-            <h2>활동 기록 제출</h2>
-            <div style="margin-bottom:12px;">
-                <label>참여자 성함</label>
-                <input type="text" id="up-name" placeholder="본인의 이름을 입력하세요">
+            <h2 style="margin-top:0;">인증샷 제출</h2>
+            <div style="margin-bottom:15px;">
+                <label>이름</label>
+                <input type="text" id="up-name" placeholder="본인 성함을 입력하세요">
             </div>
-            <div style="margin-bottom:12px;">
+            <div style="margin-bottom:15px;">
                 <label>활동 월</label>
                 <select id="up-month">
                     <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}월</option>`)</script>
                 </select>
             </div>
-            <div style="margin-bottom:12px;">
+            <div style="margin-bottom:15px;">
                 <label>활동 내용</label>
-                <input type="text" id="up-content" placeholder="무엇을 했나요?">
+                <input type="text" id="up-content" placeholder="무엇을 하셨나요?">
             </div>
-            <div style="margin-bottom:12px; font-size:14px;">
-                <label><b>추가 점수</b></label><br>
-                <input type="checkbox" id="check-team"> 팀장 참여 (+2점) 
-                <input type="checkbox" id="check-self"> 자발적 참석 (+3점)
+            <div style="margin-bottom:15px; background: #f9f9f9; padding: 15px; border-radius: 10px;">
+                <label style="font-weight: bold; font-size: 14px;">추가 점수</label><br>
+                <div style="margin-top:10px;">
+                    <input type="checkbox" id="check-team" style="width:auto;"> 팀장 참여 (+2) &nbsp;&nbsp;
+                    <input type="checkbox" id="check-self" style="width:auto;"> 자발적 참석 (+3)
+                </div>
             </div>
-            <div style="margin-bottom:12px;">
-                <label>사진 업로드 (여러 장 가능)</label>
+            <div style="margin-bottom:20px;">
+                <label>사진 선택 (여러 장 선택 가능)</label>
                 <input type="file" id="up-files" accept="image/*" multiple>
             </div>
-            <button onclick="saveToFirebase()" id="btn-submit" style="width:100%; background:var(--primary); color:var(--gold); padding:15px; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">실시간 서버로 전송</button>
+            <button onclick="saveToFirebase()" id="btn-submit" class="btn btn-primary">서버로 전송하기</button>
         </div>
     </div>
 </div>
 
 <nav class="bottom-nav">
-    <a href="#/home">홈</a><a href="#/passport">여권</a><a href="#/ranking">랭킹</a><a href="#/upload">업로드</a>
+    <a href="#/home" id="link-home">홈</a>
+    <a href="#/passport" id="link-passport">여권</a>
+    <a href="#/ranking" id="link-ranking">랭킹</a>
+    <a href="#/upload" id="link-upload">업로드</a>
 </nav>
+
+<div class="admin-tag" onclick="adminLogin()">Admin</div>
 
 <div id="modal" class="modal" onclick="this.style.display='none'">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div id="modal-body"></div>
-        <button onclick="document.getElementById('modal').style.display='none'" style="width:100%; margin-top:15px; padding:10px;">닫기</button>
+        <button onclick="document.getElementById('modal').style.display='none'" class="btn btn-outline" style="margin-top:20px;">닫기</button>
     </div>
 </div>
 
 <script>
+    // Firebase 설정
     const firebaseConfig = {
         apiKey: "AIzaSyC9wLc0ei0c9r5PR7I4MPvGDTgoBB4AKGY",
         databaseURL: "https://assembly-passport-default-rtdb.firebaseio.com",
@@ -118,36 +149,47 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // [1번 요청] 관리자 권한 복구 (비밀번호: 1234)
+    let isAdmin = false;
+    function adminLogin() {
+        const pw = prompt("관리자 비밀번호를 입력하세요.");
+        if(pw === "1234") {
+            isAdmin = true;
+            document.body.classList.add('admin-active');
+            alert("관리자 모드가 활성화되었습니다.");
+            if(location.hash === "#/passport") renderPassport();
+        }
+    }
+
     function router() {
         const hash = location.hash.replace('#/', '') || 'home';
         document.querySelectorAll('[data-view]').forEach(v => v.classList.remove('active'));
-        const target = document.getElementById('view-' + hash);
-        if(target) target.classList.add('active');
+        document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active-link'));
+        
+        document.getElementById('view-' + hash).classList.add('active');
+        document.getElementById('link-' + hash).classList.add('active-link');
+
         if(hash === 'passport') renderPassport();
         if(hash === 'ranking') renderRanking();
     }
     window.addEventListener('hashchange', router);
     window.addEventListener('load', router);
 
-    // 이미지 압축 함수
     async function compressImage(file) {
-        return new Promise((resolve) => {
+        return new Promise((res) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = (event) => {
+            reader.onload = (e) => {
                 const img = new Image();
-                img.src = event.target.result;
+                img.src = e.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const max_size = 800;
-                    let width = img.width;
-                    let height = img.height;
-                    if (width > height) { if (width > max_size) { height *= max_size / width; width = max_size; } }
-                    else { if (height > max_size) { width *= max_size / height; height = max_size; } }
-                    canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d');
+                    let width = img.width; let height = img.height;
+                    if (width > 800) { height *= 800 / width; width = 800; }
+                    canvas.width = width; canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // 70% 압축
+                    res(canvas.toDataURL('image/jpeg', 0.6));
                 };
             };
         });
@@ -157,88 +199,83 @@
         const name = document.getElementById('up-name').value.trim();
         const month = document.getElementById('up-month').value;
         const files = document.getElementById('up-files').files;
-        if(!name || files.length === 0) return alert("이름과 사진을 입력해주세요!");
+        if(!name || files.length === 0) return alert("이름과 사진을 입력해주세요.");
 
         const btn = document.getElementById('btn-submit');
-        btn.innerText = "이미지 처리 및 전송 중...";
-        btn.disabled = true;
+        btn.innerText = "전송 중..."; btn.disabled = true;
 
         let score = 5;
         if(document.getElementById('check-team').checked) score += 2;
         if(document.getElementById('check-self').checked) score += 3;
         if(files.length >= 5) score += 1;
 
-        const compressedImages = [];
-        for(let file of files) {
-            const compressed = await compressImage(file);
-            compressedImages.push(compressed);
-        }
+        const imgs = [];
+        for(let f of files) imgs.push(await compressImage(f));
 
-        const newData = {
-            id: Date.now(), name, month, score, imgs: compressedImages,
+        const id = Date.now();
+        db.ref('activities/' + id).set({
+            id, name, month, score, imgs,
             content: document.getElementById('up-content').value,
-            isPassed: true,
+            isPassed: false,
             date: new Date().toLocaleDateString()
-        };
-
-        db.ref('activities/' + newData.id).set(newData).then(() => {
-            alert("전송 완료! 공용 여권에서 확인하세요.");
-            btn.innerText = "실시간 서버로 전송";
-            btn.disabled = false;
+        }).then(() => {
+            alert("기록이 전송되었습니다! 승인 후 여권에 표시됩니다.");
             location.hash = "#/passport";
+            btn.innerText = "서버로 전송하기"; btn.disabled = false;
         });
     }
 
     function renderPassport() {
-        db.ref('activities').once('value', snapshot => {
+        db.ref('activities').once('value', snap => {
             const grid = document.getElementById('passport-grid');
             grid.innerHTML = '';
-            const val = snapshot.val();
-            const data = val ? Object.values(val) : [];
+            const data = Object.values(snap.val() || {});
             
             for(let m=1; m<=12; m++) {
-                const mData = data.filter(d => d.month == m);
+                const mData = data.filter(d => d.month == m && (d.isPassed || isAdmin));
                 const box = document.createElement('div');
                 box.className = 'month-box';
                 if(mData.length > 0) {
-                    const last = mData[mData.length-1];
-                    box.onclick = () => showDetail(last);
-                    box.innerHTML = `<img src="${last.imgs[0]}" class="month-img">
-                                     <div style="padding:8px; font-size:12px; font-weight:bold; text-align:center;">${m}월: ${last.name}</div>
-                                     <div class="stamp-badge">PASS</div>`;
+                    const item = mData[mData.length-1];
+                    box.onclick = () => showDetail(item);
+                    box.innerHTML = `<img src="${item.imgs[0]}" class="month-img">
+                                     <div style="padding:10px; font-size:13px; font-weight:bold; text-align:center;">${m}월: ${item.name}</div>
+                                     ${item.isPassed ? '<div class="stamp-badge">PASS</div>' : '<div style="font-size:10px; color:red; text-align:center;">승인대기</div>'}`;
                 } else {
-                    box.innerHTML = `<div style="height:110px; display:flex; align-items:center; justify-content:center; color:#ccc; font-size:12px;">미등록</div>
-                                     <div style="padding:8px; font-size:12px; text-align:center;">${m}월</div>`;
+                    box.innerHTML = `<div style="height:120px; display:flex; align-items:center; justify-content:center; color:#ccc;">비어있음</div>
+                                     <div style="padding:10px; font-size:13px; text-align:center; color:#999;">${m}월</div>`;
                 }
                 grid.appendChild(box);
             }
         });
     }
 
+    // [2번 요청] 올림픽 단상 렌더링 로직
     function renderRanking() {
-        db.ref('activities').once('value', snapshot => {
-            const val = snapshot.val();
-            const data = val ? Object.values(val) : [];
+        db.ref('activities').once('value', snap => {
+            const data = Object.values(snap.val() || {}).filter(d => d.isPassed);
             const scores = data.reduce((acc, c) => { acc[c.name] = (acc[c.name] || 0) + c.score; return acc; }, {});
             const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
             
-            const podiumArea = document.getElementById('podium-area');
+            const podium = document.getElementById('podium-area');
+            // 은, 금, 동 순서로 배열
             const top3 = [sorted[1], sorted[0], sorted[2]];
-            podiumArea.innerHTML = top3.map((u, i) => {
+            
+            podium.innerHTML = top3.map((u, i) => {
                 if(!u) return '<div class="rank-box"></div>';
                 const labels = ['silver', 'gold', 'bronze'];
                 const medals = ['🥈', '🥇', '🥉'];
                 return `<div class="rank-box">
-                            <div style="font-size:30px;">${medals[i]}</div>
+                            <div class="medal-icon">${medals[i]}</div>
                             <div class="bar ${labels[i]}-bar">${u[1]}점</div>
-                            <div style="font-size:12px; font-weight:bold; margin-top:5px;">${u[0]}</div>
+                            <div class="rank-name">${u[0]}</div>
                         </div>`;
             }).join('');
 
             const list = document.getElementById('rank-list');
             list.innerHTML = sorted.map((u, i) => `
-                <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee;">
-                    <span><b>${i+1}위</b> ${u[0]}</span><span>${u[1]}점</span>
+                <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee;">
+                    <span><b>${i+1}위</b> ${u[0]}</span><span style="color:var(--gold); font-weight:bold;">${u[1]}점</span>
                 </div>
             `).join('');
         });
@@ -247,17 +284,37 @@
     function showDetail(item) {
         const body = document.getElementById('modal-body');
         body.innerHTML = `
-            <h3 style="margin-top:0;">${item.month}월 활동 상세</h3>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:15px;">
-                ${item.imgs.map(img => `<img src="${img}" style="width:100%; border-radius:5px;">`).join('')}
+            <h3 style="margin-top:0; color:var(--primary);">${item.month}월 활동 상세</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:20px;">
+                ${item.imgs.map(img => `<img src="${img}" style="width:100%; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1);">`).join('')}
             </div>
-            <div style="font-size:14px; line-height:1.6;">
-                <p><b>참여자:</b> ${item.name}</p>
-                <p><b>내용:</b> ${item.content || '없음'}</p>
-                <p><b>획득 점수:</b> ${item.score}점</p>
+            <div style="line-height:1.8; font-size:15px; color:#444;">
+                <p><b>기록자:</b> ${item.name} | <b>등록일:</b> ${item.date}</p>
+                <p><b>활동내용:</b> ${item.content || '없음'}</p>
+                <p><b>획득점수:</b> ${item.score}점</p>
+                <div class="admin-only">
+                    <button onclick="approveItem(${item.id})" class="btn btn-primary" style="background:#28a745;">✅ 승인(PASS 스탬프 부여)</button>
+                    <button onclick="deleteItem(${item.id})" class="btn btn-outline" style="border-color:#dc3545; color:#dc3545;">🗑️ 기록 삭제</button>
+                </div>
             </div>
         `;
         document.getElementById('modal').style.display = 'block';
+    }
+
+    // 관리자 기능 함수
+    function approveItem(id) {
+        db.ref('activities/' + id).update({ isPassed: true }).then(() => {
+            alert("승인되었습니다.");
+            location.reload();
+        });
+    }
+    function deleteItem(id) {
+        if(confirm("정말 삭제하시겠습니까?")) {
+            db.ref('activities/' + id).remove().then(() => {
+                alert("삭제되었습니다.");
+                location.reload();
+            });
+        }
     }
 </script>
 </body>
