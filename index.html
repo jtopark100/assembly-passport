@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ko">
 <head>
@@ -81,20 +80,19 @@
                 <input type="checkbox" id="is-hidden-checkbox" style="width:20px; height:20px; margin-right:8px;" onchange="toggleHiddenInput()"> ⭐ 숨은 미션으로 등록
             </label>
             <div id="hidden-detail-input" style="display:none; margin-top:10px;">
-                <textarea id="hidden-mission-desc" placeholder="숨은 미션에 대한 상세 설명이나 힌트를 입력하세요 (관리자만 확인 가능)" rows="2"></textarea>
+                <textarea id="hidden-mission-desc" placeholder="숨은 미션 상세 설명 (관리자만 확인)" rows="2"></textarea>
             </div>
-            
             <button onclick="addMissionPool()" id="pool-add-btn" class="btn-main">미션 등록</button>
             <input type="hidden" id="editing-pool-id" value="">
             
             <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
-            <div style="font-size:13px; font-weight:800; margin-bottom:5px;">📅 월별 미션 배정 (일반/숨김 통합 조회)</div>
+            <div style="font-size:13px; font-weight:800; margin-bottom:5px;">📅 월별 미션 배정</div>
             <select id="match-month"><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월</option>`)</script></select>
             <select id="match-mission-select" style="margin-top:8px;"></select>
             <button onclick="setMonthlyMission()" class="btn-main" style="background:var(--kia-red); border:none; color:white;">배정 완료</button>
         </div>
 
-        <h3>🎯 미션 가이드 (일반 미션만 조회)</h3><div id="mission-pool-list"></div>
+        <h3>🎯 미션 가이드</h3><div id="mission-pool-list"></div>
         <h3 style="margin-top:30px;">📅 월별 배정 현황</h3><div id="monthly-history-list"></div>
     </div>
 
@@ -159,9 +157,7 @@
         const editId = document.getElementById('editing-pool-id').value;
         if(!text) return;
         if(editId) { 
-            db.ref('mission_pool/'+editId).update({ text, isHidden, hiddenDesc }).then(() => { 
-                resetMissionInput();
-            }); 
+            db.ref('mission_pool/'+editId).update({ text, isHidden, hiddenDesc }).then(() => { resetMissionInput(); }); 
         } else { db.ref('mission_pool').push({ text, isHidden, hiddenDesc }); resetMissionInput(); }
     }
 
@@ -185,18 +181,13 @@
             const listArea = document.getElementById('mission-pool-list'); const select = document.getElementById('match-mission-select');
             listArea.innerHTML = ''; select.innerHTML = ''; const data = snap.val() || {};
             Object.entries(data).forEach(([id, item]) => {
-                // [로직] 일반 리스트에는 '일반 미션'만 조회 (사용자용)
                 if(!item.isHidden) {
                     const card = document.createElement('div'); card.className = 'card'; card.style="border-left:4px solid var(--passport-gold);";
                     card.innerHTML = `<b>${item.text}</b>`;
                     if(isAdmin) card.innerHTML += `<div class="admin-edit-badge"><button class="btn-sm" style="background:#ffc107;" onclick="editPoolItem('${id}', '${item.text}', ${item.isHidden}, '${item.hiddenDesc||''}')">✏️</button><button class="btn-sm" style="background:#ff4d4d; color:white;" onclick="deletePoolItem('${id}')">🗑️</button></div>`;
                     listArea.appendChild(card);
                 }
-                
-                // [로직] 배정용 select박스에는 '숨은 미션'도 조회 (관리자용)
                 select.innerHTML += `<option value="${item.text}" data-hidden="${item.isHidden}">${item.isHidden ? '[숨김] ' : ''}${item.text}</option>`;
-                
-                // [추가] 관리자인 경우 숨은 미션도 가이드 하단에 따로 표시해줌
                 if(isAdmin && item.isHidden) {
                     const hCard = document.createElement('div'); hCard.className = 'card'; hCard.style="border-left:4px solid var(--success-blue); background:#f0f7ff;";
                     hCard.innerHTML = `<b>⭐ [숨김] ${item.text}</b><div style="font-size:11px; color:#666; margin-top:5px;">${item.hiddenDesc || '설명 없음'}</div>`;
@@ -220,7 +211,6 @@
         });
     }
 
-    // 나머지 함수들 (보존)
     function deletePoolItem(id) { if(confirm("삭제?")) db.ref('mission_pool/'+id).remove(); }
     function setMonthlyMission() {
         const m = document.getElementById('match-month').value;
