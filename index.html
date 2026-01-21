@@ -15,20 +15,29 @@
         .container { padding: 15px; max-width: 500px; margin: 0 auto; box-sizing: border-box; }
         .card { background: white; border-radius: 18px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #efefef; position: relative; }
         
-        /* [미션 탭 전용 디자인] */
+        /* [미션 탭 전용 스타일] */
         .mission-input-group { display: flex; flex-direction: column; gap: 10px; }
         .btn-delete-red { background: #ff4d4f !important; color: white !important; border: none !important; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; }
         .btn-edit-blue { background: #0047ab !important; color: white !important; border: none !important; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; margin-right: 5px; }
         .admin-img-scroll { display: flex; overflow-x: auto; gap: 8px; margin: 10px 0; }
         .admin-img-scroll img { width: 110px; height: 110px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
 
-        /* [하단 탭 모바일 최적화] */
+        /* [체크박스 레이블 최적화] */
+        .checkbox-label { display: flex; align-items: center; gap: 10px; padding: 12px 0; cursor: pointer; user-select: none; width: 100%; }
+        .checkbox-label input[type="checkbox"] { width: 22px; height: 22px; margin: 0; cursor: pointer; accent-color: var(--success-blue); }
+
+        /* [하단 탭] */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); display: flex; padding-bottom: env(safe-area-inset-bottom); height: calc(75px + env(safe-area-inset-bottom)); z-index: 1000; border-top: 2px solid var(--passport-gold); }
         .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 600; }
         .bottom-nav a.active-link { color: var(--passport-gold); font-weight: 800; }
         .nav-icon { font-size: 22px; margin-bottom: 4px; }
 
-        /* [여권/랭킹 유지 스타일] */
+        /* [공통] */
+        [data-view] { display: none; } [data-view].active { display: block; }
+        input, select, textarea { -webkit-appearance: none; border-radius: 12px; border: 1px solid #ddd; padding: 14px; width: 100%; font-size: 16px; box-sizing: border-box; }
+        .btn-main { width: 100%; height: 54px; border-radius: 14px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; font-size: 16px; margin-top: 10px; }
+        
+        /* 랭킹/여권용 기존 스타일 유지 */
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .month-box { background: white; border-radius: 15px; overflow: hidden; height: 160px; border: 1px solid #e5e5ea; position: relative; }
         .podium-box { display: flex; align-items: flex-end; justify-content: center; height: 180px; margin: 45px 0 20px; gap: 10px; }
@@ -36,11 +45,6 @@
         .p-1 { height: 110px; background: var(--passport-gold); }
         .p-2 { height: 80px; background: var(--silver); }
         .p-3 { height: 60px; background: var(--bronze); }
-        .stamp-base { position: absolute; top: 10px; right: 10px; font-family: 'Dancing Script', cursive; font-size: 18px; font-weight: 700; padding: 4px 10px; border-radius: 8px; transform: rotate(-12deg); z-index: 10; background: rgba(255,255,255,0.9); }
-
-        [data-view] { display: none; } [data-view].active { display: block; }
-        input, select, textarea { -webkit-appearance: none; border-radius: 12px; border: 1px solid #ddd; padding: 14px; width: 100%; font-size: 16px; box-sizing: border-box; }
-        .btn-main { width: 100%; height: 54px; border-radius: 14px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; font-size: 16px; margin-top: 10px; }
         #modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--passport-inner); z-index:2000; overflow-y:auto; }
     </style>
 </head>
@@ -57,7 +61,7 @@
             <div style="font-size: 20px; letter-spacing: 2px; font-weight:600;">PASSPORT</div>
         </div>
         <div class="card" style="background: rgba(255,255,255,0.1); border: 1px dashed var(--passport-gold); margin-top: 30px; color: white; text-align: center;">
-            <div id="home-mission-text" style="font-size: 16px; font-weight: 800;">데이터를 불러오는 중...</div>
+            <div id="home-mission-text" style="font-size: 16px; font-weight: 800;">연결 중...</div>
         </div>
     </div>
 </div>
@@ -72,10 +76,12 @@
         <h4 id="mission-editor-title">🛠️ 미션 매니저</h4>
         <div class="mission-input-group">
             <input type="text" id="new-mission-text" placeholder="📝 일반 미션 내용 입력">
-            <label style="display:flex; align-items:center; gap:8px; margin-top:5px; cursor:pointer; width:fit-content;">
-                <input type="checkbox" id="has-hidden-check" style="width:18px; height:18px;" onchange="document.getElementById('hidden-input-field').style.display=this.checked?'block':'none'">
-                <span style="font-size:14px; font-weight:800; color:var(--success-blue);">🕵️ 숨은 미션 설정</span>
+            
+            <label class="checkbox-label" for="has-hidden-check">
+                <input type="checkbox" id="has-hidden-check" onchange="document.getElementById('hidden-input-field').style.display=this.checked?'block':'none'">
+                <span style="font-size:15px; font-weight:800; color:var(--success-blue);">🕵️ 숨은 미션 설정</span>
             </label>
+
             <div id="hidden-input-field" style="display:none; margin-top:5px;">
                 <input type="text" id="hidden-mission-text" placeholder="🔒 숨은 미션 세부 내용 입력">
             </div>
@@ -135,7 +141,6 @@
     </div>
     <div id="modal-body-content"></div>
 </div>
-
 <button onclick="handleAdminAuth()" style="position:fixed; bottom:100px; right:15px; opacity:0; width:50px; height:50px; z-index:9999;">A</button>
 
 <script>
@@ -155,7 +160,7 @@
         router();
     }
 
-    // [미션 탭 로직 - 저장/수정/삭제]
+    // [미션 탭 핵심 스크립트]
     function saveMission() {
         const text = document.getElementById('new-mission-text').value;
         const hidden = document.getElementById('has-hidden-check').checked ? document.getElementById('hidden-mission-text').value : null;
@@ -237,7 +242,6 @@
         db.ref('mission_pool/'+id).once('value', snap => { db.ref('monthly_missions/'+m).set(snap.val()).then(()=>alert("배정 완료")); });
     }
 
-    // [관리자 승인 리스트]
     function loadApprovalList() {
         db.ref('activities').on('value', snap => {
             const list = document.getElementById('pending-list'); list.innerHTML = '';
@@ -249,8 +253,8 @@
                     <div style="background:#fcfaf2; padding:12px; border-radius:10px; font-size:14px; margin-bottom:10px;">💬 ${item.content}</div>
                     <div class="admin-img-scroll">${item.imgs.map(src=>`<img src="${src}">`).join('')}</div>
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-                        <button onclick="approve('${item.id}', 'success')" style="background:var(--success-blue); color:white; border:none; height:45px; border-radius:10px; font-weight:800;">Success</button>
-                        <button onclick="approve('${item.id}', 'pass')" style="background:#28a745; color:white; border:none; height:45px; border-radius:10px; font-weight:800;">Pass</button>
+                        <button onclick="approveAct('${item.id}', 'success')" style="background:var(--success-blue); color:white; border:none; height:45px; border-radius:10px; font-weight:800;">Success</button>
+                        <button onclick="approveAct('${item.id}', 'pass')" style="background:#28a745; color:white; border:none; height:45px; border-radius:10px; font-weight:800;">Pass</button>
                         <button onclick="if(confirm('삭제?')) db.ref('activities/${item.id}').remove()" class="btn-delete-red" style="height:45px; border-radius:10px;">Delete</button>
                     </div>
                 </div>`;
@@ -258,7 +262,7 @@
             document.getElementById('pending-count').innerText = count;
         });
     }
-    function approve(id, type) { db.ref('activities/'+id).update({isPassed:true, approvalType:type}); }
+    function approveAct(id, type) { db.ref('activities/'+id).update({isPassed:true, approvalType:type}); }
 
     // [기존 탭 유지 로직]
     function loadPassport() {
