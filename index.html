@@ -15,38 +15,41 @@
         .container { padding: 15px; max-width: 500px; margin: 0 auto; box-sizing: border-box; }
         .card { background: white; border-radius: 18px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #efefef; position: relative; }
         
+        /* [미션 탭 커스텀 체크박스 - 완벽 복구] */
+        .checkbox-container { display: flex; align-items: center; gap: 12px; padding: 15px 0; cursor: pointer; user-select: none; }
+        .checkbox-container input { display: none; }
+        .custom-checkbox { width: 26px; height: 26px; border: 2px solid #ddd; border-radius: 6px; position: relative; transition: all 0.2s; background: #fff; flex-shrink: 0; }
+        .checkbox-container input:checked + .custom-checkbox { background: var(--success-blue); border-color: var(--success-blue); }
+        .checkbox-container input:checked + .custom-checkbox::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: 900; font-size: 18px; }
+        .btn-delete-red { background: #ff4d4f !important; color: white !important; border: none !important; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; }
+        .btn-edit-blue { background: #0047ab !important; color: white !important; border: none !important; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; margin-right: 5px; }
+
         /* [여권 탭 인스타 피드 스타일] */
         .feed-card { background: white; border-radius: 15px; margin-bottom: 25px; overflow: hidden; border: 1px solid #eee; }
         .feed-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f9f9f9; }
         .feed-user { font-weight: 800; font-size: 14px; color: var(--passport-navy); }
-        .feed-img-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: #000; }
+        .feed-img-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: #f0f0f0; }
         .feed-img-slider::-webkit-scrollbar { display: none; }
-        .feed-img-slider img { width: 100%; flex-shrink: 0; scroll-snap-align: center; aspect-ratio: 1/1; object-fit: contain; }
+        .feed-img-slider img { width: 100%; flex-shrink: 0; scroll-snap-align: center; aspect-ratio: 1/1; object-fit: cover; }
         .feed-content { padding: 15px; }
         .feed-text { font-size: 14px; line-height: 1.5; color: #333; }
-        
+
         /* 이미지 확대 오버레이 */
         #zoom-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:3000; justify-content:center; align-items:center; }
         #zoom-img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .close-zoom { position: absolute; top: 40px; right: 20px; color: white; font-size: 35px; font-weight: bold; cursor: pointer; z-index: 3001; }
 
-        /* [기타 탭 유지 스타일] */
-        .checkbox-container { display: flex; align-items: center; gap: 12px; padding: 15px 0; cursor: pointer; }
-        .checkbox-container input { display: none; }
-        .custom-checkbox { width: 26px; height: 26px; border: 2px solid #ddd; border-radius: 6px; position: relative; background: #fff; }
-        .checkbox-container input:checked + .custom-checkbox { background: var(--success-blue); border-color: var(--success-blue); }
-        .checkbox-container input:checked + .custom-checkbox::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: 900; }
-        
-        .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .month-box { background: white; border-radius: 15px; overflow: hidden; height: 160px; border: 1px solid #e5e5ea; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .stamp-base { position: absolute; top: 10px; right: 10px; font-family: 'Dancing Script', cursive; font-size: 16px; padding: 4px 8px; border-radius: 5px; transform: rotate(-10deg); z-index: 10; background: white; border: 2px double; }
-        
+        /* 공통 네비게이션 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); display: flex; padding-bottom: env(safe-area-inset-bottom); height: calc(75px + env(safe-area-inset-bottom)); z-index: 1000; border-top: 2px solid var(--passport-gold); }
-        .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 11px; }
+        .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 12px; }
         .bottom-nav a.active-link { color: var(--passport-gold); font-weight: 800; }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; }
         [data-view] { display: none; } [data-view].active { display: block; }
-        input, select, textarea { border-radius: 12px; border: 1px solid #ddd; padding: 14px; width: 100%; font-size: 16px; box-sizing: border-box; -webkit-appearance: none; }
-        .btn-main { width: 100%; height: 54px; border-radius: 14px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; }
+        input, select, textarea { -webkit-appearance: none; border-radius: 12px; border: 1px solid #ddd; padding: 14px; width: 100%; font-size: 16px; box-sizing: border-box; }
+        .btn-main { width: 100%; height: 54px; border-radius: 14px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; font-size: 16px; margin-top: 10px; }
+
+        .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .month-box { background: white; border-radius: 15px; overflow: hidden; height: 160px; border: 1px solid #e5e5ea; position: relative; }
         #modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; }
     </style>
 </head>
@@ -75,7 +78,7 @@
     </div>
     <div id="admin-mission-area" style="display:none;" class="card">
         <h4 id="mission-editor-title">🛠️ 미션 매니저</h4>
-        <div class="mission-input-group" style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
             <input type="text" id="new-mission-text" placeholder="📝 일반 미션 내용 입력">
             <label class="checkbox-container">
                 <input type="checkbox" id="has-hidden-check" onchange="document.getElementById('hidden-input-field').style.display=this.checked?'block':'none'">
@@ -97,12 +100,7 @@
     <div class="passport-grid" id="passport-grid"></div>
 </div>
 
-<div id="view-ranking" data-view class="container">
-    <h3>🏆 포인트 랭킹</h3>
-    <div class="podium-box" id="podium-area"></div>
-    <div class="card" id="rank-list" style="padding:0;"></div>
-</div>
-
+<div id="view-ranking" data-view class="container"><h3>🏆 포인트 랭킹</h3><div id="podium-area"></div><div class="card" id="rank-list" style="padding:0;"></div></div>
 <div id="view-upload" data-view class="container">
     <div class="card">
         <h3>📸 활동 인증</h3>
@@ -110,31 +108,29 @@
         <input type="text" id="up-name" placeholder="참여자 이름 (쉼표로 구분)" style="margin-top:10px;">
         <textarea id="up-content" placeholder="활동 소감 및 내용" rows="3" style="margin-top:10px;"></textarea>
         <input type="file" id="up-img" accept="image/*" multiple style="margin-top:15px;">
-        <button onclick="submitUpload()" id="up-btn" class="btn-main" style="margin-top:15px;">스탬프 요청</button>
+        <button onclick="submitUpload()" id="up-btn" class="btn-main">스탬프 요청</button>
     </div>
 </div>
+
+<nav class="bottom-nav">
+    <a href="#/home"><span class="nav-icon">🏠</span>홈</a>
+    <a href="#/mission"><span class="nav-icon">🎯</span>미션</a>
+    <a href="#/passport"><span class="nav-icon">📖</span>여권</a>
+    <a href="#/ranking"><span class="nav-icon">🏆</span>랭킹</a>
+    <a href="#/upload"><span class="nav-icon">📸</span>인증</a>
+</nav>
 
 <div id="modal">
     <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; background:white; position:sticky; top:0; z-index:100; border-bottom:1px solid #eee;">
         <div id="modal-title" style="font-weight:800; font-size:18px;">활동 상세</div>
         <div onclick="closeModal()" style="font-size:30px; cursor:pointer;">&times;</div>
     </div>
-    <div id="modal-body-content" style="padding-bottom:50px;"></div>
+    <div id="modal-body-content"></div>
 </div>
-
 <div id="zoom-overlay">
     <span class="close-zoom" onclick="closeZoom()">&times;</span>
     <img id="zoom-img" src="">
 </div>
-
-<nav class="bottom-nav">
-    <a href="#/home">🏠<br>홈</a>
-    <a href="#/mission">🎯<br>미션</a>
-    <a href="#/passport">📖<br>여권</a>
-    <a href="#/ranking">🏆<br>랭킹</a>
-    <a href="#/upload">📸<br>인증</a>
-</nav>
-
 <button onclick="handleAdminAuth()" style="position:fixed; bottom:100px; right:15px; opacity:0; width:50px; height:50px; z-index:9999;">A</button>
 
 <script>
@@ -144,117 +140,92 @@
     let isAdmin = false;
 
     function handleAdminAuth() { 
-        if(!isAdmin) { if(prompt("코드를 입력하세요")==="assy") { isAdmin=true; router(); } } 
-        else { if(confirm("로그아웃?")) { isAdmin=false; router(); } }
+        if(!isAdmin) { if(prompt("코드를 입력하세요")==="assy") { isAdmin=true; updateUI(); } } 
+        else { if(confirm("로그아웃?")) { isAdmin=false; updateUI(); } }
+    }
+    function updateUI() {
+        document.getElementById('admin-mission-area').style.display = isAdmin?'block':'none';
+        document.getElementById('admin-approval-area').style.display = isAdmin?'block':'none';
+        router();
     }
 
-    /* [여권 탭 핵심 로직] */
-    function loadPassport() {
-        db.ref('activities').on('value', snap => {
-            const grid = document.getElementById('passport-grid'); grid.innerHTML = '';
-            const all = snap.val() ? Object.values(snap.val()) : [];
-            for(let i=1; i<=12; i++) {
-                const app = all.filter(d => d.month == i && d.isPassed);
-                grid.innerHTML += `<div class="month-box" onclick="openDetail(${i})">
-                    ${app.length > 0 ? `
-                        <img src="${app[0].imgs[0]}" style="width:100%; height:120px; object-fit:cover;">
-                        <div class="stamp-base" style="color:var(--kia-red); border-color:var(--kia-red);">COMPLETED</div>
-                        <div style="text-align:center; padding:8px; font-weight:800; font-size:14px;">${i}월 활동</div>
-                    ` : `
-                        <div style="height:120px; background:#f9f9f9; display:flex; align-items:center; justify-content:center; color:#ccc; font-size:40px;">?</div>
-                        <div style="text-align:center; padding:8px; color:#999; font-size:14px;">${i}월</div>
-                    `}
-                </div>`;
-            }
-        });
-    }
-
-    function openDetail(month) {
-        document.getElementById('modal-title').innerText = `${month}월 활동 피드`;
-        db.ref('activities').once('value', snap => {
-            const filtered = Object.values(snap.val()||{}).filter(d => d.month == month && d.isPassed);
-            const body = document.getElementById('modal-body-content'); body.innerHTML = '';
-            
-            if(filtered.length === 0) {
-                body.innerHTML = `<div style="text-align:center; padding:100px 20px; color:#999;">아직 인증된 활동이 없습니다.</div>`;
-            }
-
-            filtered.forEach(item => {
-                body.innerHTML += `
-                <div class="feed-card">
-                    <div class="feed-header">
-                        <div class="feed-user">👤 ${item.memberDetails.map(m=>m.name).join(', ')}</div>
-                        ${isAdmin ? `<button onclick="deleteActivity('${item.id}')" style="background:#ff4d4f; color:white; border:none; padding:5px 10px; border-radius:5px; font-size:11px; font-weight:800;">Delete</button>` : ''}
-                    </div>
-                    <div class="feed-img-slider">
-                        ${item.imgs.map(src => `<img src="${src}" onclick="zoomImage('${src}')">`).join('')}
-                    </div>
-                    <div class="feed-content">
-                        <div class="feed-text"><b>${item.memberDetails.map(m=>m.name).join(', ')}</b> ${item.content}</div>
-                        <div style="font-size:11px; color:#999; margin-top:8px;">조립1부 문화 활동 인증됨</div>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('modal').style.display='block';
-        });
-    }
-
-    function deleteActivity(id) {
-        if(confirm("이 게시물을 삭제하시겠습니까? 포인트 산정에서 제외됩니다.")) {
-            db.ref('activities/' + id).remove().then(() => {
-                alert("삭제되었습니다.");
-                closeModal();
-            });
-        }
-    }
-
-    /* 이미지 줌 기능 */
-    function zoomImage(src) {
-        document.getElementById('zoom-img').src = src;
-        document.getElementById('zoom-overlay').style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // 스크롤 방지
-    }
-    function closeZoom() {
-        document.getElementById('zoom-overlay').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-
-    /* [기타 탭 로직 - 기존 기능 보존] */
+    /* [미션 탭 로직 - 복구] */
     function saveMission() {
         const text = document.getElementById('new-mission-text').value;
         const hidden = document.getElementById('has-hidden-check').checked ? document.getElementById('hidden-mission-text').value : null;
         const editId = document.getElementById('editing-mission-id').value;
+        if(!text) return alert("내용 입력!");
         if(editId) db.ref('mission_pool/'+editId).update({text, hidden}).then(() => resetMissionEditor());
         else db.ref('mission_pool').push({text, hidden}).then(() => resetMissionEditor());
     }
-
+    function enterEditMode(id, text, hidden) {
+        window.scrollTo(0,0);
+        document.getElementById('mission-editor-title').innerText = "✏️ 미션 수정 중";
+        document.getElementById('new-mission-text').value = text;
+        if(hidden) { document.getElementById('has-hidden-check').checked = true; document.getElementById('hidden-input-field').style.display = 'block'; document.getElementById('hidden-mission-text').value = hidden; }
+        document.getElementById('editing-mission-id').value = id;
+        document.getElementById('mission-save-btn').innerText = "💾 수정 완료";
+        document.getElementById('mission-cancel-btn').style.display = 'block';
+    }
+    function resetMissionEditor() {
+        document.getElementById('mission-editor-title').innerText = "🛠️ 미션 매니저";
+        document.getElementById('new-mission-text').value=''; document.getElementById('hidden-mission-text').value='';
+        document.getElementById('has-hidden-check').checked=false; document.getElementById('hidden-input-field').style.display='none';
+        document.getElementById('editing-mission-id').value=''; document.getElementById('mission-save-btn').innerText="✨ 미션 등록하기";
+        document.getElementById('mission-cancel-btn').style.display='none';
+    }
     function loadMissions() {
         db.ref('mission_pool').on('value', snap => {
             const list = document.getElementById('mission-pool-list'); list.innerHTML = '';
             Object.entries(snap.val()||{}).forEach(([id, item]) => {
                 list.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div><b>📌 ${item.text}</b></div>
-                    ${isAdmin ? `<div><button onclick="db.ref('mission_pool/${id}').remove()" style="background:red; color:white; border:none; padding:5px 10px; border-radius:8px;">Delete</button></div>` : ''}
+                    <div style="flex:1;"><b>📌 ${item.text}</b></div>
+                    ${isAdmin ? `<div><button onclick="enterEditMode('${id}','${item.text}',${item.hidden?'\''+item.hidden+'\'':'null'})" class="btn-edit-blue">Edit</button><button onclick="db.ref('mission_pool/${id}').remove()" class="btn-delete-red">Del</button></div>` : ''}
                 </div>`;
             });
         });
     }
 
+    /* [여권 탭 로직 - 인스타 스타일] */
+    function loadPassport() {
+        db.ref('activities').on('value', snap => {
+            const grid = document.getElementById('passport-grid'); grid.innerHTML = '';
+            const all = Object.values(snap.val()||{});
+            for(let i=1; i<=12; i++) {
+                const app = all.filter(d => d.month == i && d.isPassed);
+                grid.innerHTML += `<div class="month-box" onclick="openDetail(${i})">
+                    ${app.length > 0 ? `<img src="${app[0].imgs[0]}" style="width:100%; height:120px; object-fit:cover;"><div style="text-align:center; padding:8px; font-weight:800;">${i}월 활동</div>` : `<div style="height:120px; background:#f4f4f4;"></div><div style="text-align:center; padding:8px; color:#ccc;">${i}월</div>`}
+                </div>`;
+            }
+        });
+    }
+    function openDetail(month) {
+        db.ref('activities').once('value', snap => {
+            const filtered = Object.values(snap.val()||{}).filter(d => d.month == month && d.isPassed);
+            const body = document.getElementById('modal-body-content'); body.innerHTML = '';
+            filtered.forEach(item => {
+                body.innerHTML += `<div class="feed-card">
+                    <div class="feed-header"><div class="feed-user">👤 ${item.memberDetails.map(m=>m.name).join(', ')}</div>
+                    ${isAdmin ? `<button onclick="deleteAct('${item.id}')" class="btn-delete-red">Delete</button>` : ''}</div>
+                    <div class="feed-img-slider">${item.imgs.map(s => `<img src="${s}" onclick="zoomImage('${s}')">`).join('')}</div>
+                    <div class="feed-content"><div class="feed-text"><b>${item.memberDetails.map(m=>m.name).join(', ')}</b> ${item.content}</div></div>
+                </div>`;
+            });
+            document.getElementById('modal').style.display='block';
+        });
+    }
+    function deleteAct(id) { if(confirm("삭제하시겠습니까?")) db.ref('activities/'+id).remove().then(()=>closeModal()); }
+    function zoomImage(src) { document.getElementById('zoom-img').src=src; document.getElementById('zoom-overlay').style.display='flex'; }
+    function closeZoom() { document.getElementById('zoom-overlay').style.display='none'; }
+
+    /* 나머지 로직 유지 */
     function loadRanking() {
         db.ref('activities').on('value', snap => {
-            const uMap = {}; Object.values(snap.val()||{}).forEach(d => {
-                if(d.isPassed) d.memberDetails.forEach(m => { uMap[m.name] = (uMap[m.name]||0) + m.score; });
-            });
+            const uMap = {}; Object.values(snap.val()||{}).forEach(d => { if(d.isPassed) d.memberDetails.forEach(m => { uMap[m.name] = (uMap[m.name]||0) + m.score; }); });
             const sorted = Object.entries(uMap).sort((a,b)=>b[1]-a[1]);
-            const podium = document.getElementById('podium-area');
-            if(sorted.length >= 1) {
-                const t1=sorted[0], t2=sorted[1]||["-",0], t3=sorted[2]||["-",0];
-                podium.innerHTML = `<div style="text-align:center;"><div style="font-size:12px;">${t2[0]}</div><div class="podium-bar p-2">🥈${t2[1]}</div></div><div style="text-align:center;"><div style="font-size:12px; font-weight:800;">${t1[0]}</div><div class="podium-bar p-1">🥇${t1[1]}</div></div><div style="text-align:center;"><div style="font-size:12px;">${t3[0]}</div><div class="podium-bar p-3">🥉${t3[1]}</div></div>`;
-            }
             document.getElementById('rank-list').innerHTML = sorted.map((u,i)=>`<div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;"><span>${i+1}. ${u[0]}</span><b>${u[1]}p</b></div>`).join('');
         });
     }
-
     async function compressImage(file) { return new Promise(res => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = (e) => { const img = new Image(); img.src = e.target.result; img.onload = () => { const canvas = document.createElement('canvas'); const MAX = 800; let w=img.width, h=img.height; if(w>MAX){h*=MAX/w; w=MAX;} canvas.width=w; canvas.height=h; canvas.getContext('2d').drawImage(img,0,0,w,h); res(canvas.toDataURL('image/jpeg',0.7)); }; }; }); }
     async function submitUpload() {
         const btn = document.getElementById('up-btn'); btn.disabled=true;
@@ -264,17 +235,12 @@
         const ref = db.ref('activities').push();
         ref.set({id:ref.key, month:document.getElementById('up-month').value, memberDetails:details, imgs, content:document.getElementById('up-content').value, isPassed:false}).then(()=>{alert("인증 요청됨!"); location.hash="#/passport"; btn.disabled=false;});
     }
-
     function closeModal() { document.getElementById('modal').style.display='none'; }
-
     function router() {
         const h = location.hash.replace('#/', '') || 'home';
         document.querySelectorAll('[data-view]').forEach(v => v.classList.remove('active'));
-        const target = document.getElementById('view-' + h);
-        if(target) target.classList.add('active');
-        if(h==='mission') loadMissions();
-        if(h==='passport') loadPassport();
-        if(h==='ranking') loadRanking();
+        const target = document.getElementById('view-' + h); if(target) target.classList.add('active');
+        if(h==='mission') loadMissions(); if(h==='passport') loadPassport(); if(h==='ranking') loadRanking();
         window.scrollTo(0,0);
     }
     window.addEventListener('hashchange', router); window.addEventListener('load', router);
