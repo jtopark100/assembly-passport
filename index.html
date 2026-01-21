@@ -123,7 +123,18 @@
     function zoomImg(src) { document.getElementById('zoom-img').src = src; document.getElementById('zoom-modal').style.display = 'flex'; document.body.style.overflow = 'hidden'; }
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
-    // [수정/삭제 로직]
+    function addMissionPool() {
+        const text = document.getElementById('new-mission-text').value;
+        const isHidden = document.getElementById('mission-hidden-check').checked;
+        const detail = document.getElementById('new-mission-detail').value;
+        const editId = document.getElementById('editing-pool-id').value;
+        if(!text && !detail) return alert("내용을 입력하세요.");
+        const data = { text, isHidden, detail };
+        if(editId) { db.ref('mission_pool/'+editId).update(data).then(() => { document.getElementById('editing-pool-id').value = ""; document.getElementById('pool-add-btn').innerText = "미션 풀(Pool) 등록"; });
+        } else { db.ref('mission_pool').push(data); }
+        document.getElementById('new-mission-text').value = ''; document.getElementById('new-mission-detail').value = ''; document.getElementById('mission-hidden-check').checked = false; document.getElementById('hidden-input-box').style.display = 'none';
+    }
+
     function editPoolItem(id) {
         const item = missionPoolCache[id];
         document.getElementById('editing-pool-id').value = id;
@@ -135,29 +146,7 @@
         window.scrollTo(0,0);
     }
 
-    function deletePoolItem(id) { if(confirm("이 미션을 영구 삭제하시겠습니까? 배정된 정보는 유지되나 풀에서는 사라집니다.")) db.ref('mission_pool/'+id).remove(); }
-
-    function addMissionPool() {
-        const text = document.getElementById('new-mission-text').value;
-        const isHidden = document.getElementById('mission-hidden-check').checked;
-        const detail = document.getElementById('new-mission-detail').value;
-        const editId = document.getElementById('editing-pool-id').value;
-        if(!text && !detail) return alert("내용을 입력하세요.");
-        
-        const data = { text, isHidden, detail };
-        if(editId) {
-            db.ref('mission_pool/'+editId).update(data).then(() => {
-                document.getElementById('editing-pool-id').value = "";
-                document.getElementById('pool-add-btn').innerText = "미션 풀(Pool) 등록";
-            });
-        } else {
-            db.ref('mission_pool').push(data);
-        }
-        document.getElementById('new-mission-text').value = '';
-        document.getElementById('new-mission-detail').value = '';
-        document.getElementById('mission-hidden-check').checked = false;
-        document.getElementById('hidden-input-box').style.display = 'none';
-    }
+    function deletePoolItem(id) { if(confirm("삭제하시겠습니까?")) db.ref('mission_pool/'+id).remove(); }
 
     function loadMissions() {
         db.ref('mission_pool').on('value', snap => {
@@ -167,16 +156,14 @@
             listArea.innerHTML = ''; select.innerHTML = '';
             Object.keys(missionPoolCache).forEach(id => {
                 const item = missionPoolCache[id];
+                // 일반 미션은 항상 노출, 숨은 미션은 관리자만 노출
                 if(!item.isHidden || isAdmin) {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.style.borderLeft = "4px solid var(--passport-gold)";
+                    card.style.borderLeft = item.isHidden ? "4px solid var(--success-blue)" : "4px solid var(--passport-gold)";
                     card.innerHTML = `<b>${item.isHidden ? '[숨은미션] ' : ''}${item.text || '상세 미션 참고'}</b>`;
                     if(isAdmin) {
-                        card.innerHTML += `<div class="edit-btn-group">
-                            <button class="btn-sm btn-edit" onclick="editPoolItem('${id}')">✏️</button>
-                            <button class="btn-sm btn-del" onclick="deletePoolItem('${id}')">🗑️</button>
-                        </div>`;
+                        card.innerHTML += `<div class="edit-btn-group"><button class="btn-sm btn-edit" onclick="editPoolItem('${id}')">✏️</button><button class="btn-sm btn-del" onclick="deletePoolItem('${id}')">🗑️</button></div>`;
                     }
                     listArea.appendChild(card);
                 }
@@ -194,7 +181,7 @@
                     const isHidden = monthly[i].isHiddenMission;
                     historyArea.innerHTML += `<div class="card" style="padding:12px; border-left:4px solid ${isHidden ? 'var(--success-blue)' : 'var(--passport-navy)'};">
                         <b>${i}월: ${monthly[i].text || ''}</b>
-                        ${isHidden ? `<div style="font-size:12px; color:var(--success-blue); margin-top:5px;">⭐ 숨은미션: ${monthly[i].detail}</div>` : ''}
+                        ${isHidden ? `<div style="font-size:12px; color:var(--success-blue); margin-top:5px; font-weight:700;">⭐ 미션목표: ${monthly[i].detail}</div>` : ''}
                     </div>`;
                     if(i == curM) homeText.innerText = (isHidden ? "⭐ " : "") + (monthly[i].text || monthly[i].detail);
                 }
@@ -202,24 +189,9 @@
         });
     }
 
-    // [기존 로직 보존] 승인/랭킹/여권/업로드
-    function loadApprovalList() {
-        db.ref('activities').on('value', snap => {
-            const data = snap.val() || {}; const listArea = document.getElementById('pending-list');
-            listArea.innerHTML = ''; let count = 0;
-            db.ref('monthly_missions').once('value', mSnap => {
-                const missions = mSnap.val() || {};
-                Object.values(data).filter(d => !d.isPassed).forEach(item => {
-                    count++; const isHiddenMonth = missions[item.month] && missions[item.month].isHiddenMission;
-                    const card = document.createElement('div'); card.className = 'card';
-                    card.innerHTML = `<div style="font-weight:800;">${item.month}월: ${item.names.join(', ')}</div><div style="display:flex; gap:5px; margin:10px 0; overflow-x:auto;">${item.imgs.map(img => `<img src="${img}" style="height:60px; border-radius:5px;" onclick="zoomImg('${img}')">`).join('')}</div><div class="btn-approve-group">${isHiddenMonth ? `<button onclick="approveAct('${item.id}', 'success')" class="btn-blue">⭐ SUCCESS 승인</button>` : `<button onclick="approveAct('${item.id}', 'pass')" class="btn-green">✅ PASS 승인</button>`}<button onclick="approveAct('${item.id}', 'delete')" class="btn-red">삭제</button></div>`;
-                    listArea.appendChild(card);
-                });
-                document.getElementById('pending-count').innerText = count;
-            });
-        });
-    }
-    function approveAct(id, type) { if(type === 'delete') { if(confirm("삭제하시겠습니까?")) db.ref('activities/'+id).remove(); return; } db.ref('activities/'+id).update({ isPassed: true, approvalType: type }); }
+    // 승인/랭킹/여권/업로드 기본 로직 유지
+    function loadApprovalList() { db.ref('activities').on('value', snap => { const data = snap.val() || {}; const listArea = document.getElementById('pending-list'); listArea.innerHTML = ''; let count = 0; db.ref('monthly_missions').once('value', mSnap => { const missions = mSnap.val() || {}; Object.values(data).filter(d => !d.isPassed).forEach(item => { count++; const isHiddenMonth = missions[item.month] && missions[item.month].isHiddenMission; const card = document.createElement('div'); card.className = 'card'; card.innerHTML = `<div style="font-weight:800;">${item.month}월: ${item.names.join(', ')}</div><div style="display:flex; gap:5px; margin:10px 0; overflow-x:auto;">${item.imgs.map(img => `<img src="${img}" style="height:60px; border-radius:5px;" onclick="zoomImg('${img}')">`).join('')}</div><div class="btn-approve-group">${isHiddenMonth ? `<button onclick="approveAct('${item.id}', 'success')" class="btn-blue">⭐ SUCCESS 승인</button>` : `<button onclick="approveAct('${item.id}', 'pass')" class="btn-green">✅ PASS 승인</button>`}<button onclick="approveAct('${item.id}', 'delete')" class="btn-red">삭제</button></div>`; listArea.appendChild(card); }); document.getElementById('pending-count').innerText = count; }); }); }
+    function approveAct(id, type) { if(type === 'delete') { if(confirm("삭제?")) db.ref('activities/'+id).remove(); return; } db.ref('activities/'+id).update({ isPassed: true, approvalType: type }); }
     function setMonthlyMission() { const m = document.getElementById('match-month').value; const selectedText = document.getElementById('match-mission-select').value; let targetHidden = false; let targetDetail = ""; Object.values(missionPoolCache).forEach(p => { if(p.text === selectedText || p.detail === selectedText) { targetHidden = p.isHidden; targetDetail = p.detail || ""; } }); db.ref('monthly_missions/'+m).set({ text: selectedText, isHiddenMission: targetHidden, detail: targetDetail }).then(() => alert(m+"월 매칭 완료!")); }
     function loadRanking() { db.ref('activities').on('value', snap => { const userMap = {}; const hiddenMap = {}; const all = snap.val() ? Object.values(snap.val()) : []; all.forEach(d => { if(d.isPassed && d.memberDetails) { d.memberDetails.forEach(m => { userMap[m.name] = (userMap[m.name] || 0) + m.score; if(d.approvalType === 'success') hiddenMap[m.name] = (hiddenMap[m.name] || 0) + 1; }); } }); const sorted = Object.entries(userMap).sort((a,b) => b[1] - a[1]); const sortedHidden = Object.entries(hiddenMap).sort((a,b) => b[1] - a[1]); document.getElementById('podium-area').innerHTML = sorted.length > 0 ? `<div class="card" style="background:var(--passport-navy); color:var(--passport-gold); text-align:center; font-size:26px; font-weight:800;">🏆 ${sorted[0][0]}</div>` : ''; document.getElementById('rank-list').innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;"><span><b>${i+1}</b> ${u[0]}</span><b>${u[1]}점</b></div>`).join(''); document.getElementById('hidden-rank-list').innerHTML = sortedHidden.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;"><span>⭐ ${u[0]}</span><b>${u[1]}개</b></div>`).join(''); }); }
     function openDetail(month, allData) { const body = document.getElementById('modal-body-content'); body.innerHTML = ''; allData.filter(d => d.month == month && d.isPassed).forEach(item => { const isSuccess = item.approvalType === 'success'; const card = document.createElement('div'); card.style = "background:white; border-bottom:10px solid #f2f2f7; position:relative;"; card.innerHTML = `<div class="stamp-base ${isSuccess ? 'stamp-success' : 'stamp-pass'}">${isSuccess ? 'Success' : 'Passed'}</div><div style="display:flex; overflow-x:auto; background:#000;">${item.imgs.map(img => `<img src="${img}" style="min-width:100%; max-height:420px; object-fit:contain;" onclick="zoomImg('${img}')">`).join('')}</div><div style="padding:20px;"><div style="margin-bottom:10px; display:flex; flex-wrap:wrap; gap:5px;">${item.memberDetails.map(m => `<span style="font-size:12px; font-weight:700; background:#f9f9f9; padding:4px 8px; border-radius:6px; border:1px solid #eee;">${m.name} (+${m.score})</span>`).join('')}</div><div style="line-height:1.6;">${item.content || ""}</div>${isAdmin ? `<button onclick="if(confirm('삭제?')) db.ref('activities/${item.id}').remove().then(()=>closeModal())" style="color:red; margin-top:15px; border:none; background:none; font-size:12px;">기록 삭제</button>` : ''}</div>`; body.appendChild(card); }); document.getElementById('modal').style.display = 'block'; document.body.style.overflow = 'hidden'; }
@@ -235,9 +207,7 @@
         const link = document.getElementById('link-' + hash); if(link) link.classList.add('active-link');
         document.getElementById('app-header').style.display = (hash === 'home') ? 'none' : 'block';
         if(hash === 'mission') { loadMissions(); if(isAdmin) loadApprovalList(); }
-        if(hash === 'passport') loadPassport();
-        if(hash === 'ranking') loadRanking();
-        if(hash === 'home') loadMissions();
+        if(hash === 'passport') loadPassport(); if(hash === 'ranking') loadRanking(); if(hash === 'home') loadMissions();
     }
     window.addEventListener('hashchange', router); window.addEventListener('load', router);
 </script>
