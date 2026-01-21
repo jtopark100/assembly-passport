@@ -27,10 +27,10 @@
         .bottom-nav a.active-link { color: var(--passport-gold); font-weight: 800; }
         .nav-icon { font-size: 22px; margin-bottom: 3px; }
 
-        .btn-approve-group { display: flex; gap: 8px; margin-top: 15px; }
-        .btn-green { flex: 2; background: #28a745; color: white; border: none; height: 48px; border-radius: 12px; font-weight: 800; }
-        .btn-blue { flex: 2; background: var(--success-blue); color: white; border: none; height: 48px; border-radius: 12px; font-weight: 800; }
-        .btn-red { flex: 1; background: #dc3545; color: white; border: none; height: 48px; border-radius: 12px; font-weight: 800; }
+        .btn-approve-group { display: flex; gap: 6px; margin-top: 15px; }
+        .btn-green { flex: 1.5; background: #28a745; color: white; border: none; height: 46px; border-radius: 10px; font-weight: 800; font-size: 14px; }
+        .btn-blue { flex: 1.5; background: var(--success-blue); color: white; border: none; height: 46px; border-radius: 10px; font-weight: 800; font-size: 14px; }
+        .btn-red { flex: 1; background: #dc3545; color: white; border: none; height: 46px; border-radius: 10px; font-weight: 800; font-size: 14px; }
         
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .month-box { background: white; border-radius: 15px; overflow: hidden; height: 150px; border: 1px solid #e5e5ea; position: relative; }
@@ -45,7 +45,6 @@
         .btn-edit { background: #ffc107; color: #000; }
         .btn-del { background: #ff4d4d; color: white; }
 
-        /* 점수판 전용 색상 스타일 */
         .score-tab { flex:1; padding:12px 5px; border-radius:8px; font-size:12px; text-align:center; background:#eee; color:#888; font-weight:800; transition: all 0.2s; }
         .score-tab.active-blue { background: var(--success-blue) !important; color: white !important; }
         .score-tab.active-orange { background: #fd7e14 !important; color: white !important; }
@@ -85,7 +84,7 @@
                     2. 숨은 미션 활성화
                 </label>
                 <div id="hidden-input-box" style="display:none; margin-top:10px;">
-                    <textarea id="new-mission-detail" placeholder="숨은 미션 상세 목표 (월 매칭 시 공개)" rows="2"></textarea>
+                    <textarea id="new-mission-detail" placeholder="숨은 미션 상세 목표" rows="2"></textarea>
                 </div>
             </div>
             <button onclick="addMissionPool()" id="pool-add-btn" class="btn-main" style="height:44px;">미션 풀(Pool) 등록</button>
@@ -236,7 +235,6 @@
         });
     }
 
-    // 점수판 그리기 및 색상 변경 로직
     function drawScoreTabs() {
         const area = document.getElementById('score-tabs-container');
         const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== "");
@@ -244,19 +242,39 @@
         names.forEach((name, idx) => {
             const div = document.createElement('div');
             div.className = 'card'; div.style="padding:12px; margin-bottom:10px; background:#fcfcfc;";
-            div.innerHTML = `
-                <div style="font-size:13px; font-weight:800; margin-bottom:8px; color:var(--passport-navy);">${name} 님의 점수</div>
-                <div class="score-tabs" data-idx="${idx}" style="display:flex; gap:6px;">
-                    <div class="score-tab active-blue" data-val="5" onclick="this.classList.toggle('active-blue')">기본(+5)</div>
-                    <div class="score-tab" data-val="2" onclick="this.classList.toggle('active-orange')">팀장(+2)</div>
-                    <div class="score-tab" data-val="3" onclick="this.classList.toggle('active-green')">자발(+3)</div>
-                </div>`;
+            div.innerHTML = `<div style="font-size:13px; font-weight:800; margin-bottom:8px; color:var(--passport-navy);">${name} 님의 점수</div><div class="score-tabs" data-idx="${idx}" style="display:flex; gap:6px;"><div class="score-tab active-blue" data-val="5" onclick="this.classList.toggle('active-blue')">기본(+5)</div><div class="score-tab" data-val="2" onclick="this.classList.toggle('active-orange')">팀장(+2)</div><div class="score-tab" data-val="3" onclick="this.classList.toggle('active-green')">자발(+3)</div></div>`;
             area.appendChild(div);
         });
     }
 
-    function loadApprovalList() { db.ref('activities').on('value', snap => { const data = snap.val() || {}; const listArea = document.getElementById('pending-list'); listArea.innerHTML = ''; let count = 0; db.ref('monthly_missions').once('value', mSnap => { const missions = mSnap.val() || {}; Object.values(data).filter(d => !d.isPassed).forEach(item => { count++; const isHiddenMonth = missions[item.month] && missions[item.month].isHiddenMission; const card = document.createElement('div'); card.className = 'card'; card.innerHTML = `<div style="font-weight:800;">${item.month}월: ${item.names.join(', ')}</div><div style="display:flex; gap:5px; margin:10px 0; overflow-x:auto;">${item.imgs.map(img => `<img src="${img}" style="height:60px; border-radius:5px;" onclick="zoomImg('${img}')">`).join('')}</div><div class="btn-approve-group">${isHiddenMonth ? `<button onclick="approveAct('${item.id}', 'success')" class="btn-blue">⭐ SUCCESS 승인</button>` : `<button onclick="approveAct('${item.id}', 'pass')" class="btn-green">✅ PASS 승인</button>`}<button onclick="approveAct('${item.id}', 'delete')" class="btn-red">삭제</button></div>`; listArea.appendChild(card); }); document.getElementById('pending-count').innerText = count; }); }); }
-    function approveAct(id, type) { if(type === 'delete') { if(confirm("삭제?")) db.ref('activities/'+id).remove(); return; } db.ref('activities/'+id).update({ isPassed: true, approvalType: type }); }
+    // [승인 버튼 탭 구성 업데이트]
+    function loadApprovalList() {
+        db.ref('activities').on('value', snap => {
+            const data = snap.val() || {};
+            const listArea = document.getElementById('pending-list'); listArea.innerHTML = '';
+            let count = 0;
+            Object.values(data).filter(d => !d.isPassed).forEach(item => {
+                count++;
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div style="font-weight:800;">${item.month}월: ${item.names.join(', ')}</div>
+                    <div style="display:flex; gap:5px; margin:10px 0; overflow-x:auto;">
+                        ${item.imgs.map(img => `<img src="${img}" style="height:70px; border-radius:8px;" onclick="zoomImg('${img}')">`).join('')}
+                    </div>
+                    <div class="btn-approve-group">
+                        <button onclick="approveAct('${item.id}', 'success')" class="btn-blue">⭐ Success</button>
+                        <button onclick="approveAct('${item.id}', 'pass')" class="btn-green">✅ Pass</button>
+                        <button onclick="approveAct('${item.id}', 'delete')" class="btn-red">삭제</button>
+                    </div>
+                `;
+                listArea.appendChild(card);
+            });
+            document.getElementById('pending-count').innerText = count;
+        });
+    }
+
+    function approveAct(id, type) { if(type === 'delete') { if(confirm("삭제하시겠습니까?")) db.ref('activities/'+id).remove(); return; } db.ref('activities/'+id).update({ isPassed: true, approvalType: type }); }
     function setMonthlyMission() { const m = document.getElementById('match-month').value; const selectedText = document.getElementById('match-mission-select').value; let targetHidden = false; let targetDetail = ""; Object.values(missionPoolCache).forEach(p => { if(p.text === selectedText || p.detail === selectedText) { targetHidden = p.isHidden; targetDetail = p.detail || ""; } }); db.ref('monthly_missions/'+m).set({ text: selectedText, isHiddenMission: targetHidden, detail: targetDetail }).then(() => alert(m+"월 매칭 완료!")); }
     function loadRanking() { db.ref('activities').on('value', snap => { const userMap = {}; const hiddenMap = {}; const all = snap.val() ? Object.values(snap.val()) : []; all.forEach(d => { if(d.isPassed && d.memberDetails) { d.memberDetails.forEach(m => { userMap[m.name] = (userMap[m.name] || 0) + m.score; if(d.approvalType === 'success') hiddenMap[m.name] = (hiddenMap[m.name] || 0) + 1; }); } }); const sorted = Object.entries(userMap).sort((a,b) => b[1] - a[1]); const sortedHidden = Object.entries(hiddenMap).sort((a,b) => b[1] - a[1]); document.getElementById('podium-area').innerHTML = sorted.length > 0 ? `<div class="card" style="background:var(--passport-navy); color:var(--passport-gold); text-align:center; font-size:26px; font-weight:800;">🏆 ${sorted[0][0]}</div>` : ''; document.getElementById('rank-list').innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;"><span><b>${i+1}</b> ${u[0]}</span><b>${u[1]}점</b></div>`).join(''); document.getElementById('hidden-rank-list').innerHTML = sortedHidden.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;"><span>⭐ ${u[0]}</span><b>${u[1]}개</b></div>`).join(''); }); }
     async function submitUpload() { const nameVal = document.getElementById('up-name').value.trim(); const files = document.getElementById('up-img').files; if(!nameVal || files.length === 0) return alert("이름과 사진을 입력하세요."); const btn = document.getElementById('up-btn'); btn.disabled = true; const names = nameVal.split(',').map(n => n.trim()); const memberDetails = []; document.querySelectorAll('.score-tabs').forEach((group, i) => { let s = 0; group.querySelectorAll('.score-tab').forEach(t => { if(t.classList.contains('active-blue') || t.classList.contains('active-orange') || t.classList.contains('active-green')) s += parseInt(t.dataset.val); }); memberDetails.push({ name: names[i], score: s }); }); const imgs = []; for(let f of files) { imgs.push(await new Promise(res => { const r = new FileReader(); r.readAsDataURL(f); r.onload = (e) => res(e.target.result); })); } const newRef = db.ref('activities').push(); newRef.set({ id: newRef.key, names, memberDetails, month: document.getElementById('up-month').value, imgs, content: document.getElementById('up-content').value, isPassed: false, timestamp: Date.now() }).then(() => { alert("제출 완료!"); location.hash = "#/passport"; btn.disabled = false; }); }
