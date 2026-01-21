@@ -119,8 +119,9 @@
     function zoomImg(src) { document.getElementById('zoom-img').src = src; document.getElementById('zoom-modal').style.display = 'flex'; document.body.style.overflow = 'hidden'; }
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
+    // 1. 전체 미션 삭제 로직
     async function deletePoolItem(id) { 
-        if(confirm("삭제 시 해당 미션이 배정된 월별 현황에서도 함께 제거됩니다. 삭제할까요?")) {
+        if(confirm("이 미션을 영구 삭제하시겠습니까? 배정된 월별 현황에서도 지워집니다.")) {
             const item = missionPoolCache[id];
             const keyText = item.text || item.detail;
             await db.ref('mission_pool/'+id).remove();
@@ -128,6 +129,21 @@
             const mData = mSnap.val() || {};
             for(let m in mData) { if(mData[m].text === keyText) await db.ref('monthly_missions/'+m).remove(); }
         }
+    }
+
+    // 2. [추가] 월별 미션 삭제 로직
+    function deleteMonthlyMission(month) {
+        if(confirm(month + "월의 미션 배정을 취소하시겠습니까?")) {
+            db.ref('monthly_missions/' + month).remove();
+        }
+    }
+
+    // 3. [추가] 월별 미션 수정 로직 (설정 창으로 값 복사)
+    function editMonthlyMission(month, data) {
+        document.getElementById('match-month').value = month;
+        document.getElementById('match-mission-select').value = data.text;
+        window.scrollTo(0, document.getElementById('admin-mission-area').offsetTop - 50);
+        alert(month + "월 미션 수정 모드입니다. 배정 완료 버튼을 눌러 확정하세요.");
     }
 
     function addMissionPool() {
@@ -179,17 +195,27 @@
             for(let i=1;i<=12;i++){
                 if(monthly[i]) {
                     const isHidden = monthly[i].isHiddenMission;
-                    historyArea.innerHTML += `<div class="card" style="padding:12px; border-left:4px solid ${isHidden ? 'var(--success-blue)' : 'var(--passport-navy)'};">
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style = `padding:12px; border-left:4px solid ${isHidden ? 'var(--success-blue)' : 'var(--passport-navy)'};`;
+                    card.innerHTML = `
                         <b>${i}월: ${monthly[i].text || ''}</b>
                         ${isHidden ? `<div style="font-size:12px; color:var(--success-blue); margin-top:5px; font-weight:700; border-top:1px dashed #eee; padding-top:5px;">⭐ 미션목표: ${monthly[i].detail}</div>` : ''}
-                    </div>`;
+                    `;
+                    if(isAdmin) {
+                        card.innerHTML += `
+                            <div class="edit-btn-group">
+                                <button class="btn-sm btn-edit" onclick='editMonthlyMission(${i}, ${JSON.stringify(monthly[i])})'>✏️</button>
+                                <button class="btn-sm btn-del" onclick='deleteMonthlyMission(${i})'>🗑️</button>
+                            </div>`;
+                    }
+                    historyArea.appendChild(card);
                     if(i == curM) homeText.innerText = (isHidden ? "⭐ " : "") + (monthly[i].text || monthly[i].detail);
                 }
             }
         });
     }
 
-    // [여권탭 상세 조회 기능 - 완벽 복구]
     function openDetail(month, allData) {
         const body = document.getElementById('modal-body-content');
         body.innerHTML = '';
@@ -225,7 +251,6 @@
         });
     }
 
-    // 승인/랭킹/업로드 기본 로직 유지
     function loadApprovalList() { db.ref('activities').on('value', snap => { const data = snap.val() || {}; const listArea = document.getElementById('pending-list'); listArea.innerHTML = ''; let count = 0; db.ref('monthly_missions').once('value', mSnap => { const missions = mSnap.val() || {}; Object.values(data).filter(d => !d.isPassed).forEach(item => { count++; const isHiddenMonth = missions[item.month] && missions[item.month].isHiddenMission; const card = document.createElement('div'); card.className = 'card'; card.innerHTML = `<div style="font-weight:800;">${item.month}월: ${item.names.join(', ')}</div><div style="display:flex; gap:5px; margin:10px 0; overflow-x:auto;">${item.imgs.map(img => `<img src="${img}" style="height:60px; border-radius:5px;" onclick="zoomImg('${img}')">`).join('')}</div><div class="btn-approve-group">${isHiddenMonth ? `<button onclick="approveAct('${item.id}', 'success')" class="btn-blue">⭐ SUCCESS 승인</button>` : `<button onclick="approveAct('${item.id}', 'pass')" class="btn-green">✅ PASS 승인</button>`}<button onclick="approveAct('${item.id}', 'delete')" class="btn-red">삭제</button></div>`; listArea.appendChild(card); }); document.getElementById('pending-count').innerText = count; }); }); }
     function approveAct(id, type) { if(type === 'delete') { if(confirm("삭제?")) db.ref('activities/'+id).remove(); return; } db.ref('activities/'+id).update({ isPassed: true, approvalType: type }); }
     function setMonthlyMission() { const m = document.getElementById('match-month').value; const selectedText = document.getElementById('match-mission-select').value; let targetHidden = false; let targetDetail = ""; Object.values(missionPoolCache).forEach(p => { if(p.text === selectedText || p.detail === selectedText) { targetHidden = p.isHidden; targetDetail = p.detail || ""; } }); db.ref('monthly_missions/'+m).set({ text: selectedText, isHiddenMission: targetHidden, detail: targetDetail }).then(() => alert(m+"월 매칭 완료!")); }
