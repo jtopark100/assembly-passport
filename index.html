@@ -15,18 +15,20 @@
         .container { padding: 15px; max-width: 500px; margin: 0 auto; box-sizing: border-box; }
         .card { background: white; border-radius: 18px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #efefef; position: relative; }
         
-        /* 미션 탭 전용 스타일 */
+        /* [미션 탭 전용 디자인] */
         .mission-input-group { display: flex; flex-direction: column; gap: 10px; }
-        .btn-delete-small { background: #fff1f0; color: #ff4d4f; border: 1px solid #ffa39e; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 800; }
+        .btn-delete-red { background: #ff4d4f !important; color: white !important; border: none !important; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; }
+        .btn-edit-blue { background: #0047ab !important; color: white !important; border: none !important; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; margin-right: 5px; }
         .admin-img-scroll { display: flex; overflow-x: auto; gap: 8px; margin: 10px 0; }
-        .admin-img-scroll img { width: 110px; height: 110px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+        .admin-img-scroll img { width: 110px; height: 110px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
 
-        /* 하단 탭 (모바일 최적화) */
+        /* [하단 탭 모바일 최적화] */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); display: flex; padding-bottom: env(safe-area-inset-bottom); height: calc(75px + env(safe-area-inset-bottom)); z-index: 1000; border-top: 2px solid var(--passport-gold); }
         .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 600; }
         .bottom-nav a.active-link { color: var(--passport-gold); font-weight: 800; }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; }
 
-        /* 핵심 로직 유지 스타일 (여권/랭킹) */
+        /* [여권/랭킹 유지 스타일] */
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .month-box { background: white; border-radius: 15px; overflow: hidden; height: 160px; border: 1px solid #e5e5ea; position: relative; }
         .podium-box { display: flex; align-items: flex-end; justify-content: center; height: 180px; margin: 45px 0 20px; gap: 10px; }
@@ -34,7 +36,8 @@
         .p-1 { height: 110px; background: var(--passport-gold); }
         .p-2 { height: 80px; background: var(--silver); }
         .p-3 { height: 60px; background: var(--bronze); }
-        
+        .stamp-base { position: absolute; top: 10px; right: 10px; font-family: 'Dancing Script', cursive; font-size: 18px; font-weight: 700; padding: 4px 10px; border-radius: 8px; transform: rotate(-12deg); z-index: 10; background: rgba(255,255,255,0.9); }
+
         [data-view] { display: none; } [data-view].active { display: block; }
         input, select, textarea { -webkit-appearance: none; border-radius: 12px; border: 1px solid #ddd; padding: 14px; width: 100%; font-size: 16px; box-sizing: border-box; }
         .btn-main { width: 100%; height: 54px; border-radius: 14px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; font-size: 16px; margin-top: 10px; }
@@ -54,42 +57,44 @@
             <div style="font-size: 20px; letter-spacing: 2px; font-weight:600;">PASSPORT</div>
         </div>
         <div class="card" style="background: rgba(255,255,255,0.1); border: 1px dashed var(--passport-gold); margin-top: 30px; color: white; text-align: center;">
-            <div id="home-mission-text" style="font-size: 16px; font-weight: 800;">데이터를 불러오고 있습니다.</div>
+            <div id="home-mission-text" style="font-size: 16px; font-weight: 800;">데이터를 불러오는 중...</div>
         </div>
     </div>
 </div>
 
 <div id="view-mission" data-view class="container">
     <div id="admin-approval-area" style="display:none; margin-bottom:40px;">
-        <h3 style="color:var(--kia-red);">📢 승인 대기 (<span id="pending-count">0</span>)</h3>
+        <h3 style="color:var(--kia-red);">📢 승인 대기 리스트 (<span id="pending-count">0</span>)</h3>
         <div id="pending-list"></div>
     </div>
 
     <div id="admin-mission-area" style="display:none;" class="card">
-        <h4>🛠️ 미션 매니저</h4>
+        <h4 id="mission-editor-title">🛠️ 미션 매니저</h4>
         <div class="mission-input-group">
-            <input type="text" id="new-mission-text" placeholder="일반 미션 내용 입력">
+            <input type="text" id="new-mission-text" placeholder="📝 일반 미션 내용 입력">
             <label style="display:flex; align-items:center; gap:8px; margin-top:5px; cursor:pointer; width:fit-content;">
                 <input type="checkbox" id="has-hidden-check" style="width:18px; height:18px;" onchange="document.getElementById('hidden-input-field').style.display=this.checked?'block':'none'">
-                <span style="font-size:14px; font-weight:800; color:var(--success-blue);">숨은 미션으로 설정</span>
+                <span style="font-size:14px; font-weight:800; color:var(--success-blue);">🕵️ 숨은 미션 설정</span>
             </label>
             <div id="hidden-input-field" style="display:none; margin-top:5px;">
-                <input type="text" id="hidden-mission-text" placeholder="숨은 미션 세부 내용 입력">
+                <input type="text" id="hidden-mission-text" placeholder="🔒 숨은 미션 세부 내용 입력">
             </div>
-            <button onclick="addMissionPool()" class="btn-main">미션 리스트 등록</button>
+            <input type="hidden" id="editing-mission-id" value="">
+            <button onclick="saveMission()" id="mission-save-btn" class="btn-main">✨ 미션 등록하기</button>
+            <button onclick="resetMissionEditor()" id="mission-cancel-btn" style="display:none; background:#eee; color:#666; border:none; width:100%; height:45px; border-radius:12px; margin-top:5px;">취소</button>
         </div>
         <hr style="margin:25px 0; border:0; border-top:1px solid #eee;">
         <div class="mission-input-group">
-            <label style="font-size:13px; font-weight:800;">월별 미션 매핑</label>
-            <select id="match-month"><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월</option>`)</script></select>
+            <label style="font-size:13px; font-weight:800;">📅 월별 미션 매핑</label>
+            <select id="match-month"><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월 활동 배정</option>`)</script></select>
             <select id="match-mission-select" style="margin-top:8px;"></select>
-            <button onclick="setMonthlyMission()" class="btn-main" style="background:var(--kia-red); border:none; color:white;">매핑 완료</button>
+            <button onclick="setMonthlyMission()" class="btn-main" style="background:var(--kia-red); border:none; color:white;">🔗 매핑 완료</button>
         </div>
     </div>
 
-    <h3>🎯 미션 가이드</h3>
+    <h3>🎯 미션 가이드 리스트</h3>
     <div id="mission-pool-list"></div>
-    <h3 style="margin-top:30px;">📅 월별 배정 현황</h3>
+    <h3 style="margin-top:35px;">📅 월별 미션 배정 현황</h3>
     <div id="monthly-history-list"></div>
 </div>
 
@@ -116,11 +121,11 @@
 </div>
 
 <nav class="bottom-nav">
-    <a href="#/home"><span>🏠</span>홈</a>
-    <a href="#/mission"><span>🎯</span>미션</a>
-    <a href="#/passport"><span>📖</span>여권</a>
-    <a href="#/ranking"><span>🏆</span>랭킹</a>
-    <a href="#/upload"><span>📸</span>인증</a>
+    <a href="#/home"><span class="nav-icon">🏠</span>홈</a>
+    <a href="#/mission"><span class="nav-icon">🎯</span>미션</a>
+    <a href="#/passport"><span class="nav-icon">📖</span>여권</a>
+    <a href="#/ranking"><span class="nav-icon">🏆</span>랭킹</a>
+    <a href="#/upload"><span class="nav-icon">📸</span>인증</a>
 </nav>
 
 <div id="modal">
@@ -139,7 +144,7 @@
     const db = firebase.database();
     let isAdmin = false;
 
-    // 관리자 인증
+    // [관리자 인증]
     function handleAdminAuth() { 
         if(!isAdmin) { if(prompt("코드를 입력하세요")==="assy") { isAdmin=true; updateUI(); } } 
         else { if(confirm("로그아웃 하시겠습니까?")) { isAdmin=false; updateUI(); } }
@@ -150,7 +155,44 @@
         router();
     }
 
-    // [미션 탭 로직]
+    // [미션 탭 로직 - 저장/수정/삭제]
+    function saveMission() {
+        const text = document.getElementById('new-mission-text').value;
+        const hidden = document.getElementById('has-hidden-check').checked ? document.getElementById('hidden-mission-text').value : null;
+        const editId = document.getElementById('editing-mission-id').value;
+        if(!text) return alert("내용을 입력해주세요");
+        if(editId) {
+            db.ref('mission_pool/'+editId).update({text, hidden}).then(() => { alert("수정 완료"); resetMissionEditor(); });
+        } else {
+            db.ref('mission_pool').push({text, hidden}).then(() => { alert("등록 완료"); resetMissionEditor(); });
+        }
+    }
+
+    function enterEditMode(id, text, hidden) {
+        window.scrollTo(0,0);
+        document.getElementById('mission-editor-title').innerText = "✏️ 미션 수정 중";
+        document.getElementById('new-mission-text').value = text;
+        if(hidden) {
+            document.getElementById('has-hidden-check').checked = true;
+            document.getElementById('hidden-input-field').style.display = 'block';
+            document.getElementById('hidden-mission-text').value = hidden;
+        }
+        document.getElementById('editing-mission-id').value = id;
+        document.getElementById('mission-save-btn').innerText = "💾 수정 완료하기";
+        document.getElementById('mission-cancel-btn').style.display = 'block';
+    }
+
+    function resetMissionEditor() {
+        document.getElementById('mission-editor-title').innerText = "🛠️ 미션 매니저";
+        document.getElementById('new-mission-text').value = '';
+        document.getElementById('hidden-mission-text').value = '';
+        document.getElementById('has-hidden-check').checked = false;
+        document.getElementById('hidden-input-field').style.display = 'none';
+        document.getElementById('editing-mission-id').value = '';
+        document.getElementById('mission-save-btn').innerText = "✨ 미션 등록하기";
+        document.getElementById('mission-cancel-btn').style.display = 'none';
+    }
+
     function loadMissions() {
         db.ref('mission_pool').on('value', snap => {
             const list = document.getElementById('mission-pool-list');
@@ -158,8 +200,14 @@
             list.innerHTML = ''; select.innerHTML = '';
             Object.entries(snap.val()||{}).forEach(([id, item]) => {
                 list.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div><b>${item.text}</b>${isAdmin && item.hidden ? `<div style="color:var(--success-blue); font-size:12px; margin-top:4px;">🔒 숨은내용: ${item.hidden}</div>` : ''}</div>
-                    ${isAdmin ? `<button onclick="if(confirm('삭제할까요?')) db.ref('mission_pool/${id}').remove()" class="btn-delete-small">삭제</button>` : ''}
+                    <div style="flex:1; padding-right:10px;">
+                        <b style="font-size:15px;">📌 ${item.text}</b>
+                        ${isAdmin && item.hidden ? `<div style="color:var(--success-blue); font-size:12px; margin-top:4px;">🔒 숨은내용: ${item.hidden}</div>` : ''}
+                    </div>
+                    ${isAdmin ? `<div>
+                        <button onclick="enterEditMode('${id}', '${item.text}', ${item.hidden?`'${item.hidden}'`:'null'})" class="btn-edit-blue">Edit</button>
+                        <button onclick="if(confirm('정말 삭제할까요?')) db.ref('mission_pool/${id}').remove()" class="btn-delete-red">Delete</button>
+                    </div>` : ''}
                 </div>`;
                 select.innerHTML += `<option value="${id}">${item.text}</option>`;
             });
@@ -171,24 +219,15 @@
                 if(data[i]){
                     hist.innerHTML += `<div class="card" style="border-left:5px solid var(--passport-navy); display:flex; justify-content:space-between; align-items:center;">
                         <div style="flex:1;">
-                            <span style="font-weight:800;">${i}월: ${data[i].text}</span>
+                            <span style="font-weight:800;">🗓️ ${i}월: ${data[i].text}</span>
                             ${data[i].hidden ? `<div style="color:var(--success-blue); font-weight:800; font-size:14px; margin-top:5px;">⭐ 숨은미션: ${data[i].hidden}</div>` : ''}
                         </div>
-                        ${isAdmin ? `<button onclick="if(confirm('매핑삭제?')) db.ref('monthly_missions/${i}').remove()" class="btn-delete-small">삭제</button>` : ''}
+                        ${isAdmin ? `<button onclick="if(confirm('매핑 삭제?')) db.ref('monthly_missions/${i}').remove()" class="btn-delete-red">Delete</button>` : ''}
                     </div>`;
                 }
             }
             const curM = new Date().getMonth()+1;
             if(data[curM]) document.getElementById('home-mission-text').innerText = data[curM].text;
-        });
-    }
-
-    function addMissionPool() {
-        const text = document.getElementById('new-mission-text').value;
-        const hidden = document.getElementById('has-hidden-check').checked ? document.getElementById('hidden-mission-text').value : null;
-        if(text) db.ref('mission_pool').push({text, hidden}).then(() => {
-            document.getElementById('new-mission-text').value=''; document.getElementById('hidden-mission-text').value='';
-            document.getElementById('has-hidden-check').checked=false; document.getElementById('hidden-input-field').style.display='none';
         });
     }
 
@@ -198,7 +237,7 @@
         db.ref('mission_pool/'+id).once('value', snap => { db.ref('monthly_missions/'+m).set(snap.val()).then(()=>alert("배정 완료")); });
     }
 
-    // [관리자 승인 로직 - Success/Pass/삭제]
+    // [관리자 승인 리스트]
     function loadApprovalList() {
         db.ref('activities').on('value', snap => {
             const list = document.getElementById('pending-list'); list.innerHTML = '';
@@ -206,13 +245,13 @@
             Object.values(snap.val()||{}).filter(d => !d.isPassed).forEach(item => {
                 count++;
                 list.innerHTML += `<div class="card">
-                    <div style="font-weight:800; margin-bottom:5px;">👥 ${item.memberDetails.map(m=>`${m.name}(${m.score}p)`).join(', ')}</div>
-                    <div style="font-size:14px; color:#444; margin-bottom:10px;">${item.content}</div>
+                    <div style="font-weight:800; margin-bottom:8px;">👥 ${item.memberDetails.map(m=>`${m.name}(${m.score}p)`).join(', ')}</div>
+                    <div style="background:#fcfaf2; padding:12px; border-radius:10px; font-size:14px; margin-bottom:10px;">💬 ${item.content}</div>
                     <div class="admin-img-scroll">${item.imgs.map(src=>`<img src="${src}">`).join('')}</div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:10px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
                         <button onclick="approve('${item.id}', 'success')" style="background:var(--success-blue); color:white; border:none; height:45px; border-radius:10px; font-weight:800;">Success</button>
                         <button onclick="approve('${item.id}', 'pass')" style="background:#28a745; color:white; border:none; height:45px; border-radius:10px; font-weight:800;">Pass</button>
-                        <button onclick="if(confirm('삭제?')) db.ref('activities/${item.id}').remove()" style="background:#666; color:white; border:none; height:45px; border-radius:10px; font-weight:800;">삭제</button>
+                        <button onclick="if(confirm('삭제?')) db.ref('activities/${item.id}').remove()" class="btn-delete-red" style="height:45px; border-radius:10px;">Delete</button>
                     </div>
                 </div>`;
             });
@@ -221,7 +260,7 @@
     }
     function approve(id, type) { db.ref('activities/'+id).update({isPassed:true, approvalType:type}); }
 
-    // [기존 유지 핵심 로직: 여권, 랭킹, 업로드]
+    // [기존 탭 유지 로직]
     function loadPassport() {
         db.ref('activities').on('value', snap => {
             const grid = document.getElementById('passport-grid'); grid.innerHTML = '';
@@ -281,7 +320,9 @@
     function router() {
         const h = location.hash.replace('#/', '') || 'home';
         document.querySelectorAll('[data-view]').forEach(v => v.classList.remove('active'));
-        document.getElementById('view-' + h).classList.add('active');
+        const target = document.getElementById('view-' + h);
+        if(target) target.classList.add('active');
+        
         if(h==='mission') loadMissions();
         if(h==='passport') loadPassport();
         if(h==='ranking') loadRanking();
