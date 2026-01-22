@@ -13,7 +13,6 @@
         :root { --passport-navy: #1a2e5a; --passport-gold: #d4af37; --passport-inner: #fdfaf2; --kia-red: #bb0a30; --success-blue: #0047ab; --pass-green: #28a745; }
         body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--passport-inner); color: #1c1c1e; padding-bottom: calc(100px + env(safe-area-inset-bottom)); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
 
-        /* 홈 디자인 */
         .new-passport-home { background: var(--passport-navy); min-height: calc(100vh - 160px); margin: 12px; border-radius: 15px; display: flex; flex-direction: column; padding: 45px 25px; color: var(--passport-gold); position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3); box-sizing: border-box; }
         .emblem-box { align-self: flex-end; width: 100px; height: 100px; border: 2px solid var(--passport-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
         .emblem-box::after { content: "대한민국"; position: absolute; bottom: 10px; font-size: 10px; font-weight: 800; }
@@ -25,21 +24,18 @@
         .container { padding: 15px; max-width: 500px; margin: 0 auto; box-sizing: border-box; }
         .card { background: white; border-radius: 15px; padding: 18px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #eee; position: relative; box-sizing: border-box; }
 
-        /* 스탬프 & 태그 */
         .stamp-base { position: absolute; top: 10px; right: 10px; font-family: 'Dancing Script', cursive; font-size: 18px; font-weight: 700; padding: 3px 8px; border-radius: 8px; transform: rotate(-12deg); z-index: 10; pointer-events: none; }
         .stamp-pass { color: var(--pass-green); border: 2px double var(--pass-green); background: rgba(255,255,255,0.9); }
         .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); background: rgba(255,255,255,0.9); }
         
-        /* [추가] 역할 태그 스타일 */
         .role-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-weight: 800; color: white; vertical-align: middle; display: inline-block; }
         .tag-leader { background: #fd7e14; }
         .tag-self { background: #28a745; }
 
-        /* 여권 그리드 */
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .month-box { background: white; border-radius: 12px; overflow: hidden; height: 150px; border: 1px solid #e5e5ea; position: relative; cursor: pointer; }
 
-        /* [추가] 사진 전체화면 뷰어 모달 스타일 */
+        /* 사진 전체화면 뷰어 스타일 */
         #photo-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:4000; }
         .full-swiper { width: 100%; height: 100%; }
         .close-btn { position: absolute; top: calc(20px + env(safe-area-inset-top)); right: 20px; color: white; font-size: 40px; z-index: 4100; cursor: pointer; text-shadow: 0 0 10px #000; line-height: 1; font-weight: 300; }
@@ -47,14 +43,12 @@
         .card-swiper { width: 100%; aspect-ratio: 1; background: #000; }
         .card-swiper img { width: 100%; height: 100%; object-fit: contain; cursor: pointer; }
 
-        /* 하단 탭 모바일 최적화 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); display: flex; padding-bottom: env(safe-area-inset-bottom); height: calc(75px + env(safe-area-inset-bottom)); z-index: 1000; border-top: 1px solid rgba(212, 175, 55, 0.3); }
         .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); transition: all 0.2s; }
         .nav-icon { font-size: 22px; margin-bottom: 4px; }
         .nav-label { font-size: 11px; font-weight: 600; }
         .bottom-nav a.active-link { color: var(--passport-gold); }
 
-        /* 점수 설정 탭 */
         .score-tab-group { display: flex; gap: 5px; margin-top: 8px; }
         .score-tab { flex:1; padding:12px 5px; border-radius:8px; font-size:11px; text-align:center; background:#eee; color:#888; font-weight:800; cursor:pointer; }
         .score-tab.active-blue { background: var(--success-blue) !important; color: white !important; }
@@ -174,16 +168,23 @@
     function updateAdminUI() { document.querySelectorAll('#admin-mission-area, #admin-approval-area, #logout-btn').forEach(el=>el.style.display=isAdmin?'block':'none'); }
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
-    /* [추가] 사진 전체화면 로직 */
+    // 전체화면 기능 로직
     function openPhotoModal(imgs, index) {
         const wrapper = document.getElementById('photo-slider-wrapper');
         wrapper.innerHTML = imgs.map(src => `<div class="swiper-slide"><div class="swiper-zoom-container"><img src="${src}"></div></div>`).join('');
         document.getElementById('photo-modal').style.display = 'block';
         document.body.style.overflow = 'hidden';
         if (photoSwiper) photoSwiper.destroy();
-        photoSwiper = new Swiper(".full-swiper", { zoom: true, pagination: { el: ".swiper-pagination", clickable: true }, initialSlide: index });
+        photoSwiper = new Swiper(".full-swiper", { 
+            zoom: true, 
+            pagination: { el: ".swiper-pagination", clickable: true }, 
+            initialSlide: index 
+        });
     }
-    function closePhotoModal() { document.getElementById('photo-modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
+    function closePhotoModal() { 
+        document.getElementById('photo-modal').style.display = 'none'; 
+        document.body.style.overflow = 'auto'; 
+    }
 
     function drawScoreTabs() {
         const area = document.getElementById('score-tabs-container');
@@ -256,7 +257,6 @@
         });
     }
 
-    /* [수정] 여권 상세: 사진 클릭 연동 및 팀장/자발적 표기 */
     function openDetail(month) {
         db.ref('activities').once('value', snap => {
             const items = Object.values(snap.val()||{}).filter(d => d.month == month && d.isPassed);
@@ -317,7 +317,6 @@
 
     function approve(id, type) { db.ref('activities/'+id).update({isPassed:true, approvalType:type}); }
     
-    /* [수정] 관리자 승인 리스트: 점수 + 팀장/자발적 태그 표기 */
     function loadApprovalList() {
         db.ref('activities').on('value', snap => {
             const list = document.getElementById('pending-list'); list.innerHTML = '';
