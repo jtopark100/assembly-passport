@@ -48,7 +48,6 @@
         .nav-icon { font-size: 22px; margin-bottom: 4px; }
         .nav-label { font-size: 11px; font-weight: 600; }
         .bottom-nav a.active-link { color: var(--passport-gold); }
-        .bottom-nav a.active-link .nav-icon { transform: translateY(-2px); }
 
         /* 점수 설정 탭 */
         .score-tab-group { display: flex; gap: 5px; margin-top: 8px; }
@@ -57,7 +56,11 @@
         .score-tab.active-orange { background: #fd7e14 !important; color: white !important; }
         .score-tab.active-green { background: #28a745 !important; color: white !important; }
 
-        /* 모달 및 기타 */
+        /* 관리자 승인 페이지 전용 스코어 태그 */
+        .admin-score-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-weight: 800; vertical-align: middle; }
+        .tag-leader { background: #fd7e14; color: white; }
+        .tag-self { background: #28a745; color: white; }
+
         #logout-btn { display:none; position: fixed; bottom: 95px; left: 50%; transform: translateX(-50%); background: var(--kia-red); color: white; border: none; padding: 10px 25px; border-radius: 25px; font-size: 13px; font-weight: 800; z-index: 999; }
         #modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; }
         input, select, textarea { -webkit-appearance: none; border-radius: 10px; border: 1px solid #ddd; padding: 14px; width: 100%; font-size: 16px; margin-top: 8px; box-sizing: border-box; }
@@ -188,9 +191,9 @@
             area.innerHTML += `<div class="card" style="padding:12px; margin-bottom:10px;">
                 <div style="font-size:13px; font-weight:800; margin-bottom:8px;">${name} 점수 설정</div>
                 <div class="score-tab-group" data-idx="${idx}">
-                    <div class="score-tab active-blue" data-val="5" onclick="this.classList.toggle('active-blue')">기본(+5)</div>
-                    <div class="score-tab" data-val="2" onclick="this.classList.toggle('active-orange')">팀장(+2)</div>
-                    <div class="score-tab" data-val="3" onclick="this.classList.toggle('active-green')">자발(+3)</div>
+                    <div class="score-tab active-blue" data-val="5" data-type="base">기본(+5)</div>
+                    <div class="score-tab" data-val="2" data-type="leader" onclick="this.classList.toggle('active-orange')">팀장(+2)</div>
+                    <div class="score-tab" data-val="3" data-type="self" onclick="this.classList.toggle('active-green')">자발(+3)</div>
                 </div>
             </div>`;
         });
@@ -215,7 +218,6 @@
             const mData = snap.val() || {}; area.innerHTML = '';
             for(let i=1; i<=12; i++) {
                 if(mData[i]) {
-                    // [숨은 미션 로직 유지] 홈 화면 및 리스트에 hidden 데이터 바인딩
                     area.innerHTML += `<div class="card" style="border-left:4px solid var(--passport-navy);"><div style="display:flex; justify-content:space-between;"><b>📅 ${i}월 미션: ${mData[i].text}</b>
                     ${isAdmin ? `<div><button class="admin-edit-btn" onclick="editMonthlyMission('${i}','${mData[i].text}','${mData[i].hidden||''}')">수정</button>
                     <button class="admin-edit-btn" style="color:red;" onclick="if(confirm('삭제?')) db.ref('monthly_missions/${i}').remove()">삭제</button></div>` : ''}</div>
@@ -294,8 +296,13 @@
         if(!nameVal || files.length === 0) { alert("이름과 사진을 입력하세요."); btn.disabled = false; return; }
         const memberDetails = []; const names = nameVal.split(',').map(n => n.trim());
         document.querySelectorAll('.score-tab-group').forEach((group, i) => {
-            let s = 0; group.querySelectorAll('.score-tab.active-blue, .score-tab.active-orange, .score-tab.active-green').forEach(t => s += parseInt(t.dataset.val));
-            memberDetails.push({ name: names[i], score: s });
+            let s = 0; let isLeader = false; let isSelf = false;
+            group.querySelectorAll('.score-tab.active-blue, .score-tab.active-orange, .score-tab.active-green').forEach(t => {
+                s += parseInt(t.dataset.val);
+                if(t.dataset.type === 'leader') isLeader = true;
+                if(t.dataset.type === 'self') isSelf = true;
+            });
+            memberDetails.push({ name: names[i], score: s, isLeader, isSelf });
         });
         const imgs = [];
         for(let f of files) { imgs.push(await new Promise(res => { const r = new FileReader(); r.readAsDataURL(f); r.onload = (e) => res(e.target.result); })); }
@@ -306,13 +313,23 @@
 
     function approve(id, type) { db.ref('activities/'+id).update({isPassed:true, approvalType:type}); }
     
+    // [복구] 관리자 승인 리스트: 이름 옆 점수 및 팀장/자발적 태그 가독성 강화
     function loadApprovalList() {
         db.ref('activities').on('value', snap => {
             const list = document.getElementById('pending-list'); list.innerHTML = '';
             Object.values(snap.val()||{}).filter(a => !a.isPassed).forEach(a => {
+                const membersHtml = a.memberDetails.map(m => `
+                    <div style="margin-bottom:5px; font-size:14px;">
+                        <b>${m.name}</b> <span style="color:var(--success-blue); font-weight:800;">(${m.score}p)</span>
+                        ${m.isLeader ? `<span class="admin-score-tag tag-leader">팀장</span>` : ''}
+                        ${m.isSelf ? `<span class="admin-score-tag tag-self">자발적</span>` : ''}
+                    </div>
+                `).join('');
+
                 list.innerHTML += `<div class="card">
-                    <img src="${a.imgs[0]}" style="width:100%; border-radius:10px;">
-                    <p><b>참여자:</b> ${a.memberDetails.map(m=>m.name).join(', ')}</p>
+                    <img src="${a.imgs[0]}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+                    <div style="margin-bottom:15px;">${membersHtml}</div>
+                    <div style="font-size:13px; color:#666; margin-bottom:15px; background:#f9f9f9; padding:10px; border-radius:8px;">${a.content}</div>
                     <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
                         <button onclick="approve('${a.id}','success')" style="background:var(--success-blue); color:white; border:none; padding:12px; border-radius:8px; font-weight:800;">Success</button>
                         <button onclick="approve('${a.id}','pass')" style="background:var(--pass-green); color:white; border:none; padding:12px; border-radius:8px; font-weight:800;">Pass</button>
