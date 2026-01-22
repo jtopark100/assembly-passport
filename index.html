@@ -20,7 +20,6 @@
             overflow-x: hidden; -webkit-tap-highlight-color: transparent; word-break: keep-all;
         }
 
-        /* 신형 여권 홈 스타일 */
         .new-passport-home {
             background: var(--passport-navy); min-height: calc(100vh - 120px); margin: 12px; border-radius: 15px;
             display: flex; flex-direction: column; padding: 45px 25px; color: var(--passport-gold);
@@ -38,6 +37,13 @@
         .container { padding: 15px; max-width: 500px; margin: 0 auto; box-sizing: border-box; }
         .card { background: white; border-radius: 15px; padding: 18px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #eee; position: relative; }
         
+        /* [수정 2] 체크박스 커스텀 디자인 */
+        .custom-check-wrapper { display: flex; align-items: center; cursor: pointer; user-select: none; margin: 10px 0; }
+        .custom-check-wrapper input { display: none; }
+        .custom-check-box { width: 22px; height: 22px; border: 2px solid var(--passport-gold); border-radius: 5px; margin-right: 10px; position: relative; transition: 0.2s; background: white; }
+        .custom-check-wrapper input:checked + .custom-check-box { background: var(--passport-navy); border-color: var(--passport-navy); }
+        .custom-check-wrapper input:checked + .custom-check-box::after { content: "✓"; position: absolute; color: var(--passport-gold); top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 16px; }
+
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); display: flex; padding-bottom: env(safe-area-inset-bottom); height: calc(65px + env(safe-area-inset-bottom)); z-index: 1000; border-top: 2px solid var(--passport-gold); }
         .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 10px; }
         .bottom-nav a.active-link { color: var(--passport-gold); font-weight: 800; }
@@ -45,11 +51,9 @@
 
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .month-box { background: white; border-radius: 12px; overflow: hidden; height: 140px; border: 1px solid #e5e5ea; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        
-        /* [수정] 스탬프 디자인: 필기체, 기울어짐, 고급 스타일 적용 */
-        .stamp-base { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); font-family: 'Dancing Script', cursive; font-size: 28px; font-weight: 900; padding: 5px 15px; border-radius: 10px; z-index: 10; pointer-events: none; white-space: nowrap; }
-        .stamp-pass { color: var(--kia-red); border: 3px double var(--kia-red); }
-        .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); }
+        .stamp-base { position: absolute; top: 10px; right: 10px; font-family: 'Dancing Script', cursive; font-size: 20px; font-weight: 700; padding: 4px 10px; border-radius: 8px; transform: rotate(-12deg); z-index: 10; pointer-events: none; }
+        .stamp-pass { color: var(--kia-red); border: 2px double var(--kia-red); background: rgba(255,255,255,0.9); }
+        .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); background: rgba(255,255,255,0.9); }
 
         [data-view] { display: none; } [data-view].active { display: block; }
         .score-tab { flex:1; padding:12px 5px; border-radius:8px; font-size:11px; text-align:center; background:#eee; color:#888; font-weight:800; }
@@ -59,7 +63,6 @@
 
         input, select, textarea { -webkit-appearance: none; border-radius: 10px; border: 1px solid #ddd; padding: 13px; width: 100%; font-size: 16px; margin-top: 8px; box-sizing: border-box; font-family: inherit; }
         .btn-main { width: 100%; height: 50px; border-radius: 12px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; margin-top: 15px; }
-        
         #modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--passport-inner); z-index:2000; overflow-y:auto; }
     </style>
 </head>
@@ -86,21 +89,22 @@
 <div class="container">
     <div id="view-mission" data-view>
         <div id="admin-approval-area" style="display:none; margin-bottom:30px;">
-            <h3 style="color:var(--kia-red);">📢 승인 대기 (<span id="pending-count">0</span>)</h3>
+            <h3 style="color:var(--kia-red);">📢 승인 대기 리스트</h3>
             <div id="pending-list"></div>
         </div>
-        
+
         <div id="admin-mission-area" style="display:none;" class="card">
-            <h4 style="margin:0;">🛠️ 미션 설정</h4>
-            <input type="text" id="new-mission-text" placeholder="일반 미션 내용">
+            <h4 style="margin:0;">🛠️ 미션 매니저</h4>
+            <input type="text" id="new-mission-text" placeholder="일반 미션 내용 입력">
             
-            <div style="margin-top:12px; display:flex; align-items:center; gap:8px;">
-                <input type="checkbox" id="is-hidden-check" onchange="document.getElementById('hidden-input-box').style.display=this.checked?'block':'none'">
-                <label for="is-hidden-check" style="font-size:14px; font-weight:800; color:var(--success-blue);">🕵️ 숨은 미션 설정</label>
-            </div>
+            <label class="custom-check-wrapper">
+                <input type="checkbox" id="hidden-trigger" onchange="document.getElementById('hidden-input-field').style.display=this.checked?'block':'none'">
+                <div class="custom-check-box"></div>
+                <span style="font-size:14px; font-weight:800; color:var(--success-blue);">🕵️ 숨은 미션 설정</span>
+            </label>
             
-            <div id="hidden-input-box" style="display:none;">
-                <input type="text" id="hidden-mission-text" placeholder="숨은 미션 내용">
+            <div id="hidden-input-field" style="display:none;">
+                <input type="text" id="hidden-mission-text" placeholder="숨은 미션 내용 입력">
             </div>
 
             <button onclick="addMissionPool()" class="btn-main">미션 풀 등록</button>
@@ -110,18 +114,14 @@
             <select id="match-mission-select" style="margin-top:8px;"></select>
             <button onclick="setMonthlyMission()" class="btn-main" style="background:var(--kia-red); border:none; color:white;">월별 배정 확정</button>
         </div>
+
+        <h3>🎯 미션 가이드 리스트</h3><div id="mission-pool-list"></div>
         
-        <h3>🎯 미션 가이드</h3>
-        <div id="mission-pool-list"></div>
+        <h3 style="margin-top:25px;">📅 월별 미션 배정 현황</h3><div id="monthly-assignment-list"></div>
     </div>
 
     <div id="view-passport" data-view><h3>📖 나의 여권 기록</h3><div class="passport-grid" id="passport-grid"></div></div>
-
-    <div id="view-ranking" data-view>
-        <h3>🏆 포인트 랭킹</h3><div class="card" id="rank-list" style="padding:0;"></div>
-        <h3 style="margin-top:25px;">⭐ 숨은 미션 성공</h3><div class="card" id="hidden-rank-list" style="padding:0;"></div>
-    </div>
-
+    <div id="view-ranking" data-view><h3>🏆 포인트 랭킹</h3><div class="card" id="rank-list" style="padding:0;"></div></div>
     <div id="view-upload" data-view>
         <div class="card">
             <h3>📸 활동 인증</h3>
@@ -143,103 +143,46 @@
     <a href="#/upload" id="link-upload"><span class="nav-icon">📸</span>인증</a>
 </nav>
 
-<div id="modal">
-    <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; background:white; position:sticky; top:0; border-bottom:1px solid #eee; z-index:100;">
-        <div id="modal-title" style="font-weight:800;">상세 기록</div>
-        <div onclick="closeModal()" style="font-size:30px; line-height:1;">&times;</div>
-    </div>
-    <div id="modal-body-content"></div>
-</div>
-
+<div id="modal"><div id="modal-body-content"></div></div>
 <button onclick="handleAdminAuth()" style="position:fixed; bottom:85px; right:15px; opacity:0; width:40px; height:40px; z-index:999;">Admin</button>
 
 <script>
-    const firebaseConfig = { apiKey: "AIzaSyC9wLc0ei0c9r5PR7I4MPvGDTgoBB4AKGY", databaseURL: "https://assembly-passport-default-rtdb.firebaseio.com", projectId: "assembly-passport", appId: "1:5986706156:web:c2c5b6c167f38aef8a3bc9" };
+    const firebaseConfig = { apiKey: "AIzaSyC9wLc0ei0c9r5PR7I4MPvGDTgoBB4AKGY", databaseURL: "https://assembly-passport-default-rtdb.firebaseio.com", projectId: "assembly-passport" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let isAdmin = false;
 
     function handleAdminAuth() { if(prompt("코드 입력")==="assy") { isAdmin=true; document.getElementById('admin-mission-area').style.display='block'; document.getElementById('admin-approval-area').style.display='block'; router(); } }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
-    // [1번 요청] 승인 대기 리스트 로직
+    /* [수정 1] 관리자 전용 승인 대기 리스트 로직 */
     function loadApprovalList() {
         db.ref('activities').on('value', snap => {
             const list = document.getElementById('pending-list'); list.innerHTML = '';
-            let count = 0;
             const data = snap.val() || {};
             Object.values(data).forEach(item => {
                 if(!item.isPassed) {
-                    count++;
                     list.innerHTML += `
                         <div class="card" style="border-left:5px solid var(--kia-red);">
-                            <div style="font-size:13px; margin-bottom:12px;">
-                                <b>내용:</b> ${item.content}<br>
-                                <b>명단:</b> ${item.memberDetails.map(m => `${m.name}(${m.score}p)`).join(', ')}
+                            <div style="display:flex; overflow-x:auto; gap:5px; margin-bottom:10px;">
+                                ${item.imgs.map(img => `<img src="${img}" style="height:100px; border-radius:5px;">`).join('')}
                             </div>
-                            <div style="display:flex; gap:5px;">
-                                <button onclick="approveAct('${item.id}', 'success')" style="flex:1; background:#28a745; color:white; border:none; padding:10px; border-radius:8px; font-weight:800; font-size:11px;">SUCCESS</button>
-                                <button onclick="approveAct('${item.id}', 'pass')" style="flex:1; background:#ffc107; color:white; border:none; padding:10px; border-radius:8px; font-weight:800; font-size:11px;">PASS</button>
-                                <button onclick="approveAct('${item.id}', 'delete')" style="flex:1; background:#efefef; border:none; padding:10px; border-radius:8px; font-weight:800; font-size:11px;">DELETE</button>
+                            <div style="font-size:13px; line-height:1.6;">
+                                <b>📝 소감:</b> ${item.content}<br>
+                                <b>👥 참여자 명단:</b><br>
+                                ${item.memberDetails.map(m => `• ${m.name} [합계:${m.score}p]`).join('<br>')}
+                            </div>
+                            <div style="display:flex; gap:5px; margin-top:15px;">
+                                <button onclick="approveAct('${item.id}', 'success')" style="flex:1; background:#28a745; color:white; border:none; height:40px; border-radius:8px; font-weight:800;">SUCCESS</button>
+                                <button onclick="approveAct('${item.id}', 'pass')" style="flex:1; background:#ffc107; color:white; border:none; height:40px; border-radius:8px; font-weight:800;">PASS</button>
+                                <button onclick="db.ref('activities/${item.id}').remove()" style="flex:1; background:#efefef; border:none; height:40px; border-radius:8px; font-weight:800;">삭제</button>
                             </div>
                         </div>`;
                 }
             });
-            document.getElementById('pending-count').innerText = count;
         });
     }
 
-    // [1번 요청] 상세 보기 시 스탬프 노출
-    function openDetail(month) {
-        db.ref('activities').once('value', snap => {
-            const all = snap.val() ? Object.values(snap.val()) : [];
-            const filtered = all.filter(d => d.month == month && d.isPassed);
-            const body = document.getElementById('modal-body-content'); body.innerHTML = '';
-            
-            if(filtered.length === 0) {
-                body.innerHTML = '<div style="padding:50px; text-align:center; color:#ccc;">기록이 없습니다.</div>';
-            } else {
-                filtered.forEach(item => {
-                    const isSuccess = item.approvalType === 'success';
-                    const card = document.createElement('div'); card.style = "background:white; border-bottom:8px solid #f2f2f7; position:relative; padding-bottom:15px;";
-                    card.innerHTML = `
-                        <div class="stamp-base ${isSuccess ? 'stamp-success' : 'stamp-pass'}">${isSuccess ? 'Success' : 'Passed'}</div>
-                        <div style="display:flex; overflow-x:auto;">${item.imgs.map(img => `<img src="${img}" style="width:100%; max-height:300px; object-fit:contain; background:#000;">`).join('')}</div>
-                        <div style="padding:15px;">
-                            <div style="margin-bottom:10px; display:flex; flex-wrap:wrap; gap:5px;">
-                                ${item.memberDetails.map(m => `<span style="font-size:11px; font-weight:700; background:#f9f9f9; padding:4px 8px; border-radius:6px; border:1px solid #eee;">${m.name} (+${m.score})</span>`).join('')}
-                            </div>
-                            <div style="font-size:14px; line-height:1.5;">${item.content || "활동 내용이 없습니다."}</div>
-                        </div>`;
-                    body.appendChild(card);
-                });
-            }
-            document.getElementById('modal-title').innerText = month + "월 활동 상세";
-            document.getElementById('modal').style.display = 'block';
-        });
-    }
-
-    // [2번 요청] 랭킹 및 숨은 미션 성공 개수 로직
-    function loadRanking() {
-        db.ref('activities').on('value', snap => {
-            const userMap = {}; const hiddenMap = {};
-            const all = snap.val() ? Object.values(snap.val()) : [];
-            all.forEach(d => {
-                if(d.isPassed && d.memberDetails) {
-                    d.memberDetails.forEach(m => {
-                        userMap[m.name] = (userMap[m.name] || 0) + m.score;
-                        if(d.approvalType === 'success') hiddenMap[m.name] = (hiddenMap[m.name] || 0) + 1;
-                    });
-                }
-            });
-            const sorted = Object.entries(userMap).sort((a,b) => b[1] - a[1]);
-            const sortedHidden = Object.entries(hiddenMap).sort((a,b) => b[1] - a[1]);
-            document.getElementById('rank-list').innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;"><span><b>${i+1}</b> ${u[0]}</span><b>${u[1]}점</b></div>`).join('');
-            document.getElementById('hidden-rank-list').innerHTML = sortedHidden.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;"><span>⭐ ${u[0]}</span><b>${u[1]}개</b></div>`).join('');
-        });
-    }
-
-    // [3번 요청] 미션 리스트 노출 로직 (일반/숨은 구분)
+    /* [수정 3] 미션 리스트 노출 로직 */
     function loadMissions() {
         db.ref('mission_pool').on('value', snap => {
             const listArea = document.getElementById('mission-pool-list');
@@ -247,72 +190,50 @@
             listArea.innerHTML = ''; select.innerHTML = '';
             const data = snap.val() || {};
             Object.entries(data).forEach(([key, item]) => {
-                // 풀 리스트에는 일반 미션만 노출
-                listArea.innerHTML += `<div class="card" style="border-left:4px solid var(--passport-gold); display:flex; justify-content:space-between; align-items:center;">
-                    <b>${item.text}</b>
-                    ${isAdmin ? `<button onclick="db.ref('mission_pool/${key}').remove()" style="border:none; background:none; color:#ccc;">삭제</button>` : ''}
-                </div>`;
-                // 셀렉트 박스에는 데이터 식별을 위해 JSON 문자열로 저장
-                select.innerHTML += `<option value='${JSON.stringify(item)}'>${item.text}</option>`;
+                // 전체 리스트에는 숨은 미션 여부 상관없이 일반 미션명만 노출
+                listArea.innerHTML += `<div class="card"><b>📌 ${item.text}</b></div>`;
+                select.innerHTML += `<option value='${JSON.stringify({id:key, ...item})}'>${item.text}</option>`;
             });
         });
+
+        // 월별 배정 리스트 (숨은 미션까지 노출)
         db.ref('monthly_missions').on('value', snap => {
-            const mData = snap.val() || {}; const curM = new Date().getMonth() + 1;
-            const target = mData[curM];
-            if(target) {
-                // 월별 매칭 시 일반 미션 아래에 별과 함께 숨은 미션 노출
-                let homeHtml = `이번 달 미션: ${target.text}`;
-                if(target.hidden) homeHtml += `<br><span style="font-size:12px; opacity:0.9;">⭐ ${target.hidden}</span>`;
-                document.getElementById('home-mission-text').innerHTML = homeHtml;
+            const area = document.getElementById('monthly-assignment-list');
+            const homeText = document.getElementById('home-mission-text');
+            area.innerHTML = ''; homeText.innerText = '이번 달 미션이 없습니다.';
+            const mData = snap.val() || {};
+            const curM = new Date().getMonth() + 1;
+
+            for(let i=1; i<=12; i++) {
+                if(mData[i]) {
+                    area.innerHTML += `<div class="card" style="border-left:4px solid var(--success-blue)">
+                        <b>📅 ${i}월 미션: ${mData[i].text}</b>
+                        ${mData[i].hidden ? `<div style="margin-top:8px; color:var(--success-blue); font-size:13px; font-weight:700;">⭐ 숨은 미션: ${mData[i].hidden}</div>` : ''}
+                    </div>`;
+                    if(i == curM) homeText.innerHTML = `이번 달 미션: ${mData[i].text} ${mData[i].hidden ? `<br><span style='font-size:12px; opacity:0.8;'>⭐ ${mData[i].hidden}</span>`:''}`;
+                }
             }
         });
     }
 
-    // [2, 3번 요청] 미션 등록 및 매칭 로직
+    /* [수정 2,3] 미션 등록 및 매칭 로직 */
     function addMissionPool() {
-        const t = document.getElementById('new-mission-text').value;
-        const h = document.getElementById('is-hidden-check').checked ? document.getElementById('hidden-mission-text').value : "";
-        if(t) {
-            db.ref('mission_pool').push({ text: t, hidden: h }).then(() => {
-                alert("등록 완료!");
-                document.getElementById('new-mission-text').value = '';
-                document.getElementById('hidden-mission-text').value = '';
-                document.getElementById('is-hidden-check').checked = false;
-                document.getElementById('hidden-input-box').style.display = 'none';
-            });
-        }
+        const text = document.getElementById('new-mission-text').value;
+        const hidden = document.getElementById('hidden-trigger').checked ? document.getElementById('hidden-mission-text').value : "";
+        if(text) db.ref('mission_pool').push({ text, hidden }).then(() => {
+            alert("풀에 등록되었습니다.");
+            document.getElementById('new-mission-text').value = '';
+            document.getElementById('hidden-mission-text').value = '';
+        });
     }
 
     function setMonthlyMission() {
         const m = document.getElementById('match-month').value;
         const raw = document.getElementById('match-mission-select').value;
-        if(!raw) return;
-        const item = JSON.parse(raw);
-        db.ref('monthly_missions/'+m).set(item).then(() => alert(m + "월 미션 배정 완료!"));
+        if(raw) db.ref('monthly_missions/'+m).set(JSON.parse(raw)).then(() => alert(m + "월 배정 완료"));
     }
 
-    function loadPassport() {
-        db.ref('activities').on('value', snap => {
-            const grid = document.getElementById('passport-grid'); grid.innerHTML = '';
-            const all = snap.val() ? Object.values(snap.val()) : [];
-            for(let i=1; i<=12; i++) {
-                const approved = all.filter(d => d.month == i && d.isPassed);
-                const box = document.createElement('div'); box.className = 'month-box';
-                box.onclick = () => openDetail(i);
-                if(approved.length > 0) {
-                    const isSuccess = approved[0].approvalType === 'success';
-                    box.innerHTML = `<img src="${approved[0].imgs[0]}" style="width:100%; height:90px; object-fit:cover;">
-                                     <div class="stamp-base ${isSuccess ? 'stamp-success' : 'stamp-pass'}" style="font-size:16px;">${isSuccess ? 'Success' : 'Passed'}</div>
-                                     <div style="height:50px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">${i}월 기록</div>`;
-                } else {
-                    box.innerHTML = `<div style="height:90px; background:#f4f4f4;"></div>
-                                     <div style="height:50px; display:flex; align-items:center; justify-content:center; color:#ccc; font-size:13px;">${i}월</div>`;
-                }
-                grid.appendChild(box);
-            }
-        });
-    }
-
+    function approveAct(id, type) { db.ref('activities/'+id).update({ isPassed: true, approvalType: type }); }
     function drawScoreTabs() {
         const area = document.getElementById('score-tabs-container');
         const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== "");
@@ -332,7 +253,7 @@
     async function submitUpload() {
         const btn = document.getElementById('up-btn'); btn.disabled = true;
         const nameVal = document.getElementById('up-name').value.trim(); const files = document.getElementById('up-img').files;
-        if(!nameVal || files.length === 0) { btn.disabled = false; return alert("이름과 사진을 입력하세요."); }
+        if(!nameVal || files.length === 0) { btn.disabled = false; return alert("내용을 채워주세요."); }
         const names = nameVal.split(',').map(n => n.trim()); const memberDetails = [];
         document.querySelectorAll('.score-tabs').forEach((group, i) => {
             let s = 0; group.querySelectorAll('.score-tab').forEach(t => { if(t.classList.contains('active-blue') || t.classList.contains('active-orange') || t.classList.contains('active-green')) s += parseInt(t.dataset.val); });
@@ -340,24 +261,16 @@
         });
         const imgs = []; for(let f of files) { imgs.push(await new Promise(res => { const r = new FileReader(); r.readAsDataURL(f); r.onload = (e) => res(e.target.result); })); }
         const newRef = db.ref('activities').push();
-        newRef.set({ id: newRef.key, names, memberDetails, month: document.getElementById('up-month').value, imgs, content: document.getElementById('up-content').value, isPassed: false, timestamp: Date.now() })
-        .then(() => { alert("제출 완료!"); location.hash = "#/passport"; btn.disabled = false; });
+        newRef.set({ id: newRef.key, memberDetails, month: document.getElementById('up-month').value, imgs, content: document.getElementById('up-content').value, isPassed: false, timestamp: Date.now() })
+        .then(() => { alert("스탬프 요청 완료!"); location.hash = "#/passport"; btn.disabled = false; });
     }
-
-    function approveAct(id, type) { if(type === 'delete') { if(confirm("삭제?")) db.ref('activities/'+id).remove(); return; } db.ref('activities/'+id).update({ isPassed: true, approvalType: type }); }
 
     function router() {
         const hash = location.hash.replace('#/', '') || 'home';
         document.querySelectorAll('[data-view]').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active-link'));
         document.getElementById('view-' + hash).classList.add('active');
-        const link = document.getElementById('link-' + hash); if(link) link.classList.add('active-link');
         document.getElementById('app-header').style.display = (hash === 'home') ? 'none' : 'block';
         if(hash === 'mission') { loadMissions(); if(isAdmin) loadApprovalList(); }
-        if(hash === 'passport') loadPassport(); 
-        if(hash === 'ranking') loadRanking();
-        if(hash === 'home') loadMissions();
-        window.scrollTo(0,0);
     }
     window.addEventListener('hashchange', router); window.addEventListener('load', router);
 </script>
