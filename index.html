@@ -12,6 +12,7 @@
         :root { 
             --passport-navy: #1a2e5a; --passport-gold: #d4af37; 
             --passport-inner: #fdfaf2; --kia-red: #bb0a30; --success-blue: #0047ab; 
+            --pass-green: #28a745;
         }
         
         body { 
@@ -37,13 +38,19 @@
         .container { padding: 15px; max-width: 500px; margin: 0 auto; box-sizing: border-box; }
         .card { background: white; border-radius: 15px; padding: 18px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #eee; position: relative; }
         
+        .custom-check-wrapper { display: flex; align-items: center; cursor: pointer; user-select: none; margin: 10px 0; }
+        .custom-check-wrapper input { display: none; }
+        .custom-check-box { width: 22px; height: 22px; border: 2px solid var(--passport-gold); border-radius: 5px; margin-right: 10px; position: relative; transition: 0.2s; background: white; }
+        .custom-check-wrapper input:checked + .custom-check-box { background: var(--passport-navy); border-color: var(--passport-navy); }
+        .custom-check-wrapper input:checked + .custom-check-box::after { content: "✓"; position: absolute; color: var(--passport-gold); top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 16px; }
+
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); display: flex; padding-bottom: env(safe-area-inset-bottom); height: calc(65px + env(safe-area-inset-bottom)); z-index: 1000; border-top: 2px solid var(--passport-gold); }
         .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 10px; }
         .bottom-nav a.active-link { color: var(--passport-gold); font-weight: 800; }
         .nav-icon { font-size: 20px; margin-bottom: 3px; }
 
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .month-box { background: white; border-radius: 12px; overflow: hidden; height: 140px; border: 1px solid #e5e5ea; position: relative; }
+        .month-box { background: white; border-radius: 12px; overflow: hidden; height: 140px; border: 1px solid #e5e5ea; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         
         .stamp-base { position: absolute; top: 10px; right: 10px; font-family: 'Dancing Script', cursive; font-size: 20px; font-weight: 700; padding: 4px 10px; border-radius: 8px; transform: rotate(-12deg); z-index: 10; pointer-events: none; }
         .stamp-pass { color: var(--kia-red); border: 2px double var(--kia-red); background: rgba(255,255,255,0.9); }
@@ -56,9 +63,19 @@
 
         #zoom-layer { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:3000; flex-direction:column; }
         .zoom-slider { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; height:100%; align-items:center; scrollbar-width: none; }
+        .zoom-slider::-webkit-scrollbar { display: none; }
         .zoom-slider img { width:100vw; flex-shrink:0; scroll-snap-align:center; max-height:100vh; object-fit:contain; }
         .zoom-close { position:absolute; top:calc(20px + env(safe-area-inset-top)); right:20px; color:#fff; font-size:40px; z-index:3001; font-weight:bold; }
 
+        .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 160px; margin: 30px 0 10px; }
+        .podium-item { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .podium-bar { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: 800; border-radius: 8px 8px 0 0; position: relative; }
+        .podium-bar.gold { background: linear-gradient(#d4af37, #b8860b); height: 100px; box-shadow: 0 -4px 10px rgba(212,175,55,0.3); }
+        .podium-bar.silver { background: linear-gradient(#c0c0c0, #808080); height: 75px; }
+        .podium-bar.bronze { background: linear-gradient(#cd7f32, #a0522d); height: 55px; }
+        .podium-name { font-size: 13px; font-weight: 800; margin-bottom: 5px; color: var(--passport-navy); }
+
+        [data-view] { display: none; } [data-view].active { display: block; }
         .score-tab { flex:1; padding:12px 5px; border-radius:8px; font-size:11px; text-align:center; background:#eee; color:#888; font-weight:800; }
         .score-tab.active-blue { background: var(--success-blue) !important; color: white !important; }
         .score-tab.active-orange { background: #fd7e14 !important; color: white !important; }
@@ -101,7 +118,12 @@
         <div id="admin-mission-area" style="display:none;" class="card">
             <h4 style="margin:0;">🛠️ 미션 매니저</h4>
             <input type="text" id="new-mission-text" placeholder="일반 미션 내용 입력">
-            <input type="text" id="hidden-mission-text" placeholder="🕵️ 숨은 미션 내용 (선택사항)">
+            <label class="custom-check-wrapper">
+                <input type="checkbox" id="hidden-trigger" onchange="document.getElementById('hidden-input-field').style.display=this.checked?'block':'none'">
+                <div class="custom-check-box"></div>
+                <span style="font-size:14px; font-weight:800; color:var(--success-blue);">🕵️ 숨은 미션 설정</span>
+            </label>
+            <div id="hidden-input-field" style="display:none;"><input type="text" id="hidden-mission-text" placeholder="숨은 미션 내용 입력"></div>
             <button onclick="addMissionPool()" class="btn-main">미션 풀 등록</button>
             <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
             <select id="match-month"><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월</option>`)</script></select>
@@ -117,6 +139,7 @@
     
     <div id="view-ranking" data-view>
         <h3>🏆 포인트 랭킹</h3>
+        <div id="ranking-top-area"></div>
         <div class="card" id="rank-list" style="padding:0; overflow:hidden;"></div>
         <h3 style="margin-top:25px; color:var(--success-blue);">🎖️ 숨은 미션 획득자</h3>
         <div class="card" id="success-winners-list" style="padding:15px; display:flex; flex-wrap:wrap; gap:8px;"></div>
@@ -129,7 +152,7 @@
             <input type="text" id="up-name" placeholder="참여자 성함 (쉼표 구분)" oninput="drawScoreTabs()">
             <div id="score-tabs-container"></div>
             <textarea id="up-content" placeholder="활동 소감" rows="3" style="margin-top:10px;"></textarea>
-            <input type="file" id="up-img" accept="image/*" multiple style="margin-top:15px; border:none;">
+            <input type="file" id="up-img" accept="image/*" multiple style="margin-top:15px; border:none; padding:0;">
             <button onclick="submitUpload()" id="up-btn" class="btn-main">스탬프 요청</button>
         </div>
     </div>
@@ -143,8 +166,19 @@
     <a href="#/upload" id="link-upload"><span class="nav-icon">📸</span>인증</a>
 </nav>
 
-<div id="modal"><div style="padding:15px; display:flex; justify-content:space-between; align-items:center; background:white; position:sticky; top:0; border-bottom:1px solid #eee; z-index:2100;"><div id="modal-title" style="font-weight:800;">상세</div><div onclick="closeModal()" style="font-size:30px; cursor:pointer;">&times;</div></div><div id="modal-body-content"></div></div>
-<div id="zoom-layer"><div class="zoom-close" onclick="closeZoom()">&times;</div><div class="zoom-slider" id="z-slider"></div></div>
+<div id="modal">
+    <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; background:white; position:sticky; top:0; border-bottom:1px solid #eee; z-index:2100;">
+        <div id="modal-title" style="font-weight:800;">활동 상세</div>
+        <div onclick="closeModal()" style="font-size:30px; line-height:1; cursor:pointer;">&times;</div>
+    </div>
+    <div id="modal-body-content"></div>
+</div>
+
+<div id="zoom-layer">
+    <div class="zoom-close" onclick="closeZoom()">&times;</div>
+    <div class="zoom-slider" id="z-slider"></div>
+</div>
+
 <button id="admin-btn" onclick="handleAdminAuth()" style="position:fixed; bottom:85px; right:15px; opacity:0; width:40px; height:40px; z-index:999;">Admin</button>
 
 <script>
@@ -154,29 +188,39 @@
     let isAdmin = false;
 
     function handleAdminAuth() { 
-        if(!isAdmin) { if(prompt("관리자 코드 입력") === "assy") { isAdmin = true; document.getElementById('admin-mission-area').style.display = 'block'; document.getElementById('admin-approval-area').style.display = 'block'; alert("관리자 로그인"); router(); } } 
-        else { if(confirm("로그아웃 하시겠습니까?")) { isAdmin = false; document.getElementById('admin-mission-area').style.display = 'none'; document.getElementById('admin-approval-area').style.display = 'none'; alert("로그아웃"); router(); } }
+        if(!isAdmin) {
+            if(prompt("관리자 코드 입력") === "assy") { 
+                isAdmin = true; 
+                document.getElementById('admin-mission-area').style.display = 'block'; 
+                document.getElementById('admin-approval-area').style.display = 'block'; 
+                alert("관리자 로그인 성공");
+                router(); 
+            } 
+        } else {
+            if(confirm("로그아웃 하시겠습니까?")) {
+                isAdmin = false;
+                document.getElementById('admin-mission-area').style.display = 'none'; 
+                document.getElementById('admin-approval-area').style.display = 'none'; 
+                alert("로그아웃 완료");
+                router();
+            }
+        }
     }
 
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
-    // [수정 매칭] 미션 로드 및 권한별 필터링
     function loadMissions() {
         db.ref('mission_pool').on('value', snap => {
             const listArea = document.getElementById('mission-pool-list');
             const select = document.getElementById('match-mission-select');
             listArea.innerHTML = ''; select.innerHTML = '';
             Object.entries(snap.val()||{}).forEach(([key, item]) => {
-                const hasHidden = item.hidden && item.hidden.trim() !== "";
-                listArea.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; ${hasHidden && isAdmin ? 'border:1px solid var(--success-blue);' : ''}">
-                    <div style="flex:1;">
-                        <b style="font-size:15px;">📌 ${item.text}</b>
-                        ${isAdmin && hasHidden ? `<div style="font-size:12px; color:var(--success-blue); margin-top:6px; font-weight:600;">🕵️ 숨은 미션: ${item.hidden}</div>` : ''}
-                        ${!isAdmin && hasHidden ? `<div style="font-size:11px; color:var(--success-blue); margin-top:4px;">⭐ 숨은 미션 포함 항목</div>` : ''}
-                    </div>
-                    ${isAdmin ? `<div style="display:flex; gap:5px;"><button class="btn-admin-sm" onclick="editMissionPool('${key}', '${item.text}', '${item.hidden||''}')">수정</button><button class="btn-admin-sm" style="color:red;" onclick="if(confirm('삭제?')) db.ref('mission_pool/${key}').remove()">삭제</button></div>` : ''}
+                if (!isAdmin && item.hidden) return;
+                listArea.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; ${item.hidden ? 'border:1px solid var(--success-blue);' : ''}">
+                    <div><b>📌 ${item.text}</b>${isAdmin && item.hidden ? `<div style="font-size:11px; color:var(--success-blue); margin-top:4px;">🕵️ 숨은미션: ${item.hidden}</div>` : ''}</div>
+                    ${isAdmin ? `<div><button class="btn-admin-sm" onclick="editMissionPool('${key}', '${item.text}', '${item.hidden||''}')">수정</button><button class="btn-admin-sm" style="color:red; margin-left:5px;" onclick="if(confirm('삭제?')) db.ref('mission_pool/${key}').remove()">삭제</button></div>` : ''}
                 </div>`;
-                if(isAdmin) select.innerHTML += `<option value='${JSON.stringify({id:key, ...item})}'>${item.text} ${hasHidden ? '(숨음 포함)' : ''}</option>`;
+                select.innerHTML += `<option value='${JSON.stringify({id:key, ...item})}'>${item.text} ${item.hidden ? '(숨음)' : ''}</option>`;
             });
         });
         db.ref('monthly_missions').on('value', snap => {
@@ -184,32 +228,20 @@
             const mData = snap.val() || {}; area.innerHTML = '';
             for(let i=1; i<=12; i++) {
                 if(mData[i]) {
-                    const hasHidden = mData[i].hidden && mData[i].hidden.trim() !== "";
-                    area.innerHTML += `<div class="card" style="border-left:4px solid ${hasHidden ? 'var(--success-blue)' : 'var(--passport-navy)'};">
-                        <b>📅 ${i}월: ${mData[i].text}</b>
-                        ${hasHidden ? `<div style="font-size:12px; color:var(--success-blue); font-weight:800; margin-top:5px;">⭐ 숨은 미션 도전 가능!</div>` : ''}
+                    area.innerHTML += `<div class="card" style="border-left:4px solid ${mData[i].hidden ? 'var(--success-blue)' : 'var(--passport-navy)'};">
+                        <b>📅 ${i}월: ${mData[i].text}</b>${mData[i].hidden ? `<div style="font-size:12px; color:var(--success-blue); font-weight:800; margin-top:5px;">⭐ 숨은 미션 매칭됨</div>` : ''}
                         ${isAdmin ? `<button class="btn-admin-sm" style="color:red; margin-top:10px;" onclick="db.ref('monthly_missions/${i}').remove()">배정삭제</button>` : ''}
                     </div>`;
-                    if(i == (new Date().getMonth()+1)) document.getElementById('home-mission-text').innerHTML = `이번 달 미션: ${mData[i].text}${hasHidden ? '<br><small>⭐ 숨은 미션 도전 가능!</small>' : ''}`;
+                    if(i == (new Date().getMonth()+1)) document.getElementById('home-mission-text').innerHTML = `이번 달 미션: ${mData[i].text}${mData[i].hidden ? '<br><small>⭐ 숨은 미션 도전 가능!</small>' : ''}`;
                 }
             }
         });
     }
 
-    function addMissionPool() {
-        const text = document.getElementById('new-mission-text').value.trim();
-        const hidden = document.getElementById('hidden-mission-text').value.trim();
-        if(!text) return alert("미션 내용을 입력하세요.");
-        db.ref('mission_pool').push({ text, hidden: hidden || "" }).then(() => { 
-            alert("등록 완료"); 
-            document.getElementById('new-mission-text').value = ""; document.getElementById('hidden-mission-text').value = ""; 
-        });
-    }
-
     function editMissionPool(key, oldText, oldHidden) {
-        const newText = prompt("일반 미션 내용을 수정하세요", oldText); if(newText === null) return;
-        const newHidden = prompt("숨은 미션 내용을 수정하세요", oldHidden); if(newHidden === null) return;
-        db.ref('mission_pool/' + key).update({ text: newText, hidden: newHidden }).then(() => alert("수정 완료"));
+        const newText = prompt("미션 내용을 수정하세요", oldText);
+        const newHidden = prompt("숨은 미션 내용을 수정하세요 (없으면 공백)", oldHidden);
+        if(newText !== null) db.ref('mission_pool/' + key).update({ text: newText, hidden: newHidden });
     }
 
     function loadRanking() {
@@ -225,22 +257,28 @@
             });
             const sorted = Object.entries(users).sort((a,b)=>b[1]-a[1]);
             const listArea = document.getElementById('rank-list'); listArea.innerHTML = '';
-            sorted.forEach(([name, score], idx) => { listArea.innerHTML += `<div style="padding:15px; display:flex; justify-content:space-between; border-bottom:1px solid #eee;"><span><b>${idx+1}위</b> ${name}</span><span>${score}p</span></div>`; });
+            sorted.forEach(([name, score], idx) => {
+                listArea.innerHTML += `<div style="padding:15px; display:flex; justify-content:space-between; border-bottom:1px solid #eee;"><span><b>${idx+1}위</b> ${name}</span><span>${score}p</span></div>`;
+            });
             const winArea = document.getElementById('success-winners-list'); winArea.innerHTML = '';
-            if(winners.size > 0) winners.forEach(w => { winArea.innerHTML += `<span style="background:var(--success-blue); color:white; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:800;">🎖️ ${w}</span>`; });
-            else winArea.innerHTML = '<div style="color:#ccc; font-size:12px;">취득자 없음</div>';
+            if(winners.size > 0) { winners.forEach(w => { winArea.innerHTML += `<span style="background:var(--success-blue); color:white; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:800;">🎖️ ${w}</span>`; }); }
+            else { winArea.innerHTML = '<div style="color:#ccc; font-size:12px;">아직 취득자가 없습니다.</div>'; }
         });
     }
 
     function loadPassport() {
         db.ref('activities').on('value', snap => {
-            const grid = document.getElementById('passport-grid'); if(!grid) return; grid.innerHTML = '';
-            const all = snap.val() ? Object.values(snap.val()) : [];
+            const grid = document.getElementById('passport-grid'); if(!grid) return;
+            grid.innerHTML = ''; const all = snap.val() ? Object.values(snap.val()) : [];
             for(let i=1; i<=12; i++) {
                 const approved = all.filter(d => d.month == i && d.isPassed);
-                const box = document.createElement('div'); box.className = 'month-box'; box.onclick = () => openDetail(i);
-                if(approved.length > 0) box.innerHTML = `<img src="${approved[0].imgs[0]}" style="width:100%; height:90px; object-fit:cover;"><div style="height:50px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">${i}월 기록</div>`;
-                else box.innerHTML = `<div style="height:90px; background:#f4f4f4;"></div><div style="text-align:center; height:50px; line-height:50px; color:#ccc; font-size:13px;">${i}월</div>`;
+                const box = document.createElement('div'); box.className = 'month-box';
+                box.onclick = () => openDetail(i);
+                if(approved.length > 0) {
+                    box.innerHTML = `<img src="${approved[0].imgs[0]}" style="width:100%; height:90px; object-fit:cover;"><div style="height:50px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">${i}월 기록</div>`;
+                } else {
+                    box.innerHTML = `<div style="height:90px; background:#f4f4f4;"></div><div style="text-align:center; height:50px; line-height:50px; color:#ccc; font-size:13px;">${i}월</div>`;
+                }
                 grid.appendChild(box);
             }
         });
@@ -248,50 +286,66 @@
 
     function openDetail(month) {
         db.ref('activities').once('value', snap => {
-            const filtered = Object.values(snap.val()||{}).filter(d => d.month == month && d.isPassed);
+            const all = snap.val() ? Object.values(snap.val()) : [];
+            const filtered = all.filter(d => d.month == month && d.isPassed);
             const body = document.getElementById('modal-body-content'); body.innerHTML = '';
             filtered.forEach(item => {
                 const isSuccess = item.approvalType === 'success';
-                body.innerHTML += `<div class="feed-card"><div class="stamp-base ${isSuccess ? 'stamp-success' : 'stamp-pass'}">${isSuccess ? 'Success' : 'Passed'}</div>
+                const card = document.createElement('div'); card.className = 'feed-card';
+                card.innerHTML = `<div class="stamp-base ${isSuccess ? 'stamp-success' : 'stamp-pass'}">${isSuccess ? 'Success' : 'Passed'}</div>
                     <div class="feed-slider">${item.imgs.map((img, idx) => `<img src="${img}" onclick="openZoom('${item.id}', ${idx})">`).join('')}</div>
-                    <div style="padding:15px;"><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px;">${item.memberDetails.map(m => `<span style="font-size:11px; font-weight:700; background:#eee; padding:4px 10px; border-radius:15px;">${m.name}</span>`).join('')}</div>
-                    <div style="font-size:15px;">${item.content}</div></div></div>`;
+                    <div style="padding:15px;"><div style="margin-bottom:12px; display:flex; flex-wrap:wrap; gap:5px;">
+                    ${item.memberDetails.map(m => `<span style="font-size:11px; font-weight:700; background:#eee; padding:4px 10px; border-radius:15px;">${m.name}</span>`).join('')}
+                    </div><div style="font-size:15px; line-height:1.6;">${item.content}</div></div>`;
+                body.appendChild(card);
             });
-            document.getElementById('modal-title').innerText = month + "월 기록"; document.getElementById('modal').style.display = 'block'; document.body.style.overflow = 'hidden';
+            document.getElementById('modal-title').innerText = month + "월 기록";
+            document.getElementById('modal').style.display = 'block'; document.body.style.overflow = 'hidden';
         });
     }
 
     function openZoom(actId, idx) {
         db.ref('activities/' + actId).once('value', snap => {
-            const item = snap.val(); document.getElementById('z-slider').innerHTML = item.imgs.map(img => `<img src="${img}">`).join('');
-            document.getElementById('zoom-layer').style.display = 'flex'; setTimeout(() => { document.getElementById('z-slider').scrollLeft = idx * window.innerWidth; }, 10);
+            const item = snap.val(); const zSlider = document.getElementById('z-slider');
+            zSlider.innerHTML = item.imgs.map(img => `<img src="${img}">`).join('');
+            document.getElementById('zoom-layer').style.display = 'flex';
+            setTimeout(() => { zSlider.scrollLeft = idx * window.innerWidth; }, 10);
         });
     }
     function closeZoom() { document.getElementById('zoom-layer').style.display = 'none'; }
 
+    // [수정 매칭] 관리자 승인 대기 리스트 (상세 정보 노출 최적화)
     function loadApprovalList() {
         db.ref('activities').on('value', snap => {
             const list = document.getElementById('pending-list'); list.innerHTML = '';
             const pending = Object.values(snap.val() || {}).filter(a => !a.isPassed);
+            if (pending.length === 0) { list.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">대기 중인 내역이 없습니다.</div>'; return; }
             pending.forEach(a => {
                 list.innerHTML += `<div class="card" style="border: 1px solid #ddd;">
+                    <div style="font-size:12px; color:#666; margin-bottom:8px;">${new Date(a.timestamp).toLocaleString()}</div>
                     <div class="feed-slider" style="height:220px; margin-bottom:10px;">${a.imgs.map(img => `<img src="${img}" style="height:220px;">`).join('')}</div>
                     <div style="background:#f1f3f5; padding:10px; border-radius:8px; font-size:14px; margin-bottom:10px;">${a.content || "(소감 없음)"}</div>
                     <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:15px;">
                         ${a.memberDetails.map(m => {
-                            let tags = []; if ([7, 10].includes(m.score)) tags.push('<small style="color:#fd7e14;">[팀장]</small>'); if ([8, 10].includes(m.score)) tags.push('<small style="color:#28a745;">[자발]</small>');
+                            let tags = [];
+                            if ([7, 10].includes(m.score)) tags.push('<small style="color:#fd7e14;">[팀장]</small>');
+                            if ([8, 10].includes(m.score)) tags.push('<small style="color:#28a745;">[자발]</small>');
                             return `<span style="font-size:12px; border:1px solid #eee; padding:4px 8px; border-radius:5px; background:#fff;"><b>${m.name}</b> ${tags.join(' ')}</span>`;
                         }).join('')}
                     </div>
-                    <div style="display:flex; gap:5px;"><button onclick="approveAct('${a.id}', 'pass')" class="btn-main" style="flex:1; margin-top:0; height:40px; font-size:13px;">Pass 승인</button><button onclick="approveAct('${a.id}', 'success')" class="btn-main" style="flex:1; margin-top:0; height:40px; font-size:13px; background:var(--success-blue);">Success 승인</button></div>
+                    <div style="display:flex; gap:5px;">
+                        <button onclick="approveAct('${a.id}', 'pass')" class="btn-main" style="flex:1; margin-top:0; height:40px; font-size:13px;">Pass 승인</button>
+                        <button onclick="approveAct('${a.id}', 'success')" class="btn-main" style="flex:1; margin-top:0; height:40px; font-size:13px; background:var(--success-blue);">Success 승인</button>
+                        <button onclick="if(confirm('삭제?')) db.ref('activities/${a.id}').remove()" class="btn-admin-sm" style="color:red; border-color:red;">삭제</button>
+                    </div>
                 </div>`;
             });
         });
     }
 
     function drawScoreTabs() {
-        const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== ""); 
-        const area = document.getElementById('score-tabs-container'); area.innerHTML = '';
+        const area = document.getElementById('score-tabs-container');
+        const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== ""); area.innerHTML = '';
         names.forEach((name, idx) => {
             area.innerHTML += `<div class="card" style="padding:12px; margin-bottom:10px;"><div style="font-size:13px; font-weight:800; margin-bottom:8px;">${name} 점수 설정</div><div class="score-tabs" data-idx="${idx}" style="display:flex; gap:6px;"><div class="score-tab active-blue" data-val="5" onclick="this.classList.toggle('active-blue')">기본(+5)</div><div class="score-tab" data-val="2" onclick="this.classList.toggle('active-orange')">팀장(+2)</div><div class="score-tab" data-val="3" onclick="this.classList.toggle('active-green')">자발(+3)</div></div></div>`;
         });
@@ -313,6 +367,7 @@
     }
 
     function setMonthlyMission() { const m = document.getElementById('match-month').value; const raw = document.getElementById('match-mission-select').value; if(raw) db.ref('monthly_missions/'+m).set(JSON.parse(raw)).then(()=>alert("배정 완료")); }
+    function addMissionPool() { const text = document.getElementById('new-mission-text').value; const hidden = document.getElementById('hidden-trigger').checked ? document.getElementById('hidden-mission-text').value : ""; if(text) db.ref('mission_pool').push({ text, hidden }).then(()=>alert("등록 완료")); }
     function approveAct(id, type) { db.ref('activities/'+id).update({ isPassed: true, approvalType: type }).then(()=>alert("승인 완료")); }
 
     function router() {
