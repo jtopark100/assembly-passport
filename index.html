@@ -45,9 +45,11 @@
 
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .month-box { background: white; border-radius: 12px; overflow: hidden; height: 140px; border: 1px solid #e5e5ea; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .stamp-base { position: absolute; top: 10px; right: 10px; font-family: 'Dancing Script', cursive; font-size: 20px; font-weight: 700; padding: 4px 10px; border-radius: 8px; transform: rotate(-12deg); z-index: 10; pointer-events: none; }
-        .stamp-pass { color: var(--kia-red); border: 2px double var(--kia-red); background: rgba(255,255,255,0.9); }
-        .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); background: rgba(255,255,255,0.9); }
+        
+        /* [수정] 스탬프 디자인: 필기체, 기울어짐, 고급 스타일 적용 */
+        .stamp-base { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); font-family: 'Dancing Script', cursive; font-size: 28px; font-weight: 900; padding: 5px 15px; border-radius: 10px; z-index: 10; pointer-events: none; white-space: nowrap; }
+        .stamp-pass { color: var(--kia-red); border: 3px double var(--kia-red); }
+        .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); }
 
         [data-view] { display: none; } [data-view].active { display: block; }
         .score-tab { flex:1; padding:12px 5px; border-radius:8px; font-size:11px; text-align:center; background:#eee; color:#888; font-weight:800; }
@@ -87,16 +89,30 @@
             <h3 style="color:var(--kia-red);">📢 승인 대기 (<span id="pending-count">0</span>)</h3>
             <div id="pending-list"></div>
         </div>
+        
         <div id="admin-mission-area" style="display:none;" class="card">
             <h4 style="margin:0;">🛠️ 미션 설정</h4>
-            <input type="text" id="new-mission-text" placeholder="미션 내용">
-            <button onclick="addMissionPool()" class="btn-main">등록</button>
+            <input type="text" id="new-mission-text" placeholder="일반 미션 내용">
+            
+            <div style="margin-top:12px; display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="is-hidden-check" onchange="document.getElementById('hidden-input-box').style.display=this.checked?'block':'none'">
+                <label for="is-hidden-check" style="font-size:14px; font-weight:800; color:var(--success-blue);">🕵️ 숨은 미션 설정</label>
+            </div>
+            
+            <div id="hidden-input-box" style="display:none;">
+                <input type="text" id="hidden-mission-text" placeholder="숨은 미션 내용">
+            </div>
+
+            <button onclick="addMissionPool()" class="btn-main">미션 풀 등록</button>
             <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
+            
             <select id="match-month"><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월</option>`)</script></select>
             <select id="match-mission-select" style="margin-top:8px;"></select>
-            <button onclick="setMonthlyMission()" class="btn-main" style="background:var(--kia-red); border:none; color:white;">배정 확정</button>
+            <button onclick="setMonthlyMission()" class="btn-main" style="background:var(--kia-red); border:none; color:white;">월별 배정 확정</button>
         </div>
-        <h3>🎯 미션 가이드</h3><div id="mission-pool-list"></div>
+        
+        <h3>🎯 미션 가이드</h3>
+        <div id="mission-pool-list"></div>
     </div>
 
     <div id="view-passport" data-view><h3>📖 나의 여권 기록</h3><div class="passport-grid" id="passport-grid"></div></div>
@@ -146,7 +162,34 @@
     function handleAdminAuth() { if(prompt("코드 입력")==="assy") { isAdmin=true; document.getElementById('admin-mission-area').style.display='block'; document.getElementById('admin-approval-area').style.display='block'; router(); } }
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
-    // [1번 요청 해결] 월별 클릭 시 상세 데이터 조회 함수
+    // [1번 요청] 승인 대기 리스트 로직
+    function loadApprovalList() {
+        db.ref('activities').on('value', snap => {
+            const list = document.getElementById('pending-list'); list.innerHTML = '';
+            let count = 0;
+            const data = snap.val() || {};
+            Object.values(data).forEach(item => {
+                if(!item.isPassed) {
+                    count++;
+                    list.innerHTML += `
+                        <div class="card" style="border-left:5px solid var(--kia-red);">
+                            <div style="font-size:13px; margin-bottom:12px;">
+                                <b>내용:</b> ${item.content}<br>
+                                <b>명단:</b> ${item.memberDetails.map(m => `${m.name}(${m.score}p)`).join(', ')}
+                            </div>
+                            <div style="display:flex; gap:5px;">
+                                <button onclick="approveAct('${item.id}', 'success')" style="flex:1; background:#28a745; color:white; border:none; padding:10px; border-radius:8px; font-weight:800; font-size:11px;">SUCCESS</button>
+                                <button onclick="approveAct('${item.id}', 'pass')" style="flex:1; background:#ffc107; color:white; border:none; padding:10px; border-radius:8px; font-weight:800; font-size:11px;">PASS</button>
+                                <button onclick="approveAct('${item.id}', 'delete')" style="flex:1; background:#efefef; border:none; padding:10px; border-radius:8px; font-weight:800; font-size:11px;">DELETE</button>
+                            </div>
+                        </div>`;
+                }
+            });
+            document.getElementById('pending-count').innerText = count;
+        });
+    }
+
+    // [1번 요청] 상세 보기 시 스탬프 노출
     function openDetail(month) {
         db.ref('activities').once('value', snap => {
             const all = snap.val() ? Object.values(snap.val()) : [];
@@ -173,11 +216,10 @@
             }
             document.getElementById('modal-title').innerText = month + "월 활동 상세";
             document.getElementById('modal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
         });
     }
 
-    // [2번 요청 해결] 랭킹 시스템 로직
+    // [2번 요청] 랭킹 및 숨은 미션 성공 개수 로직
     function loadRanking() {
         db.ref('activities').on('value', snap => {
             const userMap = {}; const hiddenMap = {};
@@ -192,17 +234,61 @@
             });
             const sorted = Object.entries(userMap).sort((a,b) => b[1] - a[1]);
             const sortedHidden = Object.entries(hiddenMap).sort((a,b) => b[1] - a[1]);
-            
-            document.getElementById('rank-list').innerHTML = sorted.map((u, i) => 
-                `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;">
-                    <span><b>${i+1}</b> ${u[0]}</span><b>${u[1]}점</b>
-                </div>`).join('');
-            
-            document.getElementById('hidden-rank-list').innerHTML = sortedHidden.map((u, i) => 
-                `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;">
-                    <span>⭐ ${u[0]}</span><b>${u[1]}개</b>
-                </div>`).join('');
+            document.getElementById('rank-list').innerHTML = sorted.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;"><span><b>${i+1}</b> ${u[0]}</span><b>${u[1]}점</b></div>`).join('');
+            document.getElementById('hidden-rank-list').innerHTML = sortedHidden.map((u, i) => `<div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #eee;"><span>⭐ ${u[0]}</span><b>${u[1]}개</b></div>`).join('');
         });
+    }
+
+    // [3번 요청] 미션 리스트 노출 로직 (일반/숨은 구분)
+    function loadMissions() {
+        db.ref('mission_pool').on('value', snap => {
+            const listArea = document.getElementById('mission-pool-list');
+            const select = document.getElementById('match-mission-select');
+            listArea.innerHTML = ''; select.innerHTML = '';
+            const data = snap.val() || {};
+            Object.entries(data).forEach(([key, item]) => {
+                // 풀 리스트에는 일반 미션만 노출
+                listArea.innerHTML += `<div class="card" style="border-left:4px solid var(--passport-gold); display:flex; justify-content:space-between; align-items:center;">
+                    <b>${item.text}</b>
+                    ${isAdmin ? `<button onclick="db.ref('mission_pool/${key}').remove()" style="border:none; background:none; color:#ccc;">삭제</button>` : ''}
+                </div>`;
+                // 셀렉트 박스에는 데이터 식별을 위해 JSON 문자열로 저장
+                select.innerHTML += `<option value='${JSON.stringify(item)}'>${item.text}</option>`;
+            });
+        });
+        db.ref('monthly_missions').on('value', snap => {
+            const mData = snap.val() || {}; const curM = new Date().getMonth() + 1;
+            const target = mData[curM];
+            if(target) {
+                // 월별 매칭 시 일반 미션 아래에 별과 함께 숨은 미션 노출
+                let homeHtml = `이번 달 미션: ${target.text}`;
+                if(target.hidden) homeHtml += `<br><span style="font-size:12px; opacity:0.9;">⭐ ${target.hidden}</span>`;
+                document.getElementById('home-mission-text').innerHTML = homeHtml;
+            }
+        });
+    }
+
+    // [2, 3번 요청] 미션 등록 및 매칭 로직
+    function addMissionPool() {
+        const t = document.getElementById('new-mission-text').value;
+        const h = document.getElementById('is-hidden-check').checked ? document.getElementById('hidden-mission-text').value : "";
+        if(t) {
+            db.ref('mission_pool').push({ text: t, hidden: h }).then(() => {
+                alert("등록 완료!");
+                document.getElementById('new-mission-text').value = '';
+                document.getElementById('hidden-mission-text').value = '';
+                document.getElementById('is-hidden-check').checked = false;
+                document.getElementById('hidden-input-box').style.display = 'none';
+            });
+        }
+    }
+
+    function setMonthlyMission() {
+        const m = document.getElementById('match-month').value;
+        const raw = document.getElementById('match-mission-select').value;
+        if(!raw) return;
+        const item = JSON.parse(raw);
+        db.ref('monthly_missions/'+m).set(item).then(() => alert(m + "월 미션 배정 완료!"));
     }
 
     function loadPassport() {
@@ -214,7 +300,9 @@
                 const box = document.createElement('div'); box.className = 'month-box';
                 box.onclick = () => openDetail(i);
                 if(approved.length > 0) {
+                    const isSuccess = approved[0].approvalType === 'success';
                     box.innerHTML = `<img src="${approved[0].imgs[0]}" style="width:100%; height:90px; object-fit:cover;">
+                                     <div class="stamp-base ${isSuccess ? 'stamp-success' : 'stamp-pass'}" style="font-size:16px;">${isSuccess ? 'Success' : 'Passed'}</div>
                                      <div style="height:50px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">${i}월 기록</div>`;
                 } else {
                     box.innerHTML = `<div style="height:90px; background:#f4f4f4;"></div>
@@ -241,23 +329,6 @@
         });
     }
 
-    function loadMissions() {
-        db.ref('mission_pool').on('value', snap => {
-            const listArea = document.getElementById('mission-pool-list');
-            const select = document.getElementById('match-mission-select');
-            listArea.innerHTML = ''; select.innerHTML = '';
-            const data = snap.val() || {};
-            Object.values(data).forEach(item => {
-                listArea.innerHTML += `<div class="card" style="border-left:4px solid var(--passport-gold)"><b>${item.text}</b></div>`;
-                select.innerHTML += `<option value="${item.text}">${item.text}</option>`;
-            });
-        });
-        db.ref('monthly_missions').on('value', snap => {
-            const mData = snap.val() || {}; const curM = new Date().getMonth() + 1;
-            if(mData[curM]) document.getElementById('home-mission-text').innerText = mData[curM].text;
-        });
-    }
-
     async function submitUpload() {
         const btn = document.getElementById('up-btn'); btn.disabled = true;
         const nameVal = document.getElementById('up-name').value.trim(); const files = document.getElementById('up-img').files;
@@ -274,8 +345,6 @@
     }
 
     function approveAct(id, type) { if(type === 'delete') { if(confirm("삭제?")) db.ref('activities/'+id).remove(); return; } db.ref('activities/'+id).update({ isPassed: true, approvalType: type }); }
-    function setMonthlyMission() { const m = document.getElementById('match-month').value; const t = document.getElementById('match-mission-select').value; db.ref('monthly_missions/'+m).set({ text: t }).then(() => alert("매칭 완료!")); }
-    function addMissionPool() { const t = document.getElementById('new-mission-text').value; if(t) db.ref('mission_pool').push({ text: t }); }
 
     function router() {
         const hash = location.hash.replace('#/', '') || 'home';
