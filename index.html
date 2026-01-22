@@ -28,19 +28,20 @@
         .stamp-pass { color: var(--pass-green); border: 2px double var(--pass-green); background: rgba(255,255,255,0.9); }
         .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); background: rgba(255,255,255,0.9); }
         
+        /* 역할 태그 스타일 */
         .role-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-weight: 800; color: white; vertical-align: middle; display: inline-block; }
-        .tag-leader { background: #fd7e14; }
-        .tag-self { background: #28a745; }
+        .tag-leader { background: #fd7e14; } /* 점수탭 오렌지색 일치 */
+        .tag-self { background: #28a745; }   /* 점수탭 초록색 일치 */
 
-        /* 랭킹 단상 스타일 */
-        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 30px 0 20px; height: 160px; }
-        .podium-item { display: flex; flex-direction: column; align-items: center; width: 80px; }
+        /* 랭킹 단상 스타일 (수정됨) */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 40px 0 20px; height: 180px; }
+        .podium-item { display: flex; flex-direction: column; align-items: center; width: 85px; }
         .podium-bar { width: 100%; border-radius: 8px 8px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: 800; position: relative; }
         .p-1 { height: 110px; background: var(--passport-gold); order: 2; }
         .p-2 { height: 85px; background: #c0c0c0; order: 1; }
         .p-3 { height: 65px; background: #cd7f32; order: 3; }
-        .podium-name { font-size: 12px; font-weight: 800; margin-bottom: 5px; width: 100%; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .podium-rank { position: absolute; top: -25px; font-size: 18px; }
+        .podium-name { font-size: 13px; font-weight: 800; margin-bottom: 28px; width: 100%; text-align: center; color: #333; } /* 이름 위치 올림 */
+        .podium-rank { position: absolute; top: -28px; font-size: 20px; }
 
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .month-box { background: white; border-radius: 12px; overflow: hidden; height: 150px; border: 1px solid #e5e5ea; position: relative; cursor: pointer; }
@@ -258,7 +259,7 @@
         });
     }
 
-    /* 관리자 수정/삭제 권한 복구된 여권 상세 함수 */
+    /* 여권 상세 보기 (수정됨: 팀장/자발적 태그 적용) */
     function openDetail(month) {
         db.ref('activities').once('value', snap => {
             const items = Object.values(snap.val()||{}).filter(d => d.month == month && d.isPassed);
@@ -267,8 +268,8 @@
             items.forEach((item, itemIdx) => {
                 const imgsJson = JSON.stringify(item.imgs).replace(/'/g, "\\'");
                 const memberListHtml = item.memberDetails.map(m => `
-                    <span style="font-size:11px; background:#f0f0f0; padding:3px 7px; border-radius:6px; margin-right:5px; font-weight:600; display:inline-block; margin-bottom:4px;">
-                        #${m.name}(${m.score}p)${m.isLeader ? '<span class="role-tag tag-leader">팀장</span>' : ''}${m.isSelf ? '<span class="role-tag tag-self">자발적</span>' : ''}
+                    <span style="font-size:12px; background:#f5f5f7; padding:5px 10px; border-radius:8px; margin-right:6px; font-weight:700; display:inline-block; margin-bottom:6px; border:1px solid #e5e5ea;">
+                        ${m.name}(${m.score}p)${m.isLeader ? '<span class="role-tag tag-leader">팀장</span>' : ''}${m.isSelf ? '<span class="role-tag tag-self">자발적</span>' : ''}
                     </span>
                 `).join('');
 
@@ -288,8 +289,8 @@
                     </div><div class="swiper-pagination"></div></div>
                     <div style="padding:15px; position:relative;">
                         <div class="stamp-base ${item.approvalType==='success'?'stamp-success':'stamp-pass'}" style="position:absolute; top:-45px; right:15px; pointer-events:none;">${item.approvalType==='success'?'Success':'Passed'}</div>
-                        <div style="font-size:14px; line-height:1.5; color:#333; margin-bottom:10px;">${item.content}</div>
-                        <div style="display:block;">${memberListHtml}</div>
+                        <div style="font-size:14px; line-height:1.5; color:#333; margin-bottom:12px;">${item.content}</div>
+                        <div style="display:block; border-top:1px solid #f0f0f0; padding-top:12px;">${memberListHtml}</div>
                     </div>
                 </div>`;
             });
@@ -352,7 +353,7 @@
         });
     }
 
-    /* 단상이 포함된 랭킹 로직 */
+    /* 랭킹 로직 (수정됨: 이름 위치 상향) */
     function loadRanking() {
         db.ref('activities').on('value', snap => {
             const scores = {}; const hiddenCount = {};
@@ -366,7 +367,6 @@
             });
             const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
             
-            // 단상 그리기
             const podium = document.getElementById('ranking-podium');
             if(sorted.length >= 1) {
                 podium.innerHTML = `
