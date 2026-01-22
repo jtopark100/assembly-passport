@@ -13,6 +13,7 @@
         :root { --passport-navy: #1a2e5a; --passport-gold: #d4af37; --passport-inner: #fdfaf2; --kia-red: #bb0a30; --success-blue: #0047ab; }
         body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--passport-inner); color: #1c1c1e; padding-bottom: calc(95px + env(safe-area-inset-bottom)); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
 
+        /* 홈 디자인 */
         .new-passport-home { background: var(--passport-navy); min-height: calc(100vh - 140px); margin: 12px; border-radius: 15px; display: flex; flex-direction: column; padding: 45px 25px; color: var(--passport-gold); position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3); box-sizing: border-box; }
         .emblem-box { align-self: flex-end; width: 100px; height: 100px; border: 2px solid var(--passport-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
         .emblem-box::after { content: "대한민국"; position: absolute; bottom: 10px; font-size: 10px; font-weight: 800; }
@@ -26,41 +27,45 @@
         .container { padding: 15px; max-width: 500px; margin: 0 auto; box-sizing: border-box; }
         .card { background: white; border-radius: 15px; padding: 18px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #eee; position: relative; box-sizing: border-box; }
 
+        /* 여권 그리드 & 스탬프 */
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .month-box { background: white; border-radius: 12px; overflow: hidden; height: 150px; border: 1px solid #e5e5ea; position: relative; cursor: pointer; }
-        
-        /* [복구] 스탬프 디자인 */
         .stamp-base { position: absolute; top: 10px; right: 10px; font-family: 'Dancing Script', cursive; font-size: 18px; font-weight: 700; padding: 3px 8px; border-radius: 8px; transform: rotate(-12deg); z-index: 10; pointer-events: none; }
         .stamp-pass { color: var(--kia-red); border: 2px double var(--kia-red); background: rgba(255,255,255,0.9); }
         .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); background: rgba(255,255,255,0.9); }
 
+        /* 상세 카드 내 사진 슬라이더 */
         .card-swiper { width: 100%; aspect-ratio: 1; background: #000; }
-        .card-swiper img { width: 100%; height: 100%; object-fit: contain; }
+        .card-swiper img { width: 100%; height: 100%; object-fit: contain; cursor: pointer; }
 
+        /* 전체화면 모달 (클릭 시) */
         #photo-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:3000; }
         .full-swiper { width: 100%; height: 100%; }
-        .close-btn { position: absolute; top: 40px; right: 20px; color: white; font-size: 40px; z-index: 3100; cursor: pointer; text-shadow: 0 0 10px #000; line-height: 1; }
+        .close-btn { position: absolute; top: 40px; right: 20px; color: white; font-size: 40px; z-index: 3100; cursor: pointer; line-height: 1; text-shadow: 0 0 10px #000; }
 
-        /* [복구] 점수 탭 디자인 */
+        /* 점수 설정 탭 버튼 (전처럼 복귀) */
         .score-tab-group { display: flex; gap: 5px; margin-top: 8px; }
-        .score-tab { flex:1; padding:10px 5px; border-radius:8px; font-size:11px; text-align:center; background:#eee; color:#888; font-weight:800; cursor:pointer; }
+        .score-tab { flex:1; padding:12px 5px; border-radius:8px; font-size:11px; text-align:center; background:#eee; color:#888; font-weight:800; cursor:pointer; border:none; }
         .score-tab.active-blue { background: var(--success-blue) !important; color: white !important; }
         .score-tab.active-orange { background: #fd7e14 !important; color: white !important; }
         .score-tab.active-green { background: #28a745 !important; color: white !important; }
 
-        .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 160px; margin-bottom: 30px; }
+        /* 랭킹 단상 */
+        .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 160px; margin-bottom: 25px; }
         .podium-step { display: flex; flex-direction: column; align-items: center; width: 80px; }
         .step-bar { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: white; font-weight: 800; padding-top: 10px; border-radius: 10px 10px 0 0; }
         .p-1 { height: 90px; background: linear-gradient(to top, #d4af37, #f9e29a); color: #5c4b00; }
         .p-2 { height: 70px; background: linear-gradient(to top, #aaa, #ddd); color: #333; }
         .p-3 { height: 50px; background: linear-gradient(to top, #cd7f32, #ecc39a); color: #4e2a00; }
 
+        /* 내비게이션 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); display: flex; padding-bottom: env(safe-area-inset-bottom); height: calc(70px + env(safe-area-inset-bottom)); z-index: 1000; border-top: 2px solid var(--passport-gold); }
         .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 11px; }
         .bottom-nav a.active-link { color: var(--passport-gold); font-weight: 800; }
+        
         #logout-btn { display:none; position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--kia-red); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 12px; font-weight: 800; z-index: 999; }
         #modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; }
-        input, select, textarea { -webkit-appearance: none; border-radius: 10px; border: 1px solid #ddd; padding: 13px; width: 100%; font-size: 16px; margin-top: 8px; box-sizing: border-box; font-family: inherit; }
+        input, select, textarea { -webkit-appearance: none; border-radius: 10px; border: 1px solid #ddd; padding: 13px; width: 100%; font-size: 16px; margin-top: 8px; box-sizing: border-box; }
         .btn-main { width: 100%; height: 52px; border-radius: 12px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; margin-top: 15px; }
         .admin-edit-btn { padding: 4px 8px; font-size: 11px; border-radius: 5px; border: 1px solid #ddd; background: #fff; margin-left: 4px; }
     </style>
@@ -78,7 +83,7 @@
             <div class="e-passport-icon"></div>
         </div>
         <div class="card" style="background: rgba(255,255,255,0.1); border: 1px dashed var(--passport-gold); margin-top: 35px; color: white; text-align: center; padding: 15px;">
-            <div id="home-mission-text" style="font-size: 17px; font-weight: 800;">데이터 로딩 중...</div>
+            <div id="home-mission-text" style="font-size: 17px; font-weight: 800;">로딩 중...</div>
         </div>
     </div>
 </div>
@@ -92,7 +97,7 @@
             <input type="text" id="new-mission-text" placeholder="일반 미션 제목">
             <input type="text" id="hidden-mission-text" placeholder="숨은 미션 내용">
             <button onclick="addMissionPool()" class="btn-main">가이드 추가</button>
-            <hr style="margin:10px 0; border-top:1px solid #eee;">
+            <hr style="margin:20px 0; border-top:1px solid #eee;">
             <select id="match-month"><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월</option>`)</script></select>
             <select id="match-mission-select"></select>
             <button onclick="setMonthlyMission()" class="btn-main" style="background:var(--kia-red); border:none; color:white;">미션 매칭 확정</button>
@@ -170,7 +175,7 @@
     function updateAdminUI() { document.querySelectorAll('#admin-mission-area, #admin-approval-area, #logout-btn').forEach(el=>el.style.display=isAdmin?'block':'none'); }
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
     
-    // [수정] 사진 클릭 시 전체화면 슬라이더 활성화
+    // [수정] 사진 터치 시 활성화되는 전체화면 뷰어
     function openPhotoModal(imgs, index) {
         const wrapper = document.getElementById('photo-slider-wrapper');
         wrapper.innerHTML = imgs.map(src => `<div class="swiper-slide"><div class="swiper-zoom-container"><img src="${src}"></div></div>`).join('');
@@ -180,7 +185,7 @@
     }
     function closePhotoModal() { document.getElementById('photo-modal').style.display = 'none'; }
 
-    // [복구] 기존 점수 탭 선택 로직
+    // [복구] 점수 탭 버튼 (전처럼 완벽 복귀)
     function drawScoreTabs() {
         const area = document.getElementById('score-tabs-container');
         const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== "");
@@ -229,7 +234,7 @@
     function editMissionPool(key, t, h) { const nt=prompt("미션명",t); const nh=prompt("숨은미션",h); if(nt) db.ref('mission_pool/'+key).update({text:nt, hidden:nh}); }
     function editMonthlyMission(m, t, h) { const nt=prompt(m+"월 미션명",t); const nh=prompt(m+"월 숨은미션",h); if(nt) db.ref('monthly_missions/'+m).update({text:nt, hidden:nh}); }
 
-    // [복구] 여권 그리드 내 스탬프 표시 로직
+    // [유지] 여권 스탬프 로직
     function loadPassport() {
         db.ref('activities').on('value', snap => {
             const grid = document.getElementById('passport-grid'); if(!grid) return; grid.innerHTML = '';
@@ -250,6 +255,7 @@
         });
     }
 
+    // [수정] 카드 클릭 후 "사진 클릭 시" 전체화면 연동
     function openDetail(month) {
         db.ref('activities').once('value', snap => {
             const items = Object.values(snap.val()||{}).filter(d => d.month == month && d.isPassed);
