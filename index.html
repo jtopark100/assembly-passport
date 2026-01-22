@@ -32,10 +32,19 @@
         .tag-leader { background: #fd7e14; }
         .tag-self { background: #28a745; }
 
+        /* 랭킹 단상 스타일 */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 30px 0 20px; height: 160px; }
+        .podium-item { display: flex; flex-direction: column; align-items: center; width: 80px; }
+        .podium-bar { width: 100%; border-radius: 8px 8px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: 800; position: relative; }
+        .p-1 { height: 110px; background: var(--passport-gold); order: 2; }
+        .p-2 { height: 85px; background: #c0c0c0; order: 1; }
+        .p-3 { height: 65px; background: #cd7f32; order: 3; }
+        .podium-name { font-size: 12px; font-weight: 800; margin-bottom: 5px; width: 100%; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .podium-rank { position: absolute; top: -25px; font-size: 18px; }
+
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .month-box { background: white; border-radius: 12px; overflow: hidden; height: 150px; border: 1px solid #e5e5ea; position: relative; cursor: pointer; }
 
-        /* 사진 전체화면 뷰어 스타일 */
         #photo-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:4000; }
         .full-swiper { width: 100%; height: 100%; }
         .close-btn { position: absolute; top: calc(20px + env(safe-area-inset-top)); right: 20px; color: white; font-size: 40px; z-index: 4100; cursor: pointer; text-shadow: 0 0 10px #000; line-height: 1; font-weight: 300; }
@@ -110,7 +119,7 @@
     
     <div id="view-ranking" data-view>
         <h3>🏆 포인트 랭킹</h3>
-        <div id="ranking-podium" style="margin-top:20px;"></div>
+        <div id="ranking-podium"></div>
         <div class="card" id="rank-list" style="padding:0; overflow:hidden;"></div>
         <h3 style="margin-top:25px; color:var(--success-blue);">🎖️ 숨은 미션 달성자</h3><div class="card" id="success-winners-list" style="padding:15px; display:flex; flex-wrap:wrap; gap:8px;"></div>
     </div>
@@ -168,23 +177,15 @@
     function updateAdminUI() { document.querySelectorAll('#admin-mission-area, #admin-approval-area, #logout-btn').forEach(el=>el.style.display=isAdmin?'block':'none'); }
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
-    // 전체화면 기능 로직
     function openPhotoModal(imgs, index) {
         const wrapper = document.getElementById('photo-slider-wrapper');
         wrapper.innerHTML = imgs.map(src => `<div class="swiper-slide"><div class="swiper-zoom-container"><img src="${src}"></div></div>`).join('');
         document.getElementById('photo-modal').style.display = 'block';
         document.body.style.overflow = 'hidden';
         if (photoSwiper) photoSwiper.destroy();
-        photoSwiper = new Swiper(".full-swiper", { 
-            zoom: true, 
-            pagination: { el: ".swiper-pagination", clickable: true }, 
-            initialSlide: index 
-        });
+        photoSwiper = new Swiper(".full-swiper", { zoom: true, pagination: { el: ".swiper-pagination", clickable: true }, initialSlide: index });
     }
-    function closePhotoModal() { 
-        document.getElementById('photo-modal').style.display = 'none'; 
-        document.body.style.overflow = 'auto'; 
-    }
+    function closePhotoModal() { document.getElementById('photo-modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
     function drawScoreTabs() {
         const area = document.getElementById('score-tabs-container');
@@ -257,6 +258,7 @@
         });
     }
 
+    /* 관리자 수정/삭제 권한 복구된 여권 상세 함수 */
     function openDetail(month) {
         db.ref('activities').once('value', snap => {
             const items = Object.values(snap.val()||{}).filter(d => d.month == month && d.isPassed);
@@ -276,6 +278,10 @@
                             <div style="width:30px; height:30px; background:var(--passport-navy); border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800;">${month}</div>
                             <div style="font-weight:800; font-size:14px;">${item.memberDetails.map(m=>m.name).join(', ')}</div>
                         </div>
+                        ${isAdmin ? `<div>
+                            <button class="admin-edit-btn" onclick="editActivity('${item.id}')">수정</button>
+                            <button class="admin-edit-btn" style="color:red;" onclick="deleteActivity('${item.id}')">삭제</button>
+                        </div>` : ''}
                     </div>
                     <div class="swiper card-swiper cs-${itemIdx}"><div class="swiper-wrapper">
                         ${item.imgs.map((src, idx) => `<div class="swiper-slide"><img src="${src}" onclick='openPhotoModal(${imgsJson}, ${idx})'></div>`).join('')}
@@ -292,6 +298,9 @@
             items.forEach((_, idx) => new Swiper(`.cs-${idx}`, { pagination: { el: ".swiper-pagination" } }));
         });
     }
+
+    function editActivity(id) { const nc = prompt("수정할 내용:"); if(nc) db.ref('activities/'+id).update({content:nc}).then(()=>alert("수정됨")); }
+    function deleteActivity(id) { if(confirm("정말 삭제하시겠습니까?")) db.ref('activities/'+id).remove().then(()=>alert("삭제됨")); }
 
     async function submitUpload() {
         const btn = document.getElementById('up-btn'); btn.disabled = true;
@@ -343,6 +352,7 @@
         });
     }
 
+    /* 단상이 포함된 랭킹 로직 */
     function loadRanking() {
         db.ref('activities').on('value', snap => {
             const scores = {}; const hiddenCount = {};
@@ -355,8 +365,21 @@
                 }
             });
             const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+            
+            // 단상 그리기
+            const podium = document.getElementById('ranking-podium');
+            if(sorted.length >= 1) {
+                podium.innerHTML = `
+                <div class="podium-container">
+                    ${sorted[1] ? `<div class="podium-item"><div class="podium-name">${sorted[1][0]}</div><div class="podium-bar p-2"><span class="podium-rank">🥈</span>${sorted[1][1]}p</div></div>` : ''}
+                    ${sorted[0] ? `<div class="podium-item"><div class="podium-name">${sorted[0][0]}</div><div class="podium-bar p-1"><span class="podium-rank">🥇</span>${sorted[0][1]}p</div></div>` : ''}
+                    ${sorted[2] ? `<div class="podium-item"><div class="podium-name">${sorted[2][0]}</div><div class="podium-bar p-3"><span class="podium-rank">🥉</span>${sorted[2][1]}p</div></div>` : ''}
+                </div>`;
+            }
+
             const rList = document.getElementById('rank-list'); rList.innerHTML = '';
             sorted.forEach(([name, score], idx) => { rList.innerHTML += `<div style="padding:15px; display:flex; justify-content:space-between; border-bottom:1px solid #eee;"><span><b>${idx+1}위</b> ${name}</span><span>${score}p</span></div>`; });
+            
             const wList = document.getElementById('success-winners-list'); wList.innerHTML = '';
             Object.entries(hiddenCount).forEach(([name, count]) => { wList.innerHTML += `<span style="background:var(--success-blue); color:white; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:800;">🎖️ ${name} (${count})</span>`; });
         });
