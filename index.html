@@ -56,15 +56,13 @@
         .stamp-pass { color: var(--kia-red); border: 2px double var(--kia-red); background: rgba(255,255,255,0.9); }
         .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); background: rgba(255,255,255,0.9); }
         
-        /* [수정 3] 여권 피드 카드 및 전체화면 슬라이더 */
         .feed-card { background: white; border-bottom: 8px solid #f2f2f7; position: relative; padding-bottom: 20px; }
         .feed-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: #000; height: 350px; align-items: center; }
         .feed-slider::-webkit-scrollbar { display: none; }
-        .feed-slider img { width: 100%; flex-shrink: 0; scroll-snap-align: center; object-fit: contain; max-height: 100%; transition: transform 0.3s ease; }
+        .feed-slider img { width: 100%; flex-shrink: 0; scroll-snap-align: center; object-fit: contain; max-height: 100%; transition: transform 0.3s ease; touch-action: pinch-zoom; }
         .feed-slider img.zoomed { transform: scale(2.5); cursor: zoom-out; }
         .close-zoom { position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: white; border-radius: 50%; width: 35px; height: 35px; display: none; align-items: center; justify-content: center; z-index: 3001; font-size: 20px; font-weight: bold; }
 
-        /* [수정 4] 올림픽 단상 스타일 */
         .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 160px; margin: 30px 0 10px; }
         .podium-item { flex: 1; display: flex; flex-direction: column; align-items: center; }
         .podium-bar { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: 800; border-radius: 8px 8px 0 0; position: relative; }
@@ -172,7 +170,7 @@
     <div id="modal-body-content"></div>
 </div>
 
-<button onclick="handleAdminAuth()" style="position:fixed; bottom:85px; right:15px; opacity:0; width:40px; height:40px; z-index:999;">Admin</button>
+<button id="admin-btn" onclick="handleAdminAuth()" style="position:fixed; bottom:85px; right:15px; opacity:0; width:40px; height:40px; z-index:999;">Admin</button>
 
 <script>
     const firebaseConfig = { apiKey: "AIzaSyC9wLc0ei0c9r5PR7I4MPvGDTgoBB4AKGY", databaseURL: "https://assembly-passport-default-rtdb.firebaseio.com", projectId: "assembly-passport" };
@@ -180,10 +178,28 @@
     const db = firebase.database();
     let isAdmin = false;
 
-    function handleAdminAuth() { if(prompt("코드 입력")==="assy") { isAdmin=true; document.getElementById('admin-mission-area').style.display='block'; document.getElementById('admin-approval-area').style.display='block'; router(); } }
+    // [수정 1] 관리자 로그인/로그아웃 매칭 수정
+    function handleAdminAuth() { 
+        if(!isAdmin) {
+            if(prompt("코드 입력")==="assy") { 
+                isAdmin=true; 
+                document.getElementById('admin-mission-area').style.display='block'; 
+                document.getElementById('admin-approval-area').style.display='block'; 
+                alert("관리자 로그인 성공");
+            } 
+        } else {
+            if(confirm("로그아웃 하시겠습니까?")) {
+                isAdmin=false;
+                document.getElementById('admin-mission-area').style.display='none'; 
+                document.getElementById('admin-approval-area').style.display='none'; 
+                alert("로그아웃 완료");
+            }
+        }
+        router(); 
+    }
+
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
-    /* [수정 3] 여권 월별 탭 복구 및 상세 카드(슬라이드, 줌) */
     function loadPassport() {
         db.ref('activities').on('value', snap => {
             const grid = document.getElementById('passport-grid'); if(!grid) return;
@@ -204,25 +220,34 @@
         });
     }
 
+    // [수정 3] 여권 탭 원본 보기 및 사용자 조절 줌 매칭 수정
     function openDetail(month) {
         db.ref('activities').once('value', snap => {
             const all = snap.val() ? Object.values(snap.val()) : [];
             const filtered = all.filter(d => d.month == month && d.isPassed);
             const body = document.getElementById('modal-body-content'); body.innerHTML = '';
+            const modalEl = document.getElementById('modal');
+            const titleEl = document.getElementById('modal-title');
+            
+            modalEl.style.background = "rgba(0,0,0,0.95)";
+            titleEl.parentElement.style.background = "#000";
+            titleEl.parentElement.style.borderBottom = "1px solid #333";
+            titleEl.style.color = "#fff";
+
             filtered.forEach(item => {
                 const isSuccess = item.approvalType === 'success';
                 const card = document.createElement('div'); card.className = 'feed-card';
+                card.style.background = "transparent";
                 card.innerHTML = `
-                    <div class="close-zoom" id="close-${item.id}" onclick="toggleZoom('${item.id}', false)">&times;</div>
                     <div class="stamp-base ${isSuccess ? 'stamp-success' : 'stamp-pass'}">${isSuccess ? 'Success' : 'Passed'}</div>
                     <div class="feed-slider" id="slider-${item.id}">
-                        ${item.imgs.map(img => `<img src="${img}" onclick="toggleZoom('${item.id}', true, this)">`).join('')}
+                        ${item.imgs.map(img => `<img src="${img}" style="width:100%; object-fit:contain;">`).join('')}
                     </div>
-                    <div style="padding:15px;">
+                    <div style="padding:15px; color:#fff;">
                         <div style="margin-bottom:12px; display:flex; flex-wrap:wrap; gap:5px;">
-                            ${item.memberDetails.map(m => `<span style="font-size:11px; font-weight:700; background:#f0f2f5; padding:4px 10px; border-radius:15px; border:1px solid #ddd;">${m.name} (+${m.score}p)</span>`).join('')}
+                            ${item.memberDetails.map(m => `<span style="font-size:11px; font-weight:700; background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:15px; border:1px solid rgba(255,255,255,0.3);">${m.name} (+${m.score}p)</span>`).join('')}
                         </div>
-                        <div style="font-size:15px; line-height:1.6; color:#333;">${item.content}</div>
+                        <div style="font-size:15px; line-height:1.6; opacity:0.9;">${item.content}</div>
                     </div>`;
                 body.appendChild(card);
             });
@@ -232,23 +257,21 @@
         });
     }
 
-    function toggleZoom(id, isZoom, el) {
-        const closeBtn = document.getElementById('close-'+id);
-        if(isZoom) { el.classList.add('zoomed'); closeBtn.style.display='flex'; } 
-        else { document.querySelectorAll('.zoomed').forEach(img=>img.classList.remove('zoomed')); closeBtn.style.display='none'; }
-    }
+    function toggleZoom(id, isZoom, el) { /* 줌 기능이 시스템 네이티브 pinch-zoom으로 변경되어 비워둠 */ }
 
-    /* [수정 1] 미션 수정 및 삭제 (숨은 미션 포함) */
+    // [수정 4] 미션 탭 일반 사용자 숨은 미션 조회 방지 매칭 수정
     function loadMissions() {
         db.ref('mission_pool').on('value', snap => {
             const listArea = document.getElementById('mission-pool-list');
             const select = document.getElementById('match-mission-select');
             listArea.innerHTML = ''; select.innerHTML = '';
             Object.entries(snap.val()||{}).forEach(([key, item]) => {
+                if(!isAdmin && item.hidden) return; // 관리자 아니면 숨은 미션 가이드는 노출 안함
+
                 listArea.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
                         <b>📌 ${item.text}</b>
-                        ${item.hidden ? `<div style="font-size:12px; color:var(--success-blue);">🕵️ 숨은 미션: ${item.hidden}</div>` : ''}
+                        ${isAdmin && item.hidden ? `<div style="font-size:12px; color:var(--success-blue);">🕵️ 숨은 미션: ${item.hidden}</div>` : ''}
                     </div>
                     ${isAdmin ? `<div>
                         <button class="btn-admin-sm" onclick="editMissionPool('${key}', '${item.text}', '${item.hidden||''}')">수정</button>
@@ -279,18 +302,25 @@
         db.ref('mission_pool/'+key).update({text:nt, hidden:nh});
     }
 
-    /* [수정 2] 승인 대기 리스트 (컬러 탭 및 참여자 상세) */
+    // [수정 2] 관리자 승인 탭 팀장/자발적 표시 UI 매칭 수정
     function loadApprovalList() {
         db.ref('activities').on('value', snap => {
             const list = document.getElementById('pending-list'); list.innerHTML = '';
             Object.values(snap.val()||{}).forEach(item => {
                 if(!item.isPassed) {
                     list.innerHTML += `<div class="card" style="border-left:5px solid var(--kia-red);">
-                        <div style="display:flex; overflow-x:auto; gap:5px; margin-bottom:10px;">${item.imgs.map(img => `<img src="${img}" style="height:80px; border-radius:5px;">`).join('')}</div>
+                        <div style="display:flex; overflow-x:auto; gap:5px; margin-bottom:10px;">${item.imgs.map(img => `<img src="${img}" style="height:80px; border-radius:5px; object-fit:cover;">`).join('')}</div>
                         <div style="font-size:13px; line-height:1.5;">
-                            <b>📝 소감:</b> ${item.content}<br>
-                            <b>👥 참여자 상세:</b><br>
-                            ${item.memberDetails.map(m => `• ${m.name}(${m.score}p) [${m.isLeader?'팀장O':'팀장X'} / ${m.isVoluntary?'자발O':'자발X'}]`).join('<br>')}
+                            <b>📝 활동 소감:</b> ${item.content}<br>
+                            <b>👥 참여자 상세 명단:</b><br>
+                            <div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:5px;">
+                            ${item.memberDetails.map(m => `
+                                <span style="background:#f0f2f5; padding:3px 8px; border-radius:5px; border:1px solid #ddd;">
+                                    ${m.name}(${m.score}p)
+                                    ${m.isLeader ? '<b style="color:#fd7e14;">[팀장]</b>' : ''}
+                                    ${m.isVoluntary ? '<b style="color:#28a745;">[자발]</b>' : ''}
+                                </span>`).join('')}
+                            </div>
                         </div>
                         <div style="display:flex; gap:8px; margin-top:15px;">
                             <button onclick="approveAct('${item.id}', 'success')" style="flex:1; background:var(--success-blue); color:white; border:none; height:45px; border-radius:10px; font-weight:800;">SUCCESS</button>
@@ -303,7 +333,6 @@
         });
     }
 
-    /* [수정 4] 랭킹 단상 및 숨은 미션 리스트 */
     function loadRanking() {
         db.ref('activities').on('value', snap => {
             const users = {}; const winners = new Set();
@@ -317,7 +346,6 @@
             });
             const sorted = Object.entries(users).sort((a,b)=>b[1]-a[1]);
             
-            // 단상 UI
             document.getElementById('ranking-top-area').innerHTML = `
                 <div class="podium-container">
                     <div class="podium-item"><div class="podium-name">${sorted[1]?sorted[1][0]:'-'}</div><div class="podium-bar silver">2nd</div></div>
@@ -338,7 +366,6 @@
         });
     }
 
-    /* 공통 로직 유지 */
     function drawScoreTabs() {
         const area = document.getElementById('score-tabs-container');
         const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== ""); area.innerHTML = '';
