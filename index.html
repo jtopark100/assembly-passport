@@ -13,7 +13,6 @@
         :root { --passport-navy: #1a2e5a; --passport-gold: #d4af37; --passport-inner: #fdfaf2; --kia-red: #bb0a30; --success-blue: #0047ab; }
         body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--passport-inner); color: #1c1c1e; padding-bottom: calc(95px + env(safe-area-inset-bottom)); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
 
-        /* [디자인 유지] 홈 여권 디자인 */
         .new-passport-home { background: var(--passport-navy); min-height: calc(100vh - 140px); margin: 12px; border-radius: 15px; display: flex; flex-direction: column; padding: 45px 25px; color: var(--passport-gold); position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3); box-sizing: border-box; }
         .emblem-box { align-self: flex-end; width: 100px; height: 100px; border: 2px solid var(--passport-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
         .emblem-box::after { content: "대한민국"; position: absolute; bottom: 10px; font-size: 10px; font-weight: 800; }
@@ -22,41 +21,43 @@
         .e-passport-icon { width: 34px; height: 22px; border: 2px solid var(--passport-gold); margin-top: 25px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
         .e-passport-icon::after { content: ""; width: 8px; height: 8px; background: var(--passport-gold); border-radius: 50%; }
 
-        /* 공통 레이아웃 */
         [data-view] { display: none; } [data-view].active { display: block; }
         header { background: var(--passport-navy); color: var(--passport-gold); padding: calc(15px + env(safe-area-inset-top)) 20px 15px; text-align: center; border-bottom: 2px solid var(--passport-gold); position: sticky; top: 0; z-index: 1000; }
         .container { padding: 15px; max-width: 500px; margin: 0 auto; box-sizing: border-box; }
         .card { background: white; border-radius: 15px; padding: 18px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #eee; position: relative; box-sizing: border-box; }
 
-        /* 여권 그리드 디자인 */
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .month-box { background: white; border-radius: 12px; overflow: hidden; height: 150px; border: 1px solid #e5e5ea; position: relative; cursor: pointer; }
         .stamp-base { position: absolute; top: 10px; right: 10px; font-family: 'Dancing Script', cursive; font-size: 18px; font-weight: 700; padding: 3px 8px; border-radius: 8px; transform: rotate(-12deg); z-index: 10; pointer-events: none; }
         .stamp-pass { color: var(--kia-red); border: 2px double var(--kia-red); background: rgba(255,255,255,0.9); }
         .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); background: rgba(255,255,255,0.9); }
 
-        /* [인스타 스타일] 사진 뷰어 모달 */
-        #photo-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:3000; }
-        .swiper { width: 100%; height: 100%; }
-        .swiper-slide { display: flex; justify-content: center; align-items: center; }
-        .swiper-slide img { width: 100%; height: auto; object-fit: contain; max-height: 100vh; }
-        .close-btn { position: absolute; top: 40px; right: 20px; color: white; font-size: 35px; z-index: 3100; cursor: pointer; text-shadow: 0 0 10px rgba(0,0,0,0.8); line-height: 1; }
+        /* 인스타 슬라이더 카드용 */
+        .card-swiper { width: 100%; height: 250px; background: #f9f9f9; }
+        .card-swiper img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 점수 설정 탭 디자인 */
+        /* 전체화면 뷰어 */
+        #photo-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:3000; }
+        .full-swiper { width: 100%; height: 100%; }
+        .close-btn { position: absolute; top: 40px; right: 20px; color: white; font-size: 35px; z-index: 3100; cursor: pointer; line-height: 1; }
+
         .score-tab-group { display: flex; gap: 5px; margin-top: 8px; }
         .score-tab { flex:1; padding:10px 5px; border-radius:8px; font-size:11px; text-align:center; background:#eee; color:#888; font-weight:800; cursor:pointer; }
         .score-tab.active-blue { background: var(--success-blue) !important; color: white !important; }
         .score-tab.active-orange { background: #fd7e14 !important; color: white !important; }
         .score-tab.active-green { background: #28a745 !important; color: white !important; }
 
-        /* 하단 네비게이션 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--passport-navy); display: flex; padding-bottom: env(safe-area-inset-bottom); height: calc(70px + env(safe-area-inset-bottom)); z-index: 1000; border-top: 2px solid var(--passport-gold); }
         .bottom-nav a { flex: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 11px; }
         .bottom-nav a.active-link { color: var(--passport-gold); font-weight: 800; }
         .nav-icon { font-size: 22px; margin-bottom: 4px; }
+        
+        /* 로그아웃 버튼 */
+        #logout-btn { display:none; position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--kia-red); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 12px; font-weight: 800; z-index: 999; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
         input, select, textarea { -webkit-appearance: none; border-radius: 10px; border: 1px solid #ddd; padding: 13px; width: 100%; font-size: 16px; margin-top: 8px; box-sizing: border-box; font-family: inherit; }
         .btn-main { width: 100%; height: 52px; border-radius: 12px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; margin-top: 15px; }
+        .admin-edit-btn { padding: 4px 8px; font-size: 11px; border-radius: 5px; border: 1px solid #ddd; background: #fff; margin-left: 4px; }
         #modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; }
     </style>
 </head>
@@ -73,7 +74,7 @@
             <div class="e-passport-icon"></div>
         </div>
         <div class="card" style="background: rgba(255,255,255,0.1); border: 1px dashed var(--passport-gold); margin-top: 35px; color: white; text-align: center; padding: 15px;">
-            <div id="home-mission-text" style="font-size: 17px; font-weight: 800;">데이터 로딩 중...</div>
+            <div id="home-mission-text" style="font-size: 17px; font-weight: 800;">로딩 중...</div>
         </div>
     </div>
 </div>
@@ -112,12 +113,12 @@
             <select id="up-month"><script>const cm=new Date().getMonth()+1;for(let i=1;i<=12;i++)document.write(`<option value="${i}" ${i===cm?'selected':''}>${i}월 활동</option>`)</script></select>
             <input type="text" id="up-name" placeholder="참여자 성함 (쉼표 구분)" oninput="drawScoreTabs()">
             <div id="score-tabs-container" style="margin-top:10px;"></div>
-            <textarea id="up-content" placeholder="활동 내용/소감" rows="3" style="margin-top:10px;"></textarea>
+            <textarea id="up-content" placeholder="활동 내용" rows="3" style="margin-top:10px;"></textarea>
             <input type="file" id="up-img" accept="image/*" multiple style="margin-top:15px; border:none; padding:0;">
             <button onclick="submitUpload()" id="up-btn" class="btn-main">스탬프 요청하기</button>
         </div>
         <div id="admin-approval-area" style="display:none; margin-top:20px;">
-            <h3 style="color:var(--kia-red);">📢 승인 대기 리스트</h3>
+            <h3 style="color:var(--kia-red);">📢 승인 대기</h3>
             <div id="pending-list"></div>
         </div>
     </div>
@@ -131,17 +132,19 @@
     <a href="#/upload" id="link-upload"><span class="nav-icon">📸</span>인증</a>
 </nav>
 
+<button id="logout-btn" onclick="logoutAdmin()">관리자 로그아웃</button>
+
 <div id="modal">
     <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; background:white; position:sticky; top:0; border-bottom:1px solid #eee; z-index:2100;">
         <div id="modal-title" style="font-weight:800;">기록 상세</div>
-        <div onclick="closeModal()" style="font-size:30px; cursor:pointer; line-height:1;">&times;</div>
+        <div onclick="closeModal()" style="font-size:30px; cursor:pointer;">&times;</div>
     </div>
     <div id="modal-body-content"></div>
 </div>
 
 <div id="photo-modal">
     <div class="close-btn" onclick="closePhotoModal()">&times;</div>
-    <div class="swiper mySwiper">
+    <div class="swiper full-swiper">
         <div class="swiper-wrapper" id="photo-slider-wrapper"></div>
         <div class="swiper-pagination"></div>
     </div>
@@ -156,20 +159,26 @@
     let isAdmin = false;
     let photoSwiper = null;
 
-    function handleAdminAuth() { if(prompt("관리자 코드") === "assy") { isAdmin = true; document.querySelectorAll('#admin-mission-area, #admin-approval-area').forEach(el=>el.style.display='block'); router(); } }
+    // [1번] 관리자 권한 및 로그아웃
+    function handleAdminAuth() { if(prompt("관리자 코드") === "assy") { isAdmin = true; updateAdminUI(); router(); } }
+    function logoutAdmin() { isAdmin = false; updateAdminUI(); router(); alert("로그아웃 되었습니다."); }
+    function updateAdminUI() {
+        const display = isAdmin ? 'block' : 'none';
+        document.querySelectorAll('#admin-mission-area, #admin-approval-area, #logout-btn').forEach(el=>el.style.display=display);
+    }
+
     function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
     
-    // [인스타 스타일] 사진 확대 및 슬라이더 열기
+    // [4번] 인스타 스타일 전체화면 뷰어 (줌인/아웃, 슬라이드)
     function openPhotoModal(imgs, index) {
         const wrapper = document.getElementById('photo-slider-wrapper');
         wrapper.innerHTML = imgs.map(src => `<div class="swiper-slide"><div class="swiper-zoom-container"><img src="${src}"></div></div>`).join('');
         document.getElementById('photo-modal').style.display = 'block';
         if (photoSwiper) photoSwiper.destroy();
-        photoSwiper = new Swiper(".mySwiper", { zoom: true, pagination: { el: ".swiper-pagination", dynamicBullets: true }, initialSlide: index });
+        photoSwiper = new Swiper(".full-swiper", { zoom: true, pagination: { el: ".swiper-pagination", dynamicBullets: true }, initialSlide: index });
     }
     function closePhotoModal() { document.getElementById('photo-modal').style.display = 'none'; }
 
-    // 다수 인원 점수 설정 탭
     function drawScoreTabs() {
         const area = document.getElementById('score-tabs-container');
         const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== "");
@@ -186,7 +195,7 @@
         });
     }
 
-    // [미션 탭 로직] 가이드=일반만 / 매칭=모두공개
+    // [2,3번] 미션 가이드 및 매칭 수정/삭제 기능 추가
     function loadMissions() {
         db.ref('mission_pool').on('value', snap => {
             const listArea = document.getElementById('mission-pool-list');
@@ -195,8 +204,11 @@
             Object.entries(snap.val()||{}).forEach(([key, item]) => {
                 listArea.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center;">
                     <div><b>📌 ${item.text}</b>
-                    ${isAdmin && item.hidden ? `<div style="color:var(--success-blue); font-size:11px; margin-top:5px; font-weight:800;">🕵️ [관리자용] 숨은미션: ${item.hidden}</div>` : ''}</div>
-                    ${isAdmin ? `<button class="btn-admin-sm" onclick="if(confirm('삭제?')) db.ref('mission_pool/${key}').remove()">삭제</button>` : ''}
+                    ${isAdmin && item.hidden ? `<div style="color:var(--success-blue); font-size:11px; margin-top:5px; font-weight:800;">🕵️ [관리자] 숨은: ${item.hidden}</div>` : ''}</div>
+                    ${isAdmin ? `<div>
+                        <button class="admin-edit-btn" onclick="editMissionPool('${key}','${item.text}','${item.hidden||''}')">수정</button>
+                        <button class="admin-edit-btn" style="color:red;" onclick="if(confirm('삭제?')) db.ref('mission_pool/${key}').remove()">삭제</button>
+                    </div>` : ''}
                 </div>`;
                 if(isAdmin) select.innerHTML += `<option value='${JSON.stringify({id:key, ...item})}'>${item.text}</option>`;
             });
@@ -207,7 +219,13 @@
             for(let i=1; i<=12; i++) {
                 if(mData[i]) {
                     area.innerHTML += `<div class="card" style="border-left:4px solid var(--passport-navy);">
-                        <b>📅 ${i}월 미션: ${mData[i].text}</b>
+                        <div style="display:flex; justify-content:space-between;">
+                            <b>📅 ${i}월 미션: ${mData[i].text}</b>
+                            ${isAdmin ? `<div>
+                                <button class="admin-edit-btn" onclick="editMonthlyMission('${i}','${mData[i].text}','${mData[i].hidden||''}')">수정</button>
+                                <button class="admin-edit-btn" style="color:red;" onclick="if(confirm('삭제?')) db.ref('monthly_missions/${i}').remove()">삭제</button>
+                            </div>` : ''}
+                        </div>
                         ${mData[i].hidden ? `<div style="color:var(--success-blue); font-size:12px; font-weight:800; margin-top:5px;">⭐ 숨은 미션: ${mData[i].hidden}</div>` : ''}
                     </div>`;
                     if(i == (new Date().getMonth()+1)) {
@@ -218,7 +236,9 @@
         });
     }
 
-    // [여권 탭 로직] 그리드 및 카드 피드
+    function editMissionPool(key, t, h) { const nt = prompt("미션 수정", t); const nh = prompt("숨은 미션 수정", h); if(nt) db.ref('mission_pool/'+key).update({text:nt, hidden:nh}); }
+    function editMonthlyMission(month, t, h) { const nt = prompt(month+"월 미션 수정", t); const nh = prompt(month+"월 숨은 미션 수정", h); if(nt) db.ref('monthly_missions/'+month).update({text:nt, hidden:nh}); }
+
     function loadPassport() {
         db.ref('activities').on('value', snap => {
             const grid = document.getElementById('passport-grid'); if(!grid) return; grid.innerHTML = '';
@@ -239,20 +259,24 @@
         });
     }
 
+    // [4번] 상세 카드 내 슬라이딩 및 클릭 시 전체화면 연동
     function openDetail(month) {
         db.ref('activities').once('value', snap => {
             const items = Object.values(snap.val()||{}).filter(d => d.month == month && d.isPassed);
             const body = document.getElementById('modal-body-content'); body.innerHTML = '';
             if(items.length===0) body.innerHTML = '<div style="padding:50px; text-align:center; color:#ccc;">기록이 없습니다.</div>';
-            items.forEach(item => {
+            items.forEach((item, itemIdx) => {
                 const imgsJson = JSON.stringify(item.imgs).replace(/'/g, "\\'");
                 body.innerHTML += `<div class="card" style="padding:0; overflow:hidden;">
                     <div style="padding:15px; border-bottom:1px solid #f0f0f0; display:flex; align-items:center; gap:10px;">
                         <div style="width:35px; height:35px; background:var(--passport-navy); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:12px; font-weight:800;">${month}</div>
                         <div style="font-weight:800; font-size:14px;">${item.memberDetails.map(m=>m.name).join(', ')}</div>
                     </div>
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:2px; background:#eee;">
-                        ${item.imgs.map((src, idx) => `<img src="${src}" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="openPhotoModal(${imgsJson}, ${idx})">`).join('')}
+                    <div class="swiper card-swiper card-swiper-${itemIdx}">
+                        <div class="swiper-wrapper">
+                            ${item.imgs.map((src, idx) => `<div class="swiper-slide"><img src="${src}" onclick="openPhotoModal(${imgsJson}, ${idx})"></div>`).join('')}
+                        </div>
+                        <div class="swiper-pagination"></div>
                     </div>
                     <div style="padding:15px;">
                         <div style="font-size:14px; line-height:1.5; color:#333;">${item.content}</div>
@@ -262,6 +286,7 @@
             });
             document.getElementById('modal-title').innerText = month + "월 기록 상세";
             document.getElementById('modal').style.display = 'block';
+            items.forEach((_, idx) => new Swiper(`.card-swiper-${idx}`, { pagination: { el: ".swiper-pagination" } }));
         });
     }
 
