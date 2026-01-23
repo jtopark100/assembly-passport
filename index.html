@@ -28,19 +28,17 @@
         .stamp-pass { color: var(--pass-green); border: 2px double var(--pass-green); background: rgba(255,255,255,0.9); }
         .stamp-success { color: var(--success-blue); border: 3px double var(--success-blue); background: rgba(255,255,255,0.9); }
         
-        /* 역할 태그 스타일 */
         .role-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-weight: 800; color: white; vertical-align: middle; display: inline-block; }
-        .tag-leader { background: #fd7e14; } /* 점수탭 오렌지색 일치 */
-        .tag-self { background: #28a745; }   /* 점수탭 초록색 일치 */
+        .tag-leader { background: #fd7e14; }
+        .tag-self { background: #28a745; }
 
-        /* 랭킹 단상 스타일 (수정됨) */
         .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 40px 0 20px; height: 180px; }
         .podium-item { display: flex; flex-direction: column; align-items: center; width: 85px; }
         .podium-bar { width: 100%; border-radius: 8px 8px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: 800; position: relative; }
         .p-1 { height: 110px; background: var(--passport-gold); order: 2; }
         .p-2 { height: 85px; background: #c0c0c0; order: 1; }
         .p-3 { height: 65px; background: #cd7f32; order: 3; }
-        .podium-name { font-size: 13px; font-weight: 800; margin-bottom: 28px; width: 100%; text-align: center; color: #333; } /* 이름 위치 올림 */
+        .podium-name { font-size: 13px; font-weight: 800; margin-bottom: 28px; width: 100%; text-align: center; color: #333; }
         .podium-rank { position: absolute; top: -28px; font-size: 20px; }
 
         .passport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -70,6 +68,10 @@
         input, select, textarea { -webkit-appearance: none; border-radius: 10px; border: 1px solid #ddd; padding: 14px; width: 100%; font-size: 16px; margin-top: 8px; box-sizing: border-box; }
         .btn-main { width: 100%; height: 54px; border-radius: 12px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; margin-top: 15px; }
         .admin-edit-btn { padding: 6px 10px; font-size: 12px; border-radius: 6px; border: 1px solid #ddd; background: #fff; margin-left: 5px; font-weight: 600; }
+        
+        /* 추가된 스타일 */
+        .hint-btn { background: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; margin-top: 5px; }
+        .answer-badge { background: var(--kia-red); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -97,6 +99,8 @@
             <h4>🛠️ 관리자 미션 설정</h4>
             <input type="text" id="new-mission-text" placeholder="미션 제목">
             <input type="text" id="hidden-mission-text" placeholder="숨은 미션 내용">
+            <input type="text" id="hidden-mission-hint" placeholder="숨은 미션 힌트">
+            <input type="text" id="hidden-mission-answer" placeholder="숨은 미션 정답(공개용)">
             <button onclick="addMissionPool()" class="btn-main">가이드 리스트 추가</button>
             <hr style="margin:20px 0; border:none; border-top:1px solid #eee;">
             <select id="match-month"><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월</option>`)</script></select>
@@ -211,8 +215,11 @@
             listArea.innerHTML = ''; select.innerHTML = '';
             Object.entries(snap.val()||{}).forEach(([key, item]) => {
                 listArea.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div><b>📌 ${item.text}</b>${isAdmin && item.hidden ? `<br><small style="color:var(--success-blue); font-weight:800;">🕵️ 숨은: ${item.hidden}</small>` : ''}</div>
-                    ${isAdmin ? `<div><button class="admin-edit-btn" onclick="editMissionPool('${key}','${item.text}','${item.hidden||''}')">수정</button>
+                    <div><b>📌 ${item.text}</b>
+                    ${isAdmin ? `<br><small style="color:var(--success-blue); font-weight:800;">🕵️ 숨은: ${item.hidden||''}</small>
+                    <br><small style="color:#6c757d;">💡 힌트: ${item.hint||''}</small>
+                    <br><small style="color:var(--kia-red);">✅ 정답: ${item.answer||''}</small>` : ''}</div>
+                    ${isAdmin ? `<div><button class="admin-edit-btn" onclick="editMissionPool('${key}')">수정</button>
                     <button class="admin-edit-btn" style="color:red;" onclick="if(confirm('삭제?')) db.ref('mission_pool/${key}').remove()">삭제</button></div>` : ''}
                 </div>`;
                 if(isAdmin) select.innerHTML += `<option value='${JSON.stringify({id:key, ...item})}'>${item.text}</option>`;
@@ -223,12 +230,21 @@
             const mData = snap.val() || {}; area.innerHTML = '';
             for(let i=1; i<=12; i++) {
                 if(mData[i]) {
-                    area.innerHTML += `<div class="card" style="border-left:4px solid var(--passport-navy);"><div style="display:flex; justify-content:space-between;"><b>📅 ${i}월 미션: ${mData[i].text}</b>
-                    ${isAdmin ? `<div><button class="admin-edit-btn" onclick="editMonthlyMission('${i}','${mData[i].text}','${mData[i].hidden||''}')">수정</button>
-                    <button class="admin-edit-btn" style="color:red;" onclick="if(confirm('삭제?')) db.ref('monthly_missions/${i}').remove()">삭제</button></div>` : ''}</div>
-                    ${mData[i].hidden ? `<div style="color:var(--success-blue); font-size:12px; font-weight:800; margin-top:5px;">⭐ 숨은 미션: ${mData[i].hidden}</div>` : ''}</div>`;
+                    const m = mData[i];
+                    area.innerHTML += `<div class="card" style="border-left:4px solid var(--passport-navy);">
+                        <div style="display:flex; justify-content:space-between;"><b>📅 ${i}월 미션: ${m.text}</b>
+                        ${isAdmin ? `<div>
+                            <button class="admin-edit-btn" onclick="toggleAnswerPublic('${i}', ${m.answerPublic})">${m.answerPublic ? '정답비공개' : '정답공개'}</button>
+                            <button class="admin-edit-btn" onclick="editMonthlyMission('${i}')">수정</button>
+                            <button class="admin-edit-btn" style="color:red;" onclick="if(confirm('삭제?')) db.ref('monthly_missions/${i}').remove()">삭제</button>
+                        </div>` : ''}</div>
+                        ${m.hidden ? `<div style="color:var(--success-blue); font-size:12px; font-weight:800; margin-top:5px;">⭐ 숨은 미션: ${m.hidden}</div>` : ''}
+                        ${m.hint ? `<div id="hint-box-${i}" style="display:none; font-size:12px; color:#6c757d; margin-top:5px; background:#f8f9fa; padding:8px; border-radius:6px;">💡 힌트: ${m.hint}</div>
+                        <button class="hint-btn" onclick="document.getElementById('hint-box-${i}').style.display='block'; this.style.display='none'">힌트 보기</button>` : ''}
+                        ${m.answerPublic ? `<div style="color:var(--kia-red); font-size:12px; font-weight:800; margin-top:8px; padding:8px; background:rgba(187,10,48,0.05); border-radius:6px;">✅ 정답: ${m.answer}</div>` : ''}
+                    </div>`;
                     if(i == (new Date().getMonth()+1)) {
-                        document.getElementById('home-mission-text').innerHTML = `${i}월 미션: ${mData[i].text}${mData[i].hidden ? `<br><span style="color:#ffeb3b; font-size:14px;">⭐ 숨은미션: ${mData[i].hidden}</span>` : ''}`;
+                        document.getElementById('home-mission-text').innerHTML = `${i}월 미션: ${m.text}${m.hidden ? `<br><span style="color:#ffeb3b; font-size:14px;">⭐ 숨은미션: ${m.hidden}</span>` : ''}`;
                     }
                 }
             }
@@ -236,8 +252,29 @@
         if(isAdmin) loadApprovalList();
     }
 
-    function editMissionPool(key, t, h) { const nt=prompt("미션명",t); const nh=prompt("숨은미션",h); if(nt) db.ref('mission_pool/'+key).update({text:nt, hidden:nh}); }
-    function editMonthlyMission(m, t, h) { const nt=prompt(m+"월 미션명",t); const nh=prompt(m+"월 숨은미션",h); if(nt) db.ref('monthly_missions/'+m).update({text:nt, hidden:nh}); }
+    function toggleAnswerPublic(month, current) { db.ref('monthly_missions/'+month).update({answerPublic: !current}); }
+
+    function editMissionPool(key) {
+        db.ref('mission_pool/'+key).once('value', snap => {
+            const v = snap.val();
+            const nt=prompt("미션명", v.text);
+            const nh=prompt("숨은미션", v.hidden||'');
+            const nht=prompt("힌트", v.hint||'');
+            const na=prompt("정답", v.answer||'');
+            if(nt) db.ref('mission_pool/'+key).update({text:nt, hidden:nh, hint:nht, answer:na});
+        });
+    }
+
+    function editMonthlyMission(m) {
+        db.ref('monthly_missions/'+m).once('value', snap => {
+            const v = snap.val();
+            const nt=prompt(m+"월 미션명", v.text);
+            const nh=prompt(m+"월 숨은미션", v.hidden||'');
+            const nht=prompt(m+"월 힌트", v.hint||'');
+            const na=prompt(m+"월 정답", v.answer||'');
+            if(nt) db.ref('monthly_missions/'+m).update({text:nt, hidden:nh, hint:nht, answer:na});
+        });
+    }
 
     function loadPassport() {
         db.ref('activities').on('value', snap => {
@@ -259,7 +296,6 @@
         });
     }
 
-    /* 여권 상세 보기 (수정됨: 팀장/자발적 태그 적용) */
     function openDetail(month) {
         db.ref('activities').once('value', snap => {
             const items = Object.values(snap.val()||{}).filter(d => d.month == month && d.isPassed);
@@ -353,7 +389,6 @@
         });
     }
 
-    /* 랭킹 로직 (수정됨: 이름 위치 상향) */
     function loadRanking() {
         db.ref('activities').on('value', snap => {
             const scores = {}; const hiddenCount = {};
@@ -385,8 +420,23 @@
         });
     }
 
-    function setMonthlyMission() { const m=document.getElementById('match-month').value; const raw=document.getElementById('match-mission-select').value; if(raw) db.ref('monthly_missions/'+m).set(JSON.parse(raw)); }
-    function addMissionPool() { const t=document.getElementById('new-mission-text').value; const h=document.getElementById('hidden-mission-text').value; if(t) db.ref('mission_pool').push({text:t, hidden:h}); }
+    function setMonthlyMission() { 
+        const m=document.getElementById('match-month').value; 
+        const raw=document.getElementById('match-mission-select').value; 
+        if(raw) {
+            const data = JSON.parse(raw);
+            data.answerPublic = false; // 기본값 비공개
+            db.ref('monthly_missions/'+m).set(data); 
+        }
+    }
+    
+    function addMissionPool() { 
+        const t=document.getElementById('new-mission-text').value; 
+        const h=document.getElementById('hidden-mission-text').value; 
+        const ht=document.getElementById('hidden-mission-hint').value;
+        const an=document.getElementById('hidden-mission-answer').value;
+        if(t) db.ref('mission_pool').push({text:t, hidden:h, hint:ht, answer:an}); 
+    }
 
     function router() {
         const h = location.hash.replace('#/', '') || 'home';
