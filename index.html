@@ -69,9 +69,7 @@
         .btn-main { width: 100%; height: 54px; border-radius: 12px; background: var(--passport-navy); color: var(--passport-gold); border: 1px solid var(--passport-gold); font-weight: 800; margin-top: 15px; }
         .admin-edit-btn { padding: 6px 10px; font-size: 12px; border-radius: 6px; border: 1px solid #ddd; background: #fff; margin-left: 5px; font-weight: 600; }
         
-        /* 추가된 스타일 */
         .hint-btn { background: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; margin-top: 5px; }
-        .answer-badge { background: var(--kia-red); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -192,6 +190,7 @@
     }
     function closePhotoModal() { document.getElementById('photo-modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
+    /* 점수 탭 드로잉 (수정됨: 기본(+5)도 클릭해야 활성화되도록 변경) */
     function drawScoreTabs() {
         const area = document.getElementById('score-tabs-container');
         const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== "");
@@ -200,7 +199,7 @@
             area.innerHTML += `<div class="card" style="padding:12px; margin-bottom:10px;">
                 <div style="font-size:13px; font-weight:800; margin-bottom:8px;">${name} 점수 설정</div>
                 <div class="score-tab-group" data-idx="${idx}">
-                    <div class="score-tab active-blue" data-val="5" data-type="base">기본(+5)</div>
+                    <div class="score-tab" data-val="5" data-type="base" onclick="this.classList.toggle('active-blue')">기본(+5)</div>
                     <div class="score-tab" data-val="2" data-type="leader" onclick="this.classList.toggle('active-orange')">팀장(+2)</div>
                     <div class="score-tab" data-val="3" data-type="self" onclick="this.classList.toggle('active-green')">자발(+3)</div>
                 </div>
@@ -425,7 +424,7 @@
         const raw=document.getElementById('match-mission-select').value; 
         if(raw) {
             const data = JSON.parse(raw);
-            data.answerPublic = false; // 기본값 비공개
+            data.answerPublic = false;
             db.ref('monthly_missions/'+m).set(data); 
         }
     }
