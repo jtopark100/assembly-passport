@@ -190,7 +190,6 @@
     }
     function closePhotoModal() { document.getElementById('photo-modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
-    /* 점수 탭 드로잉 (수정됨: 기본(+5)도 클릭해야 활성화되도록 변경) */
     function drawScoreTabs() {
         const area = document.getElementById('score-tabs-container');
         const names = document.getElementById('up-name').value.split(',').map(n => n.trim()).filter(n => n !== "");
@@ -338,12 +337,15 @@
     function editActivity(id) { const nc = prompt("수정할 내용:"); if(nc) db.ref('activities/'+id).update({content:nc}).then(()=>alert("수정됨")); }
     function deleteActivity(id) { if(confirm("정말 삭제하시겠습니까?")) db.ref('activities/'+id).remove().then(()=>alert("삭제됨")); }
 
+    /* 이미지 저장 로직 수정: Canvas를 이용한 리사이징으로 안정성 확보 */
     async function submitUpload() {
         const btn = document.getElementById('up-btn'); btn.disabled = true;
         const nameVal = document.getElementById('up-name').value.trim();
         const files = document.getElementById('up-img').files;
         if(!nameVal || files.length === 0) { alert("이름과 사진을 입력하세요."); btn.disabled = false; return; }
-        const memberDetails = []; const names = nameVal.split(',').map(n => n.trim());
+        
+        const memberDetails = []; 
+        const names = nameVal.split(',').map(n => n.trim());
         document.querySelectorAll('.score-tab-group').forEach((group, i) => {
             let s = 0; let isLeader = false; let isSelf = false;
             group.querySelectorAll('.score-tab.active-blue, .score-tab.active-orange, .score-tab.active-green').forEach(t => {
@@ -353,11 +355,47 @@
             });
             memberDetails.push({ name: names[i], score: s, isLeader, isSelf });
         });
+
         const imgs = [];
-        for(let f of files) { imgs.push(await new Promise(res => { const r = new FileReader(); r.readAsDataURL(f); r.onload = (e) => res(e.target.result); })); }
+        for(let f of files) {
+            const dataUrl = await new Promise(res => {
+                const r = new FileReader();
+                r.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width; let height = img.height;
+                        const max = 1000; // 최대 해상도 제한 (저장 안정성)
+                        if (width > height) { if (width > max) { height *= max / width; width = max; } }
+                        else { if (height > max) { width *= max / height; height = max; } }
+                        canvas.width = width; canvas.height = height;
+                        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                        res(canvas.toDataURL('image/jpeg', 0.7)); // 압축률 0.7
+                    };
+                    img.src = e.target.result;
+                };
+                r.readAsDataURL(f);
+            });
+            imgs.push(dataUrl);
+        }
+
         const ref = db.ref('activities').push();
-        ref.set({ id: ref.key, memberDetails, month: document.getElementById('up-month').value, imgs, content: document.getElementById('up-content').value, isPassed: false, timestamp: Date.now()
-        }).then(() => { alert("신청 완료!"); location.hash = "#/passport"; btn.disabled = false; });
+        ref.set({ 
+            id: ref.key, 
+            memberDetails, 
+            month: document.getElementById('up-month').value, 
+            imgs: imgs, // 수정된 이미지 데이터 배열
+            content: document.getElementById('up-content').value, 
+            isPassed: false, 
+            timestamp: Date.now()
+        }).then(() => { 
+            alert("신청 완료!"); 
+            location.hash = "#/passport"; 
+            btn.disabled = false; 
+        }).catch(err => {
+            alert("저장 실패: 사진 용량이 너무 큽니다.");
+            btn.disabled = false;
+        });
     }
 
     function approve(id, type) { db.ref('activities/'+id).update({isPassed:true, approvalType:type}); }
@@ -375,7 +413,7 @@
                 `).join('');
 
                 list.innerHTML += `<div class="card">
-                    <img src="${a.imgs[0]}" style="width:100%; border-radius:10px; margin-bottom:12px;">
+                    <img src="${a.imgs ? a.imgs[0] : ''}" style="width:100%; border-radius:10px; margin-bottom:12px;">
                     <div style="margin-bottom:15px;">${membersHtml}</div>
                     <div style="font-size:13px; color:#666; margin-bottom:15px; background:#f9f9f9; padding:10px; border-radius:8px;">${a.content}</div>
                     <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
